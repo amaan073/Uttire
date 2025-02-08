@@ -1,42 +1,57 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+
+/* .mainLogo {
+    font-family: "Lobster", serif;
+    font-size: 2.3rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: white;
+} */
+
+
+
+
+#root> *:not(header) {
+    transition: filter 0.3s ease;       /*smooth transition*/
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/*when the root div has .search-bar.active class(when search view is btn is active ) everything except header is blurred in root div*/
+#root:has(.search-bar:focus-within) > *:not(header) {       
+    filter: blur(15px);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.search-results>a:not(:last-child) {
+    border-bottom : var(--bs-border-width) solid var(--bs-border-color)
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* button.cart:has(.cart-count[data-count="0"])::after {
+    content: "Empty";
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: 600;
+    position: absolute;
+    white-space: nowrap;
+    background: white;
+    top: 50px;
+    right: 0;
+    box-shadow: var(--bs-box-shadow);
+    border-radius: 10px;
+    padding: 10px 20px;
+} */
+
+.cart-count {
+    position: absolute;
+    top: -11px;
+    left: 20px;
+    border-radius: 50%;
+    color: black;
+    border: 2px solid white;
+    width: 23px;
+    aspect-ratio: 1 / 1;
+    font-size: 0.8rem;
+    display: grid;
+    place-items: center;
+    font-weight: 500;
 }
 
-.card {
-  padding: 2em;
-}
 
-.read-the-docs {
-  color: #888;
-}
