@@ -2,7 +2,7 @@
     height: 32px;
     width: 32px;
     padding-right: 3px !important;
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     justify-content: space-around;
 }

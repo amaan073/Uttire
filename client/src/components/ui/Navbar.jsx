@@ -1,11 +1,11 @@
-import React from "react";
+import PropTypes from "prop-types";
 import { NavLink } from "react-router-dom";
 
 const Navbar = ({ isNavActive }) => {
   return (
-    <nav className="order-5 order-md-0 col-12 col-md-auto mt-2 mt-md-0">
+    <nav className="order-5 order-md-0 col-12 col-md-auto">
       <ul
-        className={`nav col-lg-auto align-items-center justify-content-center fw-medium d-md-flex ${
+        className={`nav col-lg-auto align-items-center justify-content-center fw-medium d-md-flex mt-2 mt-md-0 ${
           isNavActive ? "d-flex" : "d-none"
         }`}
       >
@@ -60,6 +60,10 @@ const Navbar = ({ isNavActive }) => {
       </ul>
     </nav>
   );
+};
+
+Navbar.propTypes = {
+  isNavActive: PropTypes.bool,
 };
 
 export default Navbar;

@@ -14,8 +14,11 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.2",
     "@mui/material": "^6.4.2",
+    "bootstrap": "^5.3.3",
     "lucide-react": "^0.474.0",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
+    "react-bootstrap": "^2.10.9",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.3"
   },

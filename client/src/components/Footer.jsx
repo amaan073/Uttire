@@ -1,13 +1,11 @@
-import React from "react";
-
 const Footer = () => {
   return (
     <>
-      <footer className="py-1">
+      <footer className="py-1 mt-2">
         <div className="container d-flex flex-wrap justify-content-center align-items-center">
           <div className="d-flex align-items-center">
             <span className="mb-3 mb-md-0 text-dark">
-              © {new Date().getFullYear()} UrbanEssence, Inc.
+              © {new Date().getFullYear()} Uttire, Inc.
             </span>
           </div>
         </div>

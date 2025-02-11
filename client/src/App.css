@@ -1,22 +1,15 @@
-
-/* .mainLogo {
-    font-family: "Lobster", serif;
-    font-size: 2.3rem;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: white;
-} */
-
-
-
-
+/* blurs everything else except .search-result div */
 #root> *:not(header) {
-    transition: filter 0.3s ease;       /*smooth transition*/
+    transition: filter 0.3s ease;      
+}
+#root:has(.search-bar:focus-within) > *:not(header) {       
+    filter: blur(15px);
 }
 
-/*when the root div has .search-bar.active class(when search view is btn is active ) everything except header is blurred in root div*/
-#root:has(.search-bar:focus-within) > *:not(header) {       
+/* blurs everything else except .account div form */
+#root:has(.login-form.visible) > *:not(header),
+#root:has(.login-form.visible) header>div>div>*:not(div.text-end),
+#root:has(.login-form.visible) div.text-end > *:not(.account.login) {       
     filter: blur(15px);
 }
 
@@ -46,7 +39,7 @@
     border-radius: 50%;
     color: black;
     border: 2px solid white;
-    width: 23px;
+    width: 24px;
     aspect-ratio: 1 / 1;
     font-size: 0.8rem;
     display: grid;
@@ -55,3 +48,11 @@
 }
 
 
+
+/*
+-->
+
+//HOME page styles
+
+<--
+*/
