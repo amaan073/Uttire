@@ -24,7 +24,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="container-fluid position-fixed z-3 top-0 light-bg">
+      <header className="container-fluid position-fixed z-3 top-0 light-bg border-bottom">
         <div className="px-1 py-3 px-md-3">
           <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start ">
             <NavBtn isNavActive={isNavActive} setNavActive={setNavActive} />

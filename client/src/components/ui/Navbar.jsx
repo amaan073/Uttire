@@ -14,8 +14,8 @@ const Navbar = ({ isNavActive }) => {
             to="/"
             className={({ isActive }) =>
               isActive
-                ? "nav-link px-2 text-secondary fs-5"
-                : "nav-link px-2 text-dark fs-5"
+                ? "nav-link p-0 px-2 text-secondary fs-5"
+                : "nav-link p-0 px-2 text-dark fs-5"
             }
           >
             Home
@@ -26,8 +26,8 @@ const Navbar = ({ isNavActive }) => {
             to="/shop"
             className={({ isActive }) =>
               isActive
-                ? "nav-link px-2 text-secondary fs-5"
-                : "nav-link px-2 text-dark fs-5"
+                ? "nav-link p-0 px-2 text-secondary fs-5"
+                : "nav-link p-0 px-2 text-dark fs-5"
             }
           >
             Shop
@@ -38,8 +38,8 @@ const Navbar = ({ isNavActive }) => {
             to="/about"
             className={({ isActive }) =>
               isActive
-                ? "nav-link px-2 text-secondary fs-5"
-                : "nav-link px-2 text-dark fs-5"
+                ? "nav-link p-0 px-2 text-secondary fs-5"
+                : "nav-link p-0 px-2 text-dark fs-5"
             }
           >
             About
@@ -50,8 +50,8 @@ const Navbar = ({ isNavActive }) => {
             to="/contact"
             className={({ isActive }) =>
               isActive
-                ? "nav-link px-2 text-secondary fs-5"
-                : "nav-link px-2 text-dark fs-5"
+                ? "nav-link p-0 px-2 text-secondary fs-5"
+                : "nav-link p-0 px-2 text-dark fs-5"
             }
           >
             Contact
