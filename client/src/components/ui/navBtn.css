@@ -16,7 +16,9 @@
     transition: all 0.2s ease;
 }
 
-
+.nav-view-btn .line2 {
+    width: 95%;
+}
 
 
 
@@ -40,5 +42,5 @@
 }
 
 .nav-view-btn.active .line3 {
-    transform: rotate(135deg);
+    transform: rotate(-45deg);
 }

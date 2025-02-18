@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import image from "../assets/image.png";
 import Card from "../components/ui/Card";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import { ShoppingBagIcon } from "lucide-react";
 
 const Home = () => {
   return (
@@ -31,9 +31,10 @@ const Home = () => {
           <Link
             to="/shop"
             style={{ all: "unset" }}
-            className="d-flex align-items-center"
+            className="d-flex align-items-center gap-1"
           >
-            <ShoppingBagIcon /> Shop Now
+            <ShoppingBagIcon />
+            Shop Now
           </Link>
         </div>
 
@@ -58,7 +59,7 @@ const Home = () => {
 
         {/* Featured Producst */}
         <div className="my-5 mx-3">
-          <h2 className="text-md-start mb-5">Featured Products</h2>
+          <h2 className="text-md-start mb-5 fw-bold">Featured Products</h2>
           <div
             className="d-grid w-100 gap-4"
             style={{
@@ -78,7 +79,7 @@ const Home = () => {
         <hr />
         {/* Newsletter subsciption */}
         <div className="my-5 mx-3">
-          <h2 className="mb-5">Newsletter Subscription</h2>
+          <h2 className="mb-5 fw-bold">Newsletter Subscription</h2>
           <div className="border p-3 px-md-5  rounded bg-dark d-inline-block text-white">
             <p className="mt-2 mb-3">
               Stay updated with our latest news and offers!
