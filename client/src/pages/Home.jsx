@@ -92,7 +92,7 @@ const Home = () => {
             >
               <input
                 type="email"
-                class="form-control mb-3"
+                className="form-control mb-3"
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
                 placeholder="Enter email"
