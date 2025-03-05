@@ -101,6 +101,7 @@ const Home = () => {
                 type="submit"
                 value="Subscribe"
                 className="btn btn-warning"
+                title="Disabled"
               />
             </form>
             <p>

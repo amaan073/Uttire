@@ -19,3 +19,8 @@ hr {
     margin-inline: auto !important;
 }
 
+hr.hr {
+    all: unset !important;
+    border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
+    display: block !important;
+}
