@@ -20,6 +20,7 @@ const Contact = () => {
     <>
       <div className="container-xxl text-center">
         <div className="py-5">
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
           <h2 className="mb-5">We'd Love to Hear from You!</h2>
           <img
             src={image}
@@ -111,6 +112,7 @@ const Contact = () => {
             style={{ maxWidth: "800px" }}
           >
             <li className="ps-2 my-4 border-bottom pb-3">
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
               <p className="fw-semibold">What is Uttire's return policy?</p>
               <span>
                 We accept returns within 30 days of purchase. Items must be

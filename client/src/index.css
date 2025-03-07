@@ -24,3 +24,10 @@ hr.hr {
     border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
     display: block !important;
 }
+
+.unselectable {
+    user-select: none; /* For most modern browsers */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For Internet Explorer/Edge */
+}
