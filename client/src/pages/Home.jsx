@@ -61,7 +61,7 @@ const Home = () => {
         <div className="my-5 mx-3">
           <h2 className="text-md-start mb-5 fw-bold">Featured Products</h2>
           <div
-            className="d-grid w-100 gap-4"
+            className="d-sm-grid w-100 gap-4"
             style={{
               gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
             }}

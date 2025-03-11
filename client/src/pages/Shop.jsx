@@ -1,8 +1,13 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
+import Card from "../components/ui/Card";
+import { Filter } from "lucide-react";
 
 const Shop = () => {
   const [minPrice, setMinPrice] = useState(5);
   const [maxPrice, setMaxPrice] = useState(100);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const handleMinRangeChange = (e) => {
     const minValue = e.target.value;
@@ -14,14 +19,38 @@ const Shop = () => {
     setMaxPrice(Math.max(maxValue, minPrice + 5)); //prevents overlapping with a gap of 5 points
   };
 
+  const handleFilterBtn = () => {
+    setIsFilterOpen(true);
+  };
+
   return (
     <>
-      <div className="container-xxl py-5">
+      <div
+        className="container-xxl py-md-5 py-2 d-md-grid gap-4 align-items-start"
+        style={{ gridTemplateColumns: "280px minmax(0,1fr)" }}
+      >
+        <button
+          className="mobile-filter-btn btn btn-primary d-flex align-items-center gap-1  d-md-none my-3 ms-auto"
+          onClick={handleFilterBtn}
+        >
+          <Filter /> <span className="fs-5">Filters</span>
+        </button>
+
         <section
-          className="filter-sidebar bg-white p-3 px-4 border "
+          className={`filter-sidebar bg-white p-3 px-4 border rounded rounded-3 ${
+            isFilterOpen ? "d-block open" : "d-none d-md-block"
+          }`}
           aria-label="filter"
         >
-          <h1 className="fw-bold">Filters</h1>
+          <div className="d-flex justify-content-between align-items-center">
+            <h1 className="fw-bold m-0 mb-sm-1">Filters</h1>
+            <button
+              className="close-btn d-block d-md-none btn fw-bold pb-2 fs-3 border-0"
+              onClick={() => setIsFilterOpen(false)}
+            >
+              X
+            </button>
+          </div>
 
           <div>
             <form onSubmit={(e) => e.preventDefault()}>
@@ -234,7 +263,33 @@ const Shop = () => {
           <form></form>
         </section>
 
-        <section className="products"></section>
+        <section className="products">
+          <div
+            className="d-sm-grid gap-4 text-center"
+            style={{
+              gridTemplateColumns: "repeat(auto-fill, minmax(244px, 1fr))",
+            }}
+          >
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+          </div>
+          <div className="pagination d-flex gap-5 justify-content-center mt-4 ">
+            <Link to="#prev">{"<<"}Prev</Link>
+            <div className="d-flex gap-3">
+              <Link to="#1">[1]</Link>
+              <Link to="#2">[2]</Link>
+              <Link to="#3">[3]</Link>
+            </div>
+            <Link to="#next">Next{">>"}</Link>
+          </div>
+        </section>
       </div>
     </>
   );
