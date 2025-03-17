@@ -9,6 +9,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import Shop from "./pages/Shop";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import ProductDetail from "./pages/ProductDetail";
 
 /*
 
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: "/contact",
         element: <Contact />,
+      },
+      {
+        path: "/product",
+        element: <ProductDetail />,
       },
     ],
   },

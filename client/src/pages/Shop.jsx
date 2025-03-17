@@ -270,7 +270,9 @@ const Shop = () => {
               gridTemplateColumns: "repeat(auto-fill, minmax(244px, 1fr))",
             }}
           >
-            <Card />
+            <Link to="/product">
+              <Card />
+            </Link>
             <Card />
             <Card />
             <Card />
