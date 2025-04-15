@@ -1,39 +1,36 @@
 /* blurs everything else except .search-result div */
-#root> *:not(header) {
-    transition: filter 0.3s ease;      
+#root > *:not(header) {
+  transition: filter 0.3s ease;
 }
-#root:has(.search-bar:focus-within) > *:not(header) {       
-    filter: blur(15px);
+#root:has(.search-bar:focus-within) > *:not(header) {
+  filter: blur(15px);
 }
 
 /* blurs everything else except .account div form */
 #root:has(.login-form.visible) > *:not(header),
-#root:has(.login-form.visible) header>div>div>*:not(div.text-end),
-#root:has(.login-form.visible) div.text-end > *:not(.account.login) {       
-    filter: blur(15px);
+#root:has(.login-form.visible) header > div > div > *:not(div.text-end),
+#root:has(.login-form.visible) div.text-end > *:not(.account.login) {
+  filter: blur(15px);
 }
 
-.search-results>a:not(:last-child) {
-    border-bottom : var(--bs-border-width) solid var(--bs-border-color)
+.search-results > a:not(:last-child) {
+  border-bottom: var(--bs-border-width) solid var(--bs-border-color);
 }
-
 
 .cart-count {
-    position: absolute;
-    top: -11px;
-    left: 20px;
-    border-radius: 50%;
-    color: black;
-    border: 2px solid var(--light-bg);
-    width: 24px;
-    aspect-ratio: 1 / 1;
-    font-size: 0.8rem;
-    display: grid;
-    place-items: center;
-    font-weight: 500;
+  position: absolute;
+  top: -11px;
+  left: 20px;
+  border-radius: 50%;
+  color: black;
+  border: 2px solid var(--light-bg);
+  width: 24px;
+  aspect-ratio: 1 / 1;
+  font-size: 0.8rem;
+  display: grid;
+  place-items: center;
+  font-weight: 500;
 }
-
-
 
 /*
 -->
@@ -44,23 +41,28 @@
 */
 
 .main-logo-txt {
-    background: linear-gradient(90deg, rgba(255, 1, 1, 1) 0%, rgba(157, 23, 23, 1) 35%, rgba(60, 9, 3, 1) 100%);
-    background-clip: text;
-    color: transparent;
-    background-size: 400% 400%;
-    animation: gradient-bg 3s ease infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 1, 1, 1) 0%,
+    rgba(157, 23, 23, 1) 35%,
+    rgba(60, 9, 3, 1) 100%
+  );
+  background-clip: text;
+  color: transparent;
+  background-size: 400% 400%;
+  animation: gradient-bg 3s ease infinite;
 }
 @keyframes gradient-bg {
-    0%{background-position-x: 0%;}
-    50%{background-position-x: 100%;}
-    100%{background-position-x: 0%;}
+  0% {
+    background-position-x: 0%;
+  }
+  50% {
+    background-position-x: 100%;
+  }
+  100% {
+    background-position-x: 0%;
+  }
 }
-
-
-
-
-
-
 
 /*
 -->
@@ -71,26 +73,23 @@
 */
 
 .avatar {
-    width: 100%;
-    max-width: 170px;
-    height: auto;
-    background-color: rgb(43, 58, 124);
-    color: white;
-    aspect-ratio: 1/1;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    font-size: min(4rem, 7vw);
-    font-weight: 600;
-    margin-inline: auto;
+  width: 100%;
+  max-width: 170px;
+  height: auto;
+  background-color: rgb(43, 58, 124);
+  color: white;
+  aspect-ratio: 1/1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: min(4rem, 7vw);
+  font-weight: 600;
+  margin-inline: auto;
 }
 
-.avatar+h4 {
-    font-size: min(1.5rem, 5vw);
+.avatar + h4 {
+  font-size: min(1.5rem, 5vw);
 }
-
-
-
 
 /*
 -->
@@ -101,79 +100,77 @@
 */
 
 .color-indicator {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background-color: currentColor;
-    border-radius: 50%;
-    margin-inline-start: 3px;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: currentColor;
+  border-radius: 50%;
+  margin-inline-start: 3px;
 }
-
 
 /* PRICE RANGE STYLES */
 .slider-container {
-    height: 6px;
-    position: relative;
-    background: #e4e4e4;
-    border-radius: 5px;
+  height: 6px;
+  position: relative;
+  background: #e4e4e4;
+  border-radius: 5px;
 }
 
 .slider-container .price-slider {
-    height: 100%;
-    left: 0%;       /*setting width of green background of price range using left and right percentage*/
-    right: 0%;
-    position: absolute;
-    border-radius: 5px;
+  height: 100%;
+  left: 0%; /*setting width of green background of price range using left and right percentage*/
+  right: 0%;
+  position: absolute;
+  border-radius: 5px;
 }
 
 .range-input {
-    position: relative;
+  position: relative;
 }
 
 .range-input input {
-    position: absolute;
-    width: 100%;
-    height: 5px;
-    background: none;
-    top: -6px;
-    pointer-events: none;
-    cursor: pointer;
-    -webkit-appearance: none;
-    appearance: none;
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  background: none;
+  top: -6px;
+  pointer-events: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 /* Styles for the range thumb in WebKit browsers */
 input[type="range"]::-webkit-slider-thumb {
-    height: 20px;
-    width: 20px;
-    border-radius: 70%;
-    background: #555;
-    border: 2px solid white;
-    pointer-events: auto;
-    -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 70%;
+  background: #555;
+  border: 2px solid white;
+  pointer-events: auto;
+  -webkit-appearance: none;
 }
-
 
 @media screen and (max-width: 768px) {
+  .img_middle {
+    width: 100% !important;
+  }
 
-    .img_middle {
-        width: 100% !important;
-    }
+  .filter-sidebar.open {
+    position: fixed;
+    width: 100vw;
+    height: 150vh;
+    height: 150svh;
+    top: 0;
+    left: 0;
+    margin: 0;
+    z-index: 3;
+    overflow: auto;
+    border-radius: 0 !important;
+    border: none !important;
+  }
 
-    .filter-sidebar.open {
-        position: fixed;
-        width: 100vw;
-        height: 150vh;
-        height: 150svh;
-        top: 0;
-        left: 0;
-        margin: 0;
-        z-index: 3;
-        overflow: auto;
-        border-radius: 0 !important;
-        border: none !important;
-    }
-
-    html:has(.filter-sidebar.open)::-webkit-scrollbar {display: none}
+  html:has(.filter-sidebar.open)::-webkit-scrollbar {
+    display: none;
+  }
 }
-
