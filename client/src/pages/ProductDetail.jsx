@@ -4,7 +4,8 @@ import image from "../assets/image.png";
 import Dropdown from "react-bootstrap/Dropdown";
 
 const ProductDetail = () => {
-  const [filterChange, handleFilterChange] = useState("Select");
+  const [filterChange, handleFilterChange] = useState("Most Recent");
+  const [formVisible, handleFormVisible] = useState(false);
 
   return (
     <div className="container py-md-5 py-2">
@@ -15,7 +16,7 @@ const ProductDetail = () => {
         <div className="product-info">
           <h3>Product Title</h3>
           <h5 className="text-secondary">By Brand</h5>
-          <h4 className="star-rating">&#11088;&#11088;&#11088;&#11088;</h4>
+          <h4 className="star-rating">★★★★☆ 4</h4>
           <h5 className="fw-bold">50.99$</h5>
           <h5 className="discount">20% Off</h5>
           <h5 className="stock-indicator mb-5">[In Stock]</h5>
@@ -32,9 +33,7 @@ const ProductDetail = () => {
           </h5>
           <h5 className="my-4 mb-5">Quantity : [-] 1 [+]</h5>
           <button className="btn btn-primary d-block my-2">Add to cart</button>
-          <button className="btn btn-secondary d-block my-2 mb-4">
-            Buy Now
-          </button>
+          <button className="btn btn-success d-block my-2 mb-4">Buy Now</button>
           <h6>&#9989;Free shipping</h6>
           <h6> &#9989;Easy Returns</h6>
         </div>
@@ -117,7 +116,7 @@ const ProductDetail = () => {
                   style={{ width: "75%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">5★ (80)</p>
+              <p className="m-0 p-0">5&#11088; (80)</p>
             </div>
             <div className="d-flex align-items-center justify-content-between gap-2">
               <div
@@ -130,7 +129,7 @@ const ProductDetail = () => {
                   style={{ width: "60%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">4★ (67)</p>
+              <p className="m-0 p-0">4&#11088; (67)</p>
             </div>
             <div className="d-flex align-items-center justify-content-between gap-2">
               <div
@@ -143,7 +142,7 @@ const ProductDetail = () => {
                   style={{ width: "90%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">3★ (76)</p>
+              <p className="m-0 p-0">3&#11088; (76)</p>
             </div>
             <div className="d-flex align-items-center justify-content-between gap-2">
               <div
@@ -156,9 +155,9 @@ const ProductDetail = () => {
                   style={{ width: "10%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">2★ (10)</p>
+              <p className="m-0 p-0">2&#11088; (10)</p>
             </div>
-            <div className="d-flex align-items-center justify-content-between gap-2">
+            <div className="d-flex align-items-center gap-3">
               <div
                 className="position-relative w-100"
                 style={{ maxWidth: "300px", height: "12px" }}
@@ -169,14 +168,87 @@ const ProductDetail = () => {
                   style={{ width: "5%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">1★ (5)</p>
+              <p className="m-0 p-0">1&#11088; (5)</p>
             </div>
           </div>
         </div>
-        <button className="btn btn-primary my-3">Write a review</button>
+        <button
+          className={`btn btn-primary my-3 ${
+            formVisible ? "d-none" : "d-block"
+          }`}
+          onClick={() => handleFormVisible(true)}
+        >
+          Write a review
+        </button>
 
-        <div className="my-3 fs-5 d-flex gap-2 align-items-center">
-          <b className="p-0 m-0">Filter By</b>
+        <form
+          className={`review-form border p-4 mt-4 rounded-4 shadow position-relative ${
+            formVisible ? "d-block" : "d-none"
+          }`}
+          style={{ maxWidth: "400px" }}
+        >
+          <button
+            className="btn btn-light rounded-circle p-0 position-absolute"
+            style={{ width: "30px", height: "30px", right: "24px" }}
+            onClick={(e) => {
+              handleFormVisible(false);
+              e.preventDefault();
+            }}
+          >
+            &times;
+          </button>
+
+          <div
+            className="star-rating d-flex flex-row-reverse justify-content-end fs-4"
+            style={{ cursor: "pointer" }}
+          >
+            <input type="radio" id="star5" name="rating" value="5" />
+            <label htmlFor="star5">&#9733;</label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label htmlFor="star4">&#9733;</label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label htmlFor="star3">&#9733;</label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label htmlFor="star2">&#9733;</label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label htmlFor="star1">&#9733;</label>
+            <b className="me-2 mb-2">Rate:</b>
+            {/* everything here is in reverse becaues row-reverse and row-reverse is needed to achieve star rating feature */}
+          </div>
+          <div className="form-group my-2">
+            <label htmlFor="name-input">Name</label>
+            <input type="text" className="form-control" id="name-input" />
+          </div>
+          <div className="form-group my-2">
+            <label htmlFor="email-input">Email address</label>
+            <input
+              type="email"
+              className="form-control"
+              id="email-input"
+              placeholder="name@example.com"
+            />
+          </div>
+          <div className="form-group my-2">
+            <label htmlFor="review-title">Title</label>
+            <input type="text" className="form-control" id="name-input" />
+          </div>
+          <div className="form-group my-2">
+            <label htmlFor="review-content">Review</label>
+            <textarea
+              className="form-control"
+              id="review-content"
+              rows="3"
+            ></textarea>
+          </div>
+          <div className="form-group mt-3">
+            <button type="submit" className="btn btn-primary">
+              Submit review
+            </button>
+          </div>
+        </form>
+
+        <div className="my-3 mt-5 fs-5 d-flex gap-2 align-items-center">
+          <b className="p-0 m-0">Filter By ★★★★★ | ★★★★☆ | </b>
           <Dropdown>
             <Dropdown.Toggle variant="success" id="dropdown-basic">
               {filterChange}
@@ -204,6 +276,72 @@ const ProductDetail = () => {
             </Dropdown.Menu>
           </Dropdown>
         </div>
+
+        <div className="user-ratings mt-4" style={{ maxWidth: "700px" }}>
+          <div className="rating-card py-2">
+            <div className="d-flex gap-2 align-items-center">
+              <div className="fs-5">★★★★★</div>
+              <div>
+                by <b>Aman S.</b>
+              </div>
+              <div>•</div>
+              <div>Verified Buyer</div>
+              <div>•</div>
+              <div>2 days ago</div>
+            </div>
+            <p className="p-2 px-3 border-start">
+              &quot;Absolutely love the fit and material. Color is exactly as
+              shown. Will definitely repurchase!&quot;&quot;Absolutely love the
+              fit and material. Color is exactly as shown. Will definitely
+              repurchase!&quot;&quot;Absolutely love the fit and material. Color
+              is exactly as shown. Will definitely repurchase!&quot;
+            </p>
+          </div>
+          <div className="rating-card py-2">
+            <div className="d-flex gap-2 align-items-center">
+              <div className="fs-5">★★★★★</div>
+              <div>
+                by <b>Aman S.</b>
+              </div>
+              <div>•</div>
+              <div>Verified Buyer</div>
+              <div>•</div>
+              <div>2 days ago</div>
+            </div>
+            <p className="p-2 px-3 border-start">
+              &quot;Absolutely love the fit and material. Color is exactly as
+              shown. Will definitely repurchase!&quot;&quot;Absolutely love the
+              fit and material. Color is exactly as shown. Will definitely
+              repurchase!&quot;&quot;Absolutely love the fit and material. Color
+              is exactly as shown. Will definitely repurchase!&quot;
+            </p>
+          </div>
+          <div className="rating-card py-2">
+            <div className="d-flex gap-2 align-items-center">
+              <div className="fs-5">★★★★★</div>
+              <div>
+                by <b>Aman S.</b>
+              </div>
+              <div>•</div>
+              <div>Verified Buyer</div>
+              <div>•</div>
+              <div>2 days ago</div>
+            </div>
+            <p className="p-2 px-3 border-start">
+              &quot;Absolutely love the fit and material. Color is exactly as
+              shown. Will definitely repurchase!&quot;&quot;Absolutely love the
+              fit and material. Color is exactly as shown. Will definitely
+              repurchase!&quot;&quot;Absolutely love the fit and material. Color
+              is exactly as shown. Will definitely repurchase!&quot;
+            </p>
+          </div>
+        </div>
+
+        <a href="#" className="fs-5 text-decoration-underline fw-semibold">
+          Load more reviews {">"}
+        </a>
+
+        <hr className="hr" />
       </div>
     </div>
   );
