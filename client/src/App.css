@@ -200,3 +200,43 @@ input[type="range"]::-webkit-slider-thumb {
 .star-rating label:hover ~ label {
   color: gold;
 }
+
+.card-scroll-container::-webkit-scrollbar {
+  height: 3px; 
+}
+
+.card-scroll-container::-webkit-scrollbar-track {
+  display: none;
+}
+
+.card-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #999; 
+  border-radius: 4px;
+  cursor: pointer;
+}
+@media screen and (max-width: 576px) {
+  .card-scroll-container::-webkit-scrollbar {
+    height: 10px; 
+  }
+}
+
+.arrow-indicator {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  z-index: 1;
+  background-color: rgba(var(--light-bg), 0.8);
+  border-radius: 50%;
+  aspect-ratio: 1/1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border: 1px solid rgba(0, 0, 0, 0.315);
+  transition: all 0.3s ease;
+}
+
+.arrow-indicator:hover {
+  transform: translateY(-52.5%) scale(1.1); /*translate again becasue if we use transform for scale the translate value returns to default becasue its the same property*/
+  background-color: white;
+}

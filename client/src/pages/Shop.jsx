@@ -37,7 +37,7 @@ const Shop = () => {
         </button>
 
         <section
-          className={`filter-sidebar bg-white p-3 px-4 border rounded rounded-3 ${
+          className={`filter-sidebar position-sticky top-0 bg-white p-3 px-4 border rounded rounded-3 ${
             isFilterOpen ? "d-block open" : "d-none d-md-block"
           }`}
           aria-label="filter"
@@ -45,10 +45,10 @@ const Shop = () => {
           <div className="d-flex justify-content-between align-items-center">
             <h1 className="fw-bold m-0 mb-sm-1">Filters</h1>
             <button
-              className="close-btn d-block d-md-none btn fw-bold pb-2 fs-3 border-0"
+              className="close-btn d-block d-md-none btn fw-bold pb-2 fs-1 border-0"
               onClick={() => setIsFilterOpen(false)}
             >
-              X
+              &times;
             </button>
           </div>
 
@@ -260,7 +260,6 @@ const Shop = () => {
               </div>
             </form>
           </div>
-          <form></form>
         </section>
 
         <section className="products">
@@ -271,16 +270,16 @@ const Shop = () => {
             }}
           >
             <Link to="/product">
-              <Card />
+              <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
             </Link>
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
           </div>
           <div className="pagination d-flex gap-5 justify-content-center mt-4 ">
             <Link to="#prev">{"<<"}Prev</Link>

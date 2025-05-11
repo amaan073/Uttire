@@ -2,11 +2,12 @@ import image from "../../assets/image.png";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import "./card.css";
 
-const Card = () => {
+// eslint-disable-next-line react/prop-types
+const Card = ({ className, style }) => {
   return (
     <div
-      className="product-card bg-white border d-flex d-sm-block text-start text-sm-center mb-4 mb-sm-0"
-      style={{ cursor: "pointer" }}
+      className={`product-card bg-white border d-block text-center mb-0 ${className}`}
+      style={{ cursor: "pointer", ...style }}
     >
       <div style={{ flex: "0.9" }}>
         <img src={image} className="w-100 h-100 object-fit-cover" />

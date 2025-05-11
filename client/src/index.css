@@ -2,12 +2,12 @@
 
 :root {
   --bs-body-font-family: "Inter", sans-serif !important; /*Bootstrap default font override*/
-  --light-bg: #fdfdfd !important;
+  --light-bg: 253, 253, 253;
 }
 
 body,
 .light-bg {
-  background-color: var(--light-bg) !important;
+  background-color: rgb(var(--light-bg)) !important;
 }
 
 a {
@@ -38,4 +38,8 @@ hr.hr {
   -webkit-user-select: none; /* For Safari */
   -moz-user-select: none; /* For Firefox */
   -ms-user-select: none; /* For Internet Explorer/Edge */
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

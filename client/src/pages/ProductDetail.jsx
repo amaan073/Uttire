@@ -1,25 +1,65 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import image from "../assets/image.png";
 import Dropdown from "react-bootstrap/Dropdown";
+import Card from "../components/ui/Card";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { ShoppingBagIcon } from "lucide-react";
 
 const ProductDetail = () => {
   const [filterChange, handleFilterChange] = useState("Most Recent");
   const [formVisible, handleFormVisible] = useState(false);
 
+  const scrollRef = useRef(null);
+
+  const scrollLeft = () => {
+    scrollRef.current.scrollBy({ left: -220, behavior: "smooth" });
+  };
+  const scrollRight = () => {
+    scrollRef.current.scrollBy({ left: 220, behavior: "smooth" });
+  };
+
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const updateScrollState = () => {
+    const el = scrollRef.current;
+    if (!el) return; //prevents function from running when el gets null value.
+
+    setCanScrollLeft(el.scrollLeft > 0); //boolean values to see if it left end or right end
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth); //also boolean combines scroll from left value and clientwidth and then compares them to scroll width to see if we have reached right end
+  };
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    updateScrollState();
+    if (!el) return; //checking just in case no need but good practice for unpredictable behaviour
+    el.addEventListener("scroll", updateScrollState); //updating scroll state everytime someone scrolls the slider
+    window.addEventListener("resize", updateScrollState); //updating scroll state when window is resized because resizing changes the client width changing the whole scroll width etc
+    return () => {
+      el.removeEventListener("scroll", updateScrollState); //cleaning listeners before the page unmounts to prevent memory leak
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, []);
+
   return (
-    <div className="container py-md-5 py-2">
-      <div className="d-flex gap-5">
-        <div className="product-image">
-          <img src={image} alt="image" />
+    <div className="container-xxl px-3 px-md-4 px-xxl-0 py-md-5 py-4">
+      <div className="d-md-flex gap-5">
+        <div
+          className="product-image col-md-6 col-xl-7 col-xxl-12"
+          style={{ maxWidth: "770px" }}
+        >
+          <img src={image} alt="image" className="w-100 h-100 mb-3 mb-md-0" />
         </div>
         <div className="product-info">
-          <h3>Product Title</h3>
+          <h3>Soft Cotton Relaxed Fit Hoodie</h3>
           <h5 className="text-secondary">By Brand</h5>
           <h4 className="star-rating">★★★★☆ 4</h4>
           <h5 className="fw-bold">50.99$</h5>
           <h5 className="discount">20% Off</h5>
-          <h5 className="stock-indicator mb-5">[In Stock]</h5>
+          <h5 className="stock-indicator mb-3">[In Stock]</h5>
           <h5 className="size">Size : [S][M][L][XL]</h5>
           <h5 className="color">
             <span className="color-indicator" style={{ color: "red" }}></span>
@@ -31,17 +71,25 @@ const ProductDetail = () => {
               style={{ color: "white", border: "thin solid black" }}
             ></span>
           </h5>
-          <h5 className="my-4 mb-5">Quantity : [-] 1 [+]</h5>
-          <button className="btn btn-primary d-block my-2">Add to cart</button>
-          <button className="btn btn-success d-block my-2 mb-4">Buy Now</button>
-          <h6>&#9989;Free shipping</h6>
-          <h6> &#9989;Easy Returns</h6>
+          <h5 className="my-3">Quantity : [-] 1 [+]</h5>
+          <div className="d-flex my-2 mb-4 gap-2">
+            <button className="btn btn-primary d-flex align-items-center gap-1">
+              <ShoppingCartIcon /> Add to cart
+            </button>
+            <button className="btn btn-success d-flex align-items-center gap-1">
+              <ShoppingBagIcon /> <span>Buy Now</span>
+            </button>
+          </div>
+          <div className="d-flex d-xxl-block gap-3">
+            <h6 className="m-0 m-xxl-2">&#9989;Free shipping</h6>
+            <h6 className="m-0 m-xxl-2"> &#9989;Easy Returns</h6>
+          </div>
         </div>
       </div>
 
       <div className="prod-description">
         <div className="my-5 mb-4">
-          <h4 className="pb-3">Description</h4>
+          <h1 className="pb-3">Description</h1>
           <p>
             This casual cotton t-shirt is perfect for daily wear. Featuring a
             soft and breathable fabric, it offers all-day comfort with a relaxed
@@ -94,7 +142,7 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <hr className="bold" />
+      <hr className="hr" />
 
       <div className="reviews my-4">
         <h1 className="pb-3">Customer reviews</h1>
@@ -116,7 +164,9 @@ const ProductDetail = () => {
                   style={{ width: "75%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">5&#11088; (80)</p>
+              <p className="m-0 p-0" style={{ width: "100px" }}>
+                5<span className="text-warning">★</span> (80)
+              </p>
             </div>
             <div className="d-flex align-items-center justify-content-between gap-2">
               <div
@@ -129,7 +179,9 @@ const ProductDetail = () => {
                   style={{ width: "60%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">4&#11088; (67)</p>
+              <p className="m-0 p-0" style={{ width: "100px" }}>
+                4<span className="text-warning">★</span> (67)
+              </p>
             </div>
             <div className="d-flex align-items-center justify-content-between gap-2">
               <div
@@ -142,7 +194,9 @@ const ProductDetail = () => {
                   style={{ width: "90%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">3&#11088; (76)</p>
+              <p className="m-0 p-0" style={{ width: "100px" }}>
+                3<span className="text-warning">★</span> (76)
+              </p>
             </div>
             <div className="d-flex align-items-center justify-content-between gap-2">
               <div
@@ -155,9 +209,11 @@ const ProductDetail = () => {
                   style={{ width: "10%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">2&#11088; (10)</p>
+              <p className="m-0 p-0" style={{ width: "100px" }}>
+                2<span className="text-warning">★</span> (10)
+              </p>
             </div>
-            <div className="d-flex align-items-center gap-3">
+            <div className="d-flex align-items-center justify-content-between gap-2">
               <div
                 className="position-relative w-100"
                 style={{ maxWidth: "300px", height: "12px" }}
@@ -168,7 +224,9 @@ const ProductDetail = () => {
                   style={{ width: "5%" }}
                 ></div>
               </div>
-              <p className="m-0 p-0">1&#11088; (5)</p>
+              <p className="m-0 p-0" style={{ width: "100px" }}>
+                1<span className="text-warning">★</span> (5)
+              </p>
             </div>
           </div>
         </div>
@@ -213,7 +271,7 @@ const ProductDetail = () => {
             <input type="radio" id="star1" name="rating" value="1" />
             <label htmlFor="star1">&#9733;</label>
             <b className="me-2 mb-2">Rate:</b>
-            {/* everything here is in reverse becaues row-reverse and row-reverse is needed to achieve star rating feature */}
+            {/* everything here is in reverse becaues of row-reverse and row-reverse is needed to achieve star rating feature */}
           </div>
           <div className="form-group my-2">
             <label htmlFor="name-input">Name</label>
@@ -248,7 +306,10 @@ const ProductDetail = () => {
         </form>
 
         <div className="my-3 mt-5 fs-5 d-flex gap-2 align-items-center">
-          <b className="p-0 m-0">Filter By ★★★★★ | ★★★★☆ | </b>
+          <b className="p-0 m-0">
+            Filter By{" "}
+            <span className="d-none d-sm-inline-block">★★★★★ | ★★★★☆ | </span>
+          </b>
           <Dropdown>
             <Dropdown.Toggle variant="success" id="dropdown-basic">
               {filterChange}
@@ -279,17 +340,19 @@ const ProductDetail = () => {
 
         <div className="user-ratings mt-4" style={{ maxWidth: "700px" }}>
           <div className="rating-card py-2">
-            <div className="d-flex gap-2 align-items-center">
-              <div className="fs-5">★★★★★</div>
+            <div className="d-sm-flex gap-2 align-items-center">
+              <div className="fs-5 text-warning">★★★★★</div>
               <div>
                 by <b>Aman S.</b>
               </div>
-              <div>•</div>
-              <div>Verified Buyer</div>
-              <div>•</div>
-              <div>2 days ago</div>
+              <div className="d-none d-sm-block">•</div>
+              <div className="d-flex d-sm-bloxk gap-2 mb-2 m-sm-0">
+                <div className="fst-italic">Verified Buyer</div>
+                <div>•</div>
+                <div className="text-secondary">2d ago</div>
+              </div>
             </div>
-            <p className="p-2 px-3 border-start">
+            <p className="p-3 border-start border-bottom">
               &quot;Absolutely love the fit and material. Color is exactly as
               shown. Will definitely repurchase!&quot;&quot;Absolutely love the
               fit and material. Color is exactly as shown. Will definitely
@@ -298,36 +361,19 @@ const ProductDetail = () => {
             </p>
           </div>
           <div className="rating-card py-2">
-            <div className="d-flex gap-2 align-items-center">
-              <div className="fs-5">★★★★★</div>
+            <div className="d-sm-flex gap-2 align-items-center">
+              <div className="fs-5 text-warning">★★★★★</div>
               <div>
                 by <b>Aman S.</b>
               </div>
-              <div>•</div>
-              <div>Verified Buyer</div>
-              <div>•</div>
-              <div>2 days ago</div>
-            </div>
-            <p className="p-2 px-3 border-start">
-              &quot;Absolutely love the fit and material. Color is exactly as
-              shown. Will definitely repurchase!&quot;&quot;Absolutely love the
-              fit and material. Color is exactly as shown. Will definitely
-              repurchase!&quot;&quot;Absolutely love the fit and material. Color
-              is exactly as shown. Will definitely repurchase!&quot;
-            </p>
-          </div>
-          <div className="rating-card py-2">
-            <div className="d-flex gap-2 align-items-center">
-              <div className="fs-5">★★★★★</div>
-              <div>
-                by <b>Aman S.</b>
+              <div className="d-none d-sm-block">•</div>
+              <div className="d-flex d-sm-bloxk gap-2 mb-2 m-sm-0">
+                <div className="fst-italic">Verified Buyer</div>
+                <div>•</div>
+                <div className="text-secondary">2d ago</div>
               </div>
-              <div>•</div>
-              <div>Verified Buyer</div>
-              <div>•</div>
-              <div>2 days ago</div>
             </div>
-            <p className="p-2 px-3 border-start">
+            <p className="p-3 border-start border-bottom">
               &quot;Absolutely love the fit and material. Color is exactly as
               shown. Will definitely repurchase!&quot;&quot;Absolutely love the
               fit and material. Color is exactly as shown. Will definitely
@@ -340,8 +386,113 @@ const ProductDetail = () => {
         <a href="#" className="fs-5 text-decoration-underline fw-semibold">
           Load more reviews {">"}
         </a>
+      </div>
 
-        <hr className="hr" />
+      <hr className="hr" />
+
+      <div className="related-products ">
+        <h1 className="my-3 mb-4">Related Products</h1>
+        <div className="d-flex position-relative">
+          {canScrollLeft && (
+            <div
+              className="arrow-indicator d-none d-sm-flex"
+              onClick={scrollLeft}
+              style={{ left: "-10px" }}
+            >
+              <ArrowBackIosNewIcon fontSize="large" />
+            </div>
+          )}
+          <div
+            className="d-flex overflow-scroll overflow-y-hidden card-scroll-container pb-2"
+            style={{
+              scrollSnapType: "x mandatory",
+              scrollBehavior: "smooth",
+            }}
+            ref={scrollRef}
+          >
+            <Card
+              style={{
+                scrollSnapAlign: "start",
+
+                minWidth: "200px",
+                marginRight: "10px",
+              }}
+            />
+            <Card
+              style={{
+                scrollSnapAlign: "start",
+
+                minWidth: "200px",
+                marginRight: "10px",
+              }}
+            />
+            <Card
+              style={{
+                scrollSnapAlign: "start",
+
+                minWidth: "200px",
+                marginRight: "10px",
+              }}
+            />
+            <Card
+              style={{
+                scrollSnapAlign: "start",
+
+                minWidth: "200px",
+                marginRight: "10px",
+              }}
+            />
+            <Card
+              style={{
+                scrollSnapAlign: "start",
+
+                minWidth: "200px",
+                marginRight: "10px",
+              }}
+            />
+            <Card
+              style={{
+                scrollSnapAlign: "start",
+
+                minWidth: "200px",
+                marginRight: "10px",
+              }}
+            />
+            <Card
+              style={{
+                scrollSnapAlign: "start",
+
+                minWidth: "200px",
+                marginRight: "10px",
+              }}
+            />
+            <Card
+              style={{
+                scrollSnapAlign: "start",
+
+                minWidth: "200px",
+                marginRight: "10px",
+              }}
+            />
+            <Card
+              style={{
+                scrollSnapAlign: "start",
+
+                minWidth: "200px",
+                marginRight: "10px",
+              }}
+            />
+          </div>
+          {canScrollRight && (
+            <div
+              className="arrow-indicator d-none d-sm-flex"
+              onClick={scrollRight}
+              style={{ right: "-10px" }}
+            >
+              <ArrowForwardIosIcon fontSize="large" />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
