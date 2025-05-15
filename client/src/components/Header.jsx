@@ -93,15 +93,17 @@ const Header = () => {
             </button>
 
             <div className="text-end">
-              <button
-                type="button"
-                className="cart btn p-0 ms-0 me-2 mx-lg-2 border-0 position-relative"
-              >
-                <ShoppingCartIcon sx={{ height: "38px", width: "auto" }} />
-                <div className="cart-count bg-warning" data-count="0">
-                  0
-                </div>
-              </button>
+              <Link to="/cart">
+                <button
+                  type="button"
+                  className="cart btn p-0 ms-0 me-2 mx-lg-2 border-0 position-relative"
+                >
+                  <ShoppingCartIcon sx={{ height: "38px", width: "auto" }} />
+                  <div className="cart-count bg-warning" data-count="0">
+                    0
+                  </div>
+                </button>
+              </Link>
 
               <div className="account login position-relative d-inline-block">
                 <button

@@ -157,21 +157,21 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   .filter-sidebar.open {
-    position: fixed;
+    position: fixed !important;
     width: 100vw;
-    height: 150vh;
-    height: 150svh;
+    height: 100vh;
+    height: 100svh;
     top: 0;
     left: 0;
     margin: 0;
     z-index: 3;
-    overflow: auto;
+    overflow-y: auto;
     border-radius: 0 !important;
     border: none !important;
   }
 
-  html:has(.filter-sidebar.open)::-webkit-scrollbar {
-    display: none;
+  html:has(.filter-sidebar.open) {
+    overflow: hidden;
   }
 }
 

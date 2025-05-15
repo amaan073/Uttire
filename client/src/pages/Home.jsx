@@ -66,14 +66,14 @@ const Home = () => {
               gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
             }}
           >
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
+            <Card className="text-start d-flex text-sm-center d-sm-block mb-2 mb-sm-0" />
           </div>
         </div>
         <hr />
