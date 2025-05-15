@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./ui/Navbar.jsx";
 import NavBtn from "./ui/NavBtn.jsx";
+import { NavLink } from "react-router-dom";
 
 //ICONS
 import mainLogo from "../assets/uttireLogo.png";
@@ -13,13 +14,13 @@ const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false); //search bar open and close in small screens
   const [isResultVisible, setIsResultVisible] = useState(false); //search result hide and show
   const [isNavActive, setNavActive] = useState(false); //nav menu button for small screens
-  const [isLoginFormVisible, setIsLoginFormVisible] = useState(false); //login form show and hide
+  const [isAccountPopupVisible, setisAccountPopupVisible] = useState(false); //login form show and hide
 
   //click outside login form to close it /* snippet From [Tech Stacker] https://youtu.be/wX0pb6CBS-c?si=kZtN6kWFqY0yrG1y*/
   const documentRef = useRef(document);
   documentRef.current.addEventListener("click", (e) => {
     if (e.target.closest(".login")) return;
-    setIsLoginFormVisible(false);
+    setisAccountPopupVisible(false);
   });
 
   return (
@@ -110,49 +111,39 @@ const Header = () => {
                   type="button"
                   className="btn p-0 border-0"
                   onClick={() => {
-                    setIsLoginFormVisible(!isLoginFormVisible);
+                    setisAccountPopupVisible(!isAccountPopupVisible);
                   }}
                 >
                   <AccountCircleIcon sx={{ height: "38px", width: "auto" }} />
                 </button>
-                <form
-                  className={`login-form position-absolute end-0 shadow-lg rounded-4 z-3 bg-body p-4 mt-3 text-start ${
-                    isLoginFormVisible ? "d-block visible" : "d-none"
+                <div
+                  className={`login-form position-absolute end-0 shadow-lg rounded-4 z-3 bg-body py-3 pb-4 mt-3 text-center ${
+                    isAccountPopupVisible ? "d-block visible" : "d-none"
                   }`}
-                  style={{ maxWidth: "330px", width: "90vw" }}
+                  style={{ maxWidth: "230px", width: "90vw" }}
                 >
-                  <div className="mb-3">
-                    <label htmlFor="email_input" className="form-label">
-                      Email address
-                    </label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="email_input"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="password_input" className="form-label">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      id="password_input"
-                    />
-                  </div>
-                  <button type="submit" className="btn btn-primary">
+                  <p>You&apos;re not logged in!</p>
+                  <NavLink
+                    to="/login"
+                    className={({ isActive }) =>
+                      "btn" +
+                      (isActive ? " disabled btn-secondary" : " btn-primary")
+                    }
+                    onClick={() => setisAccountPopupVisible(false)}
+                  >
                     Login
-                  </button>
-                  <div className="mt-3" style={{ fontSize: "0.9em" }}>
-                    {/* eslint-disable-next-line react/no-unescaped-entities */}
-                    Don't have an account?
-                    <Link to="/signup">
-                      <i> Signup </i>
-                    </Link>
-                    here!
-                  </div>
-                </form>
+                  </NavLink>
+                  <NavLink
+                    to="/signup"
+                    className={({ isActive }) =>
+                      "btn ms-2" +
+                      (isActive ? " disabled btn-secondary" : " btn-success")
+                    }
+                    onClick={() => setisAccountPopupVisible(false)}
+                  >
+                    Signup
+                  </NavLink>
+                </div>
               </div>
             </div>
           </div>
