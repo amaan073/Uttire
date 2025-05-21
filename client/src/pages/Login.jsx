@@ -5,9 +5,9 @@ const Login = () => {
   return (
     <div
       className="container-fluid px-0 text-center d-flex justify-content-center align-items-center"
-      style={{ maxWidth: "1600px", minHeight: "calc(100vh - 210px)" }}
+      style={{ maxWidth: "1600px", height: "calc(var(--safe-height) - 83px)" }}
     >
-      <div className="bg-white shadow rounded p-4">
+      <div className="login-form bg-white shadow rounded p-4">
         <AccountCircleIcon sx={{ height: "60px", width: "auto" }} />
         <h4 className="fw-semibold my-2 mb-3">Login</h4>
         <form style={{ width: "300px" }}>

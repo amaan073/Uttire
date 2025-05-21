@@ -3,6 +3,12 @@
 :root {
   --bs-body-font-family: "Inter", sans-serif !important; /*Bootstrap default font override*/
   --light-bg: 253, 253, 253;
+   --safe-height: 100vh; /* default fallback for height */
+}
+@supports (height: 100svh) {
+  :root {
+    --safe-height: 100svh; /* use svh in supported browser if not supported then default property will be applied which is vh */
+  }
 }
 
 body,

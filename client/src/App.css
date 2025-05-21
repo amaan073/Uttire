@@ -245,14 +245,30 @@ input[type="range"]::-webkit-slider-thumb {
 /*
 -->
 
-//Sign up page styles
+//Sign up and login page styles
 
 <--
 */
 
 @media screen and (max-width: 576px){
-  div.signup-form {
+  div.signup-form, div.login-form {
     box-shadow: none !important;
-    border: 1px solid #f3f2f2;
+    border: 1px solid var(--bs-border-color);
 }
 }
+
+
+/*
+-->
+
+//Cart page styles
+
+<--
+*/
+
+@media screen and (max-width: 576px){
+  div.cart-summary {
+    position: static !important;
+  }
+}
+

@@ -278,10 +278,428 @@ const Cart = () => {
                   </InputGroup>
                 </div>
               </div>
+              <div className="cart-list-card d-flex gap-3 align-items-center border-bottom pb-4">
+                <div
+                  style={{ minWidth: "100px", width: "100px" }}
+                  className="overflow-hidden rounded"
+                >
+                  <img
+                    src={image}
+                    className="w-100"
+                    style={{ height: "120px" }}
+                  />
+                </div>
+                <div>
+                  <b className="fs-5">
+                    Product name dsfkjdsl dkfdj dfds l fudslkf{" "}
+                  </b>
+                  <p className="text-muted">Size: M | Color: Black</p>
+                </div>
+                <div className="ms-auto text-end">
+                  <p className="fs-5 fw-semibold mb-2">25$</p>
+                  <InputGroup style={{ width: "70px", height: "32px" }}>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("first", quantities.first - 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      −
+                    </Button>
+                    <Form.Control
+                      type="number"
+                      id="first"
+                      min={1}
+                      value={quantities.first}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          e.target.id,
+                          parseInt(e.target.value) || ""
+                        )
+                      }
+                      style={{
+                        width: "20px", // very narrow input
+                        padding: "0",
+                        fontSize: "14px",
+                        textAlign: "center",
+                        borderRadius: "0",
+                        height: "32px",
+                      }}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("first", quantities.first + 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      +
+                    </Button>
+                  </InputGroup>
+                </div>
+              </div>
+              <div className="cart-list-card d-flex gap-3 align-items-center border-bottom py-4">
+                <div
+                  style={{ minWidth: "100px", width: "100px" }}
+                  className="overflow-hidden rounded"
+                >
+                  <img
+                    src={image}
+                    className="w-100"
+                    style={{ height: "120px" }}
+                  />
+                </div>
+                <div>
+                  <b className="fs-5">Product name</b>
+                  <p className="text-muted">Size: M | Color: Black</p>
+                </div>
+                <div className="ms-auto text-end">
+                  <p className="fs-5 fw-semibold mb-2">25$</p>
+                  <InputGroup style={{ width: "70px", height: "32px" }}>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("second", quantities.second - 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      −
+                    </Button>
+                    <Form.Control
+                      type="number"
+                      id="second"
+                      min={1}
+                      value={quantities.second}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          e.target.id,
+                          parseInt(e.target.value) || ""
+                        )
+                      }
+                      style={{
+                        width: "20px", // very narrow input
+                        padding: "0",
+                        fontSize: "14px",
+                        textAlign: "center",
+                        borderRadius: "0",
+                        height: "32px",
+                      }}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("second", quantities.second + 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      +
+                    </Button>
+                  </InputGroup>
+                </div>
+              </div>
+              <div className="cart-list-card d-flex gap-3 align-items-center py-4">
+                <div
+                  style={{ minWidth: "100px", width: "100px" }}
+                  className="overflow-hidden rounded"
+                >
+                  <img
+                    src={image}
+                    className="w-100"
+                    style={{ height: "120px" }}
+                  />
+                </div>
+                <div>
+                  <b className="fs-5">Product name</b>
+                  <p className="text-muted">Size: M | Color: Black</p>
+                </div>
+                <div className="ms-auto text-end">
+                  <p className="fs-5 fw-semibold mb-2">25$</p>
+                  <InputGroup style={{ width: "70px", height: "32px" }}>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("third", quantities.third - 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      −
+                    </Button>
+                    <Form.Control
+                      type="number"
+                      id="third"
+                      min={1}
+                      value={quantities.third}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          e.target.id,
+                          parseInt(e.target.value) || ""
+                        )
+                      }
+                      style={{
+                        width: "20px", // very narrow input
+                        padding: "0",
+                        fontSize: "14px",
+                        textAlign: "center",
+                        borderRadius: "0",
+                        height: "32px",
+                      }}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("third", quantities.third + 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      +
+                    </Button>
+                  </InputGroup>
+                </div>
+              </div>
+              <div className="cart-list-card d-flex gap-3 align-items-center border-bottom pb-4">
+                <div
+                  style={{ minWidth: "100px", width: "100px" }}
+                  className="overflow-hidden rounded"
+                >
+                  <img
+                    src={image}
+                    className="w-100"
+                    style={{ height: "120px" }}
+                  />
+                </div>
+                <div>
+                  <b className="fs-5">
+                    Product name dsfkjdsl dkfdj dfds l fudslkf{" "}
+                  </b>
+                  <p className="text-muted">Size: M | Color: Black</p>
+                </div>
+                <div className="ms-auto text-end">
+                  <p className="fs-5 fw-semibold mb-2">25$</p>
+                  <InputGroup style={{ width: "70px", height: "32px" }}>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("first", quantities.first - 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      −
+                    </Button>
+                    <Form.Control
+                      type="number"
+                      id="first"
+                      min={1}
+                      value={quantities.first}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          e.target.id,
+                          parseInt(e.target.value) || ""
+                        )
+                      }
+                      style={{
+                        width: "20px", // very narrow input
+                        padding: "0",
+                        fontSize: "14px",
+                        textAlign: "center",
+                        borderRadius: "0",
+                        height: "32px",
+                      }}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("first", quantities.first + 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      +
+                    </Button>
+                  </InputGroup>
+                </div>
+              </div>
+              <div className="cart-list-card d-flex gap-3 align-items-center border-bottom py-4">
+                <div
+                  style={{ minWidth: "100px", width: "100px" }}
+                  className="overflow-hidden rounded"
+                >
+                  <img
+                    src={image}
+                    className="w-100"
+                    style={{ height: "120px" }}
+                  />
+                </div>
+                <div>
+                  <b className="fs-5">Product name</b>
+                  <p className="text-muted">Size: M | Color: Black</p>
+                </div>
+                <div className="ms-auto text-end">
+                  <p className="fs-5 fw-semibold mb-2">25$</p>
+                  <InputGroup style={{ width: "70px", height: "32px" }}>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("second", quantities.second - 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      −
+                    </Button>
+                    <Form.Control
+                      type="number"
+                      id="second"
+                      min={1}
+                      value={quantities.second}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          e.target.id,
+                          parseInt(e.target.value) || ""
+                        )
+                      }
+                      style={{
+                        width: "20px", // very narrow input
+                        padding: "0",
+                        fontSize: "14px",
+                        textAlign: "center",
+                        borderRadius: "0",
+                        height: "32px",
+                      }}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("second", quantities.second + 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      +
+                    </Button>
+                  </InputGroup>
+                </div>
+              </div>
+              <div className="cart-list-card d-flex gap-3 align-items-center py-4">
+                <div
+                  style={{ minWidth: "100px", width: "100px" }}
+                  className="overflow-hidden rounded"
+                >
+                  <img
+                    src={image}
+                    className="w-100"
+                    style={{ height: "120px" }}
+                  />
+                </div>
+                <div>
+                  <b className="fs-5">Product name</b>
+                  <p className="text-muted">Size: M | Color: Black</p>
+                </div>
+                <div className="ms-auto text-end">
+                  <p className="fs-5 fw-semibold mb-2">25$</p>
+                  <InputGroup style={{ width: "70px", height: "32px" }}>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("third", quantities.third - 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      −
+                    </Button>
+                    <Form.Control
+                      type="number"
+                      id="third"
+                      min={1}
+                      value={quantities.third}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          e.target.id,
+                          parseInt(e.target.value) || ""
+                        )
+                      }
+                      style={{
+                        width: "20px", // very narrow input
+                        padding: "0",
+                        fontSize: "14px",
+                        textAlign: "center",
+                        borderRadius: "0",
+                        height: "32px",
+                      }}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        handleQuantityChange("third", quantities.third + 1)
+                      }
+                      style={{
+                        padding: "0 6px",
+                        fontSize: "14px",
+                        height: "32px",
+                        lineHeight: "1",
+                      }}
+                    >
+                      +
+                    </Button>
+                  </InputGroup>
+                </div>
+              </div>
             </div>
             <div
-              className="p-4 border rounded-3 text-start bg-white mx-auto mx-md-0 mt-4 mt-md-0"
-              style={{ maxWidth: "600px" }}
+              className="cart-summary p-4 border rounded-3 text-start bg-white mx-auto mx-md-0 mt-4 mt-md-0 position-sticky"
+              style={{ maxWidth: "600px", top: "107px" }}
             >
               <h5 className="mb-3">Cart summary</h5>
               <hr className="hr" />
@@ -289,9 +707,12 @@ const Cart = () => {
                 <p>Subtotal</p>
                 <p>$140</p>
               </div>
-              <button className="btn btn-primary text-nowrap px-3 ms-auto ms-md-0 d-block">
+              <Link
+                to="/checkout"
+                className="btn btn-primary text-nowrap px-3 ms-auto ms-md-0 d-block"
+              >
                 Proceed to checkout
-              </button>
+              </Link>
             </div>
           </div>
         </div>

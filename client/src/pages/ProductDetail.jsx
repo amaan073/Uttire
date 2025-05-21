@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import image from "../assets/image.png";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -76,9 +77,12 @@ const ProductDetail = () => {
             <button className="btn btn-primary d-flex align-items-center gap-1">
               <ShoppingCartIcon /> Add to cart
             </button>
-            <button className="btn btn-success d-flex align-items-center gap-1">
+            <Link
+              to="/checkout"
+              className="btn btn-success d-flex align-items-center gap-1"
+            >
               <ShoppingBagIcon /> <span>Buy Now</span>
-            </button>
+            </Link>
           </div>
           <div className="d-flex d-xxl-block gap-3">
             <h6 className="m-0 m-xxl-2">&#9989;Free shipping</h6>

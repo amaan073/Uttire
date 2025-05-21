@@ -4,7 +4,7 @@ const Signup = () => {
   return (
     <div
       className="container-fluid px-0 d-flex justify-content-center align-items-center"
-      style={{ maxWidth: "1600px", minHeight: "calc(100vh - 210px)" }}
+      style={{ maxWidth: "1600px", height: "calc(var(--safe-height) - 83px)" }}
     >
       <div className="signup-form bg-white shadow rounded p-4">
         <h2 className="fw-semibold my-2 mb-3">Sign up</h2>

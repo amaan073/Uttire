@@ -10,7 +10,7 @@ const NotFoundPage = () => {
 
       <div
         className="container text-center p-3 d-flex justify-content-center align-items-center"
-        style={{ height: "calc(100vh - 128px)" }}
+        style={{ height: "calc(var(--safe-height) - 128px)" }}
       >
         <div>
           <div className="fw-bolder display-5">404 - Page Not Found</div>

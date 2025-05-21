@@ -13,6 +13,8 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
 
 /*
 
@@ -56,6 +58,14 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/checkout",
+        element: <Checkout />,
+      },
+      {
+        path: "/order-success",
+        element: <OrderSuccess />,
       },
     ],
   },
