@@ -35,10 +35,10 @@
 .account-popup{
   transition: all 0.3s ease;
 }
-.account-popup>div p {
+.a-link {
   cursor: pointer;
 }
-.account-popup>div p:hover {
+.a-link:hover {
   background-color: #f8f9fa;
 }
 

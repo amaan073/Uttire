@@ -146,15 +146,31 @@ const Header = () => {
                       </div>
                       <hr className="hr" />
                       <div className="mt-2 fs-5">
-                        <p className="m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3">
+                        <NavLink
+                          to="/profile"
+                          className={({ isActive }) =>
+                            `a-link m-0 d-flex align-items-center gap-3 py-2 px-2 mb-1 rounded-3 ${
+                              isActive ? "text-secondary bg-light" : "text-dark"
+                            }`
+                          }
+                          onClick={() => setisAccountPopupVisible(false)}
+                        >
                           <PersonOutlineIcon fontSize="large" />
                           Profile
-                        </p>
-                        <p className="m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3">
+                        </NavLink>
+                        <NavLink
+                          to="/dashboard"
+                          className={({ isActive }) =>
+                            `a-link m-0 d-flex align-items-center gap-3 py-2 px-2 mb-1 rounded-3 ${
+                              isActive ? "text-secondary bg-light" : "text-dark"
+                            }`
+                          }
+                          onClick={() => setisAccountPopupVisible(false)}
+                        >
                           <GridViewIcon fontSize="large" />
                           Dashboard
-                        </p>
-                        <p className="m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3 text-danger">
+                        </NavLink>
+                        <p className="a-link m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3 text-danger">
                           <LogoutIcon fontSize="large" />
                           Logout
                         </p>
