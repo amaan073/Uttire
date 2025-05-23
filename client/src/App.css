@@ -7,9 +7,9 @@
 }
 
 /* blurs everything else except .account div form */
-#root:has(.login-form.visible) > *:not(header),
-#root:has(.login-form.visible) header > div > div > *:not(div.text-end),
-#root:has(.login-form.visible) div.text-end > *:not(.account.login) {
+#root:has(.account-popup.visible) > *:not(header),
+#root:has(.account-popup.visible) header > div > div > *:not(div.text-end),
+#root:has(.account-popup.visible) div.text-end > *:not(.account-box) {
   filter: blur(15px);
 }
 
@@ -30,6 +30,30 @@
   display: grid;
   place-items: center;
   font-weight: 500;
+}
+
+.account-popup{
+  transition: all 0.3s ease;
+}
+.account-popup>div p {
+  cursor: pointer;
+}
+.account-popup>div p:hover {
+  background-color: #f8f9fa;
+}
+
+.account-popup>div::before {
+  content: "";
+  height: 10px;
+  aspect-ratio: 1 / 1;
+  background: white;
+  border: 1px solid var(--bs-border-color);
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  position: absolute;
+  top: -5px;
+  right: 14px;
+  transform: rotate(-45deg);
 }
 
 /*

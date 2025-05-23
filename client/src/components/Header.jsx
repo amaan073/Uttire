@@ -9,6 +9,10 @@ import mainLogo from "../assets/uttireLogo.png";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Search } from "lucide-react";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import GridViewIcon from "@mui/icons-material/GridView";
+import LogoutIcon from "@mui/icons-material/Logout";
+import EmailWithTooltip from "../components/ui/EmailWithTooltip.jsx";
 
 const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false); //search bar open and close in small screens
@@ -16,10 +20,12 @@ const Header = () => {
   const [isNavActive, setNavActive] = useState(false); //nav menu button for small screens
   const [isAccountPopupVisible, setisAccountPopupVisible] = useState(false); //login form show and hide
 
+  const userLoggedIn = true; //temporary solution
+
   //click outside login form to close it /* snippet From [Tech Stacker] https://youtu.be/wX0pb6CBS-c?si=kZtN6kWFqY0yrG1y*/
   const documentRef = useRef(document);
   documentRef.current.addEventListener("click", (e) => {
-    if (e.target.closest(".login")) return;
+    if (e.target.closest(".account-box")) return;
     setisAccountPopupVisible(false);
   });
 
@@ -106,7 +112,7 @@ const Header = () => {
                 </button>
               </Link>
 
-              <div className="account login position-relative d-inline-block">
+              <div className="account-box position-relative d-inline-block">
                 <button
                   type="button"
                   className="btn p-0 border-0"
@@ -117,32 +123,76 @@ const Header = () => {
                   <AccountCircleIcon sx={{ height: "38px", width: "auto" }} />
                 </button>
                 <div
-                  className={`login-form position-absolute end-0 shadow-lg rounded-4 z-3 bg-body py-3 pb-4 mt-3 text-center ${
+                  className={`account-popup position-absolute end-0 shadow-lg rounded-4 z-3 bg-body mt-3 text-center border p-3 ${
                     isAccountPopupVisible ? "d-block visible" : "d-none"
                   }`}
-                  style={{ maxWidth: "230px", width: "90vw" }}
                 >
-                  <p>You&apos;re not logged in!</p>
-                  <NavLink
-                    to="/login"
-                    className={({ isActive }) =>
-                      "btn" +
-                      (isActive ? " disabled btn-secondary" : " btn-primary")
-                    }
-                    onClick={() => setisAccountPopupVisible(false)}
-                  >
-                    Login
-                  </NavLink>
-                  <NavLink
-                    to="/signup"
-                    className={({ isActive }) =>
-                      "btn ms-2" +
-                      (isActive ? " disabled btn-secondary" : " btn-success")
-                    }
-                    onClick={() => setisAccountPopupVisible(false)}
-                  >
-                    Signup
-                  </NavLink>
+                  {userLoggedIn ? (
+                    <div className="text-start">
+                      <div className="d-flex align-items-center mb-3 gap-2 pe-3">
+                        <div style={{ width: "90px", height: "90px" }}>
+                          <AccountCircleIcon
+                            sx={{
+                              height: "90px",
+                              width: "auto",
+                              color: "gray",
+                            }}
+                          />
+                        </div>
+                        <div className="user-profile-sum">
+                          <h4 className="fw-semibold">John Doe</h4>
+                          <EmailWithTooltip email="john-doe23456578@gmail.com" />
+                        </div>
+                      </div>
+                      <hr className="hr" />
+                      <div className="mt-2 fs-5">
+                        <p className="m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3">
+                          <PersonOutlineIcon fontSize="large" />
+                          Profile
+                        </p>
+                        <p className="m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3">
+                          <GridViewIcon fontSize="large" />
+                          Dashboard
+                        </p>
+                        <p className="m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3 text-danger">
+                          <LogoutIcon fontSize="large" />
+                          Logout
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <span className="mb-2 d-inline-block">
+                        You&apos;re not logged in!
+                      </span>
+                      <div className="d-flex gap-2 px-1">
+                        <NavLink
+                          to="/login"
+                          className={({ isActive }) =>
+                            "btn" +
+                            (isActive
+                              ? " disabled btn-secondary"
+                              : " btn-primary")
+                          }
+                          onClick={() => setisAccountPopupVisible(false)}
+                        >
+                          Login
+                        </NavLink>
+                        <NavLink
+                          to="/signup"
+                          className={({ isActive }) =>
+                            "btn" +
+                            (isActive
+                              ? " disabled btn-secondary"
+                              : " btn-success")
+                          }
+                          onClick={() => setisAccountPopupVisible(false)}
+                        >
+                          Signup
+                        </NavLink>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

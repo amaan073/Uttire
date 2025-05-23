@@ -4,10 +4,10 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container py-5">
-      <h1 className="fw-semibold mb-5 text-center">Checkout</h1>
-      <div className="d-flex gap-4 align-items-start justify-content-center">
-        <div className="w-100" style={{ maxWidth: "400px" }}>
+    <div className="container-fluid py-5" style={{ maxWidth: "1600px" }}>
+      <h1 className="fw-semibold mb-5 text-center display-4">Checkout</h1>
+      <div className="d-md-flex gap-4 align-items-start justify-content-center mt-3">
+        <div className="w-100 mx-auto mx-md-0" style={{ maxWidth: "400px" }}>
           <form onSubmit={() => navigate("/order-success")}>
             <div className="form-group mb-3">
               <label htmlFor="name-input">Name</label>
@@ -103,14 +103,14 @@ const Checkout = () => {
                 </label>
               </div>
             </div>
-            <button className="btn btn-primary" type="submit">
+            <button className="btn btn-primary w-100 mt-3" type="submit">
               Place order
             </button>
           </form>
         </div>
         <div
-          className="border rounded p-3 bg-white"
-          style={{ minWidth: "350px" }}
+          className="border rounded p-3 bg-white mx-auto mx-md-0 mt-5 mt-md-0"
+          style={{ minWidth: "330px", maxWidth: "450px" }}
         >
           <h5 className="mb-3">Order summary</h5>
           <div className="d-flex justify-content-between my-3">
