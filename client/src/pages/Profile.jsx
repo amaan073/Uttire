@@ -22,7 +22,7 @@ const Profile = () => {
           minHeight: "calc(var(--safe-height) - 83px)",
         }}
       >
-        <div className="d-flex gap-3 mb-5 align-items-start">
+        <div className="d-md-flex gap-3 mb-md-5 align-items-start">
           <ProfileDetail mode={mode} setMode={setMode} />
           {/*content right */}
           <div>
@@ -119,17 +119,17 @@ const Profile = () => {
                 className="text-primary"
               />
             </div>
-            <div className="d-flex gap-3">
+            <div className="d-md-flex gap-3 text-center">
               {/* Orders */}
               <Link
                 to="/dashboard"
-                className="btn btn-primary d-flex gap-2 align-content-center p-2 px-3  fs-5 fw-semibold w-100"
+                className="btn btn-primary d-flex gap-2 justify-content-center align-content-center p-2 px-3  fs-5 fw-semibold w-100 mb-3 mb-md-0"
               >
                 <ShoppingBagIcon fontSize="large" />
                 <span style={{ lineHeight: "38px" }}>Orders</span>
               </Link>
               {/* Delete account */}
-              <button className="btn btn-danger d-flex gap-2 align-content-center p-2 px-3  fs-5 fw-semibold w-100 text-nowrap">
+              <button className="btn btn-danger d-flex gap-2 justify-content-center align-content-center p-2 px-3  fs-5 fw-semibold w-100 text-nowrap">
                 <DeleteIcon fontSize="large" />
                 <span style={{ lineHeight: "38px" }}>Delete Account</span>
               </button>

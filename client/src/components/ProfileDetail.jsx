@@ -5,7 +5,7 @@ import EditIcon from "@mui/icons-material/Edit";
 const ProfileDetail = ({ mode, setMode }) => {
   return (
     <div
-      className="text-center bg-white p-3 ps-4 rounded-3 border"
+      className="text-center bg-white p-3 ps-4 rounded-3 border mx-auto mx-md-0 mb-3 mb-md-0"
       style={{ width: "330px", minHeight: "350px" }}
     >
       <h5 className="fw-semibold text-start mb-3">Profile information</h5>
