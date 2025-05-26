@@ -86,7 +86,7 @@ const Checkout = () => {
                   checked /*is to be removed later in backedn process */
                 />
                 <label className="form-check-label" htmlFor="standardDelivery">
-                  Standard deliver
+                  Standard delivery
                 </label>
               </div>
 
