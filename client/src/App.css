@@ -319,3 +319,20 @@ input[type="range"]::-webkit-slider-thumb {
 .edit-btn:hover {
   background-color: var(--bs-border-color) !important;
 }
+
+
+/*
+-->
+
+//Dashboard styles
+
+<--
+*/
+
+.dashboard-grid {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas: 
+    "a b"
+    "c b";
+}

@@ -17,6 +17,7 @@ import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
+import Admin from "./pages/Admin";
 
 /*
 
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/admin",
+        element: <Admin />,
       },
     ],
   },
