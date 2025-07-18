@@ -1,0 +1,46 @@
+.admin-profile-btn {
+    transition: 0.3s all ease;
+    border: none;
+    margin-top: 0;
+}
+
+.admin-profile-btn.active {
+    transform: rotate(180deg);
+    margin-top: 3px;
+}
+
+.admin-profile-popup {
+    top: 50px;
+    right: 0;
+    transition: 0.3s all ease;
+    display: none;
+    opacity: 0.1;
+}
+
+.admin-profile-btn.active + .admin-profile-popup {
+    display: block !important;
+    opacity: 1;
+}
+
+.table>:not(caption)>*>* {
+    background-color: unset;
+}
+
+.table tr>td , .table tr>th {
+    text-align: center;
+    padding-inline: 25px !important;
+}
+
+span[data-value="Pending"] {
+    background-color: rgb(199, 199, 13);
+}
+span[data-value="Delivered"] {
+    background-color: #498aeb;
+}
+span[data-value="In Transit"] {
+    background-color: rgb(97, 236, 97);
+}
+span[data-value="Cancelled"] {
+    background-color: #dc3546d8;
+    
+}
