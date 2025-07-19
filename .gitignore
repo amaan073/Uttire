@@ -1,6 +1,7 @@
 # === Root ===
 node_modules/
 .env
+.env.local
 .env.*.local
 *.log
 package-lock.json
@@ -26,7 +27,6 @@ server/dist/
 *.sublime-project
 *.iml
 
-# === OS ===
+# === OS-specific files ===
 Thumbs.db
 ehthumbs.db
-``
