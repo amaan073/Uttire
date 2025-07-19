@@ -1,0 +1,19 @@
+{
+  "name": "uttire-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "client": "npm --prefix client run dev",
+    "server": "npm --prefix server run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "lint": "eslint \"**/*.js\" --ignore-pattern node_modules",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "clean": "rimraf node_modules client/node_modules server/node_modules"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5"
+  }
+}
