@@ -1,4 +1,4 @@
-import image from "../assets/image.png";
+import customer_care from "../assets/images/customer_care.webp";
 
 const Contact = () => {
   const handleSubmit = (e) => {
@@ -23,8 +23,8 @@ const Contact = () => {
           {/* eslint-disable-next-line react/no-unescaped-entities */}
           <h2 className="mb-5">We'd Love to Hear from You!</h2>
           <img
-            src={image}
-            alt="image of model wearing clothes"
+            src={customer_care}
+            alt="customer care"
             className="mt-2 w-100 h-auto"
             style={{ maxWidth: "800px" }}
           />

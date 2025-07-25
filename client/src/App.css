@@ -89,6 +89,15 @@
   }
 }
 
+.home-cover img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.home-header {
+  background: url("./assets/images/home_bg.webp");
+}
+
 /*
 -->
 
@@ -177,9 +186,6 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 @media screen and (max-width: 768px) {
-  .img_middle {
-    width: 100% !important;
-  }
 
   .filter-sidebar.open {
     position: fixed !important;

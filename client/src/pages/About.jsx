@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import image from "../assets/image.png";
+import about_img from "../assets/images/about_page.webp";
 import { ShoppingBagIcon } from "lucide-react";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import WbIncandescentIcon from "@mui/icons-material/WbIncandescent";
@@ -20,8 +20,8 @@ const About = () => {
             individual in mind, bleding contemporary aesthetics with timeless
             elegance.
           </p>
-          {/* Collage of 6 images */}
-          <img src={image} alt="collage" className="w-100" />
+
+          <img src={about_img} alt="clothing" className="w-100" />
         </div>
         <hr />
         <div className="my-5 mx-auto" style={{ maxWidth: "800px" }}>

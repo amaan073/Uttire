@@ -1,4 +1,5 @@
 import Image from "../assets/image.png";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ModeIcon from "@mui/icons-material/Mode";
 import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -24,12 +25,7 @@ const Admin = () => {
             Admin Dashboard
           </h1>
           <div className="d-flex align-items-center">
-            <img
-              src={Image}
-              height="60"
-              width="60"
-              className="rounded-circle"
-            />
+            <AccountCircleIcon sx={{ fontSize: "50px" }} />
             <h4 className="m-0 ms-3">John Doe</h4>
             <div
               className="position-relative"

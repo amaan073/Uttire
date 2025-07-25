@@ -1,60 +1,60 @@
 import { Link } from "react-router-dom";
 
-import image from "../assets/image.png";
 import Card from "../components/ui/Card";
 import { ShoppingBagIcon } from "lucide-react";
+import home1 from "../assets/images/home1.webp";
+import home2 from "../assets/images/home2.webp";
+import home3 from "../assets/images/home3.webp";
+
+import DemoToolTip from "../components/ui/DemoTooltip";
 
 const Home = () => {
   return (
     <>
       <div
-        className="container-fluid text-center py-3 px-0"
+        className="container-fluid text-center pb-3 px-0"
         style={{ maxWidth: "1600px" }}
       >
-        <h1
-          style={{
-            fontFamily: '"Agbalumo", serif',
-            fontSize: "clamp(4.2rem,7vw,5.5rem)",
-          }}
-          className="main-logo-txt"
-        >
-          Uttire
-        </h1>
-        <p
-          className="my-2 mx-auto px-3"
-          style={{ fontSize: "min(1.1rem,4vw)" }}
-        >
-          Welcome to Uttire! Explore our collection of stylish and comfortable
-          clothing.
-        </p>
-        <div className="btn btn-primary mt-2 mb-4 mb-md-4">
-          <Link
-            to="/shop"
-            style={{ all: "unset" }}
-            className="d-flex align-items-center gap-1"
+        <div className="home-header py-3">
+          <h1
+            style={{
+              fontFamily: '"Agbalumo", serif',
+              fontSize: "clamp(4.2rem,7vw,5.5rem)",
+            }}
+            className="main-logo-txt"
           >
-            <ShoppingBagIcon />
-            Shop Now
-          </Link>
+            Uttire
+          </h1>
+          <p
+            className="my-2 mx-auto px-3"
+            style={{ fontSize: "min(1.1rem,4vw)" }}
+          >
+            Welcome to Uttire! Explore our collection of stylish and comfortable
+            clothing.
+          </p>
+          <div className="btn btn-primary mt-2 mb-4 mb-md-4">
+            <Link
+              to="/shop"
+              style={{ all: "unset" }}
+              className="d-flex align-items-center gap-1"
+            >
+              <ShoppingBagIcon />
+              Shop Now
+            </Link>
+          </div>
         </div>
 
         {/*Home page Cover  */}
-        <div className="home-cover d-flex w-100 mt-3">
-          <img
-            src={image}
-            style={{ width: "33.3333%" }}
-            className="h-auto d-none d-md-block"
-          />
-          <img
-            src={image}
-            style={{ width: "33.3333%" }}
-            className="img_middle h-auto"
-          />
-          <img
-            src={image}
-            style={{ width: "33.3333%" }}
-            className="h-auto d-none d-md-block"
-          />
+        <div className="home-cover d-flex w-100">
+          <div className="w-100 d-none d-md-block">
+            <img src={home1} alt="Home Cover" className="h-100 w-100" />
+          </div>
+          <div className="w-100">
+            <img src={home2} alt="Home Cover" className="h-100 w-100" />
+          </div>
+          <div className="w-100 d-none d-md-block">
+            <img src={home3} alt="Home Cover" className="h-100 w-100" />
+          </div>
         </div>
 
         {/* Featured Producst */}
@@ -97,12 +97,13 @@ const Home = () => {
                 aria-describedby="emailHelp"
                 placeholder="Enter email"
               />
-              <input
-                type="submit"
-                value="Subscribe"
-                className="btn btn-warning"
-                title="Disabled"
-              />
+              <DemoToolTip>
+                <input
+                  type="submit"
+                  value="Subscribe"
+                  className="btn btn-warning"
+                />
+              </DemoToolTip>
             </form>
             <p>
               We respect your privacy.
