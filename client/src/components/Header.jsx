@@ -20,7 +20,7 @@ const Header = () => {
   const [isNavActive, setNavActive] = useState(false); //nav menu button for small screens
   const [isAccountPopupVisible, setisAccountPopupVisible] = useState(false); //login form show and hide
 
-  const userLoggedIn = true; //temporary solution
+  const userLoggedIn = false; //temporary solution
 
   //click outside login form to close it /* snippet From [Tech Stacker] https://youtu.be/wX0pb6CBS-c?si=kZtN6kWFqY0yrG1y*/
   const documentRef = useRef(document);
