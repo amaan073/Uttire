@@ -1,0 +1,102 @@
+i used cosedens fil structure for client folder.
+now i pasted from chatgpt the package.json of the outside level of cleint and server .so it is the third package.json independent of both foolders. it has scripts to run both client and server at same time and many more. and ran "npm i" to install devdependacies. 
+added .gitignore and pasted mern stack must gitignore files.
+added read.MD for instructions
+
+now i created a server folder. 
+inside it i copied the file strcuture form web dev simplified yt channell. credited him in read.MD
+now i initialized package npm init -y and setup package.json
+
+
+
+BACKEND
+
+now we look at the plan what to do in the backend
+add dev:"nodemon server.js" to scripts of package.json 
+
+in server.js file we define a express server.
+
+import express from "express", 
+define port variable.
+use express() in const app = express() for simplicity
+then start by app.listen(port, callabck)
+
+now we need to run both client and server same time using concurrently and tweaking vite.config.js for smooth experince.
+
+now add mongodb database and connect. download it tgz file then create a mongodb and data folder in your local drive anywhere. install mongdob.tgz in mongodb folder.
+
+you need mongod server and mongoshell or compass. so run  ~/mongodb/bin/mongod --dbpath ~/data/db for mongod server or set path variable to simply enabling. in this command first is path of mongod and after that option and the path data directory data/db
+
+
+nowe after settign mongo db in our project we creating database config in config folder, then a different models for different purposes like for user data we created a user model so we can create(signup) search and check( login) . etc and then create a router for sginpu and login in routes folder . then separate the logic for handling the request for userRoutes in the controller folder . then do this for all other features of backend.
+
+USE AXIOS FOR API REQUEST. not fetch
+
+after creating login and signup backend and validation of inputs after succesful login and signup apply jwt and local storage featurea and tehn naviator to home
+
+/////////////////////////////////////////////////////////////
+✅ 1. Signup Flow
+Frontend (React):
+
+User fills form → submits to /api/users/register
+
+You validate fields (email, password length, etc.)
+
+Send POST request with user data
+
+On success:
+
+Backend creates user + generates JWT
+
+JWT is returned in response
+
+✅ You store token in localStorage
+
+✅ Show toast: “Signup successful! Welcome aboard 👋”
+
+✅ Use useNavigate("/") to redirect to homepage
+
+js
+Copy
+Edit
+localStorage.setItem("token", res.data.token);
+toast.success("Signup successful! Welcome aboard 👋");
+navigate("/");
+✅ 2. Login Flow
+Frontend (React):
+
+User fills email/password → submits to /api/users/login
+
+You validate inputs
+
+Backend verifies credentials and returns JWT
+
+✅ You store token in localStorage
+
+✅ Show toast: “Login successful!”
+
+✅ Redirect user to homepage or dashboard
+
+js
+Copy
+Edit
+localStorage.setItem("token", res.data.token);
+toast.success("Login successful!");
+navigate("/");
+🔐 3. Protecting Auth Routes (Frontend)
+You’ll later:
+
+Read the JWT from localStorage
+
+Use it in headers for protected API calls:
+
+js
+Copy
+Edit
+headers: {
+  Authorization: `Bearer ${token}`,
+}
+Optionally decode it to get user info (with jwt-decode)
+
+Create a PrivateRoute component to protect routes like /profile
+///////////////////////////////////////////////////////////////////////////////
