@@ -50,7 +50,7 @@ const Signup = () => {
 
       console.log(res.data);
       toast.success("Signup successful! Welcome aboard 🙌");
-      // localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", res.data.token);
       navigate("/");
     } catch (e) {
       const status = e.response?.status;

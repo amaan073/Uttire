@@ -1,8 +1,10 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./ui/Navbar.jsx";
 import NavBtn from "./ui/NavBtn.jsx";
 import { NavLink } from "react-router-dom";
+import AuthContext from "../context/AuthContext.jsx";
+import { useContext } from "react";
 
 //ICONS
 import mainLogo from "../assets/uttireLogo.png";
@@ -13,6 +15,7 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import GridViewIcon from "@mui/icons-material/GridView";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EmailWithTooltip from "../components/ui/EmailWithTooltip.jsx";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false); //search bar open and close in small screens
@@ -20,7 +23,10 @@ const Header = () => {
   const [isNavActive, setNavActive] = useState(false); //nav menu button for small screens
   const [isAccountPopupVisible, setisAccountPopupVisible] = useState(false); //login form show and hide
 
-  const userLoggedIn = false; //temporary solution
+  //checking if user is logged in or not (has value or null)
+  const { user, logoutUser } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   //click outside login form to close it /* snippet From [Tech Stacker] https://youtu.be/wX0pb6CBS-c?si=kZtN6kWFqY0yrG1y*/
   const documentRef = useRef(document);
@@ -28,6 +34,12 @@ const Header = () => {
     if (e.target.closest(".account-box")) return;
     setisAccountPopupVisible(false);
   });
+
+  const handleLogout = () => {
+    logoutUser(); //clears token and user data
+    toast.info("Logged out successfully");
+    navigate("/login");
+  };
 
   return (
     <>
@@ -127,8 +139,8 @@ const Header = () => {
                     isAccountPopupVisible ? "d-block visible" : "d-none"
                   }`}
                 >
-                  {userLoggedIn ? (
-                    <div className="text-start">
+                  {user ? (
+                    <div className="text-start" style={{ minWidth: "340px" }}>
                       <div className="d-flex align-items-center mb-3 gap-2 pe-3">
                         <div style={{ width: "90px", height: "90px" }}>
                           <AccountCircleIcon
@@ -140,8 +152,8 @@ const Header = () => {
                           />
                         </div>
                         <div className="user-profile-sum">
-                          <h4 className="fw-semibold">John Doe</h4>
-                          <EmailWithTooltip email="john-doe23456578@gmail.com" />
+                          <h4 className="fw-semibold">{user.name}</h4>
+                          <EmailWithTooltip email={user.email} />
                         </div>
                       </div>
                       <hr className="hr" />
@@ -170,7 +182,10 @@ const Header = () => {
                           <GridViewIcon fontSize="large" />
                           Dashboard
                         </NavLink>
-                        <p className="a-link m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3 text-danger">
+                        <p
+                          className="a-link m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3 text-danger"
+                          onClick={handleLogout}
+                        >
                           <LogoutIcon fontSize="large" />
                           Logout
                         </p>

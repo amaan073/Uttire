@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-import ProfileDetail from "../components/ProfileDetail";
-import DemoTooltip from "../components/ui/DemoTooltipButton";
+import ProfileDetail from "../../components/ProfileDetail";
+import DemoTooltip from "../../components/ui/DemoTooltipButton";
 
 import LockIcon from "@mui/icons-material/Lock";
 import GppGoodIcon from "@mui/icons-material/GppGood";

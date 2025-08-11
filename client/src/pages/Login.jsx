@@ -1,16 +1,24 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { isValidEmail, isValidLoginPassword } from "../utils/validators.js";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthContext.jsx"
+import { useContext } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+  //getting the current route pathname if not available then "/" homepage
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/"; // fallback to home
+
+  //context to use the user and its functions through context
+  const { loginUser } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,11 +37,10 @@ const Login = () => {
         email,
         password,
       });
-
-      console.log(res.data);
-      toast.success("Login successful!");
-      // localStorage.setItem("token", response.data.token);
-      navigate("/");
+      
+      loginUser(res.data.token); // ✅ This sets the token, decodes it, updates user globally
+      toast.success(`Welcome back, ${res.data?.user?.name || "User"}!`);
+      navigate(from, { replace: true });
     } catch (e) {
       const status = e.response?.status;
       const message = e.response?.data?.message || "Something went wrong!";

@@ -100,3 +100,47 @@ Optionally decode it to get user info (with jwt-decode)
 
 Create a PrivateRoute component to protect routes like /profile
 ///////////////////////////////////////////////////////////////////////////////
+
+
+now in backend we need to follwo this flow and on success create teh user and but we also need to validate again for backend also its a must practice.
+
+USE OPENSSL COMMNAD TO GENREATE A JWT_SECRET (KEY) AND INSERT IT INTO ENV AND USE IT FOR JWT TOKEN CREATION. ( openssl rand -base64 32 )
+
+now after genrating and sending jwt token in reponse in both singup and login controller, both saving the token in both login.jsx and signup.jsx we store them in local storage for proctect routes 
+that needs to be proctected.
+
+in next step we create a axiosInstance file in utils folder of frontend to get the token of the saved localstorage and send axios request to server to decode jwt and send us the users data,
+so we can allow users to view their profile and access private routes.
+
+
+//////////////////////////////////////////////////////////
+Use axiosInstance instead of axios for protected requests:
+const res = await axiosInstance.get("/users/profile");
+/////////////////////////////////////////////////////////
+
+next step is setting private routes 
+create a privateRoute component in components folder, and use it wrap around teh proctected routes in the layout or app.jsx
+here a nested object will be set inside the children array of the main object like path="/" its children array inside that we will set a object which have a element set as <PrivateRoute/> 
+comonent whenever someone goes to proctected routes they will first go to lgoin if they have not lgoin or they have logined(they have valid jwt token) then they will access proctected routes.
+
+
+now install jwt-decode npm package. and either create a decoder module.js in utils folder which is better since it will be used in signup too.
+then we will use the data from the decoded jwt token and use the name and email from there to fill the profile details and this makes it look like the user is logged in.
+this requires making the user data accessible through reactContext. we will create a context and then use its provider to provide a user varidable, a login user function and logout user 
+function to all global access or whole app. by wrapping the router provider componet(our whole app in main .jsx) and then we can use the context values(user, loginuser function etc)
+in any component by importing this context we created. this allows us to handle login and log out and set user details in any component needed. like we enable popup of account icon to 
+show profile and dashboarf only when user is logged in and show user details. this is 2 or 3 different components work. so we need a global variable that we can use any where and we needed
+loginuser and logout user in context provider because they have setUser() function which is needed to be global for us to use it anywhere and so login user and lgoout user functions needed
+globalized too.
+
+//////////////////////////////////////////////////////////
+Use axiosInstance instead of axios for protected requests:
+const res = await axiosInstance.get("/users/profile");
+/////////////////////////////////////////////////////////
+
+after this we will setup lgout feature.
+
+
+
+
+

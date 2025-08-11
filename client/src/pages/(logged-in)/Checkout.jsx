@@ -48,14 +48,14 @@ const Checkout = () => {
                   className="form-check-input"
                   type="radio"
                   name="paymentMethod"
-                  id="creditCard"
-                  value="creditCard"
+                  id="debitCard"
+                  value="debitCard"
                   checked
-                  //   checked={paymentMethod === "creditCard"}
+                  //   checked={paymentMethod === "debitCard"}
                   //   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
-                <label className="form-check-label" htmlFor="creditCard">
-                  Credit Card
+                <label className="form-check-label" htmlFor="debitCard">
+                  Debit Card
                 </label>
               </div>
 

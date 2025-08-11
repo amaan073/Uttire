@@ -14,69 +14,54 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
-import Checkout from "./pages/Checkout";
-import OrderSuccess from "./pages/OrderSuccess";
-import Profile from "./pages/Profile";
-import Dashboard from "./pages/Dashboard";
+
+//Pages - Private
+import Checkout from "./pages/(logged-in)/Checkout";
+import OrderSuccess from "./pages/(logged-in)/OrderSuccess";
+import Profile from "./pages/(logged-in)/Profile";
+import Dashboard from "./pages/(logged-in)/Dashboard";
+
+//Private route wrapper
+import PrivateRoute from "./components/PrivateRoute";
+
+//Public route wrapper
+import PublicRoute from "./components/PublicRoute";
 
 //Pages - Admin
 import Admin from "./pages/Admin";
 
 // ✅ React Router Setup
-
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     errorElement: <NotFoundPage />,
     children: [
+      { path: "/", element: <Home /> },
+      { path: "/shop", element: <Shop /> },
+      { path: "/about", element: <About /> },
+      { path: "/contact", element: <Contact /> },
+      { path: "/product", element: <ProductDetail /> },
+      { path: "/cart", element: <Cart /> },
+
+      //Public routes (so user dont access them through url when they are already logged in!)
       {
-        path: "/",
-        element: <Home />,
+        element: <PublicRoute />, // Wrapper
+        children: [
+          { path: "/signup", element: <Signup /> },
+          { path: "/login", element: <Login /> },
+        ],
       },
+
+      // 🔒 Protected route wrapper (accessing these routes require going through PrivateRoute component first)
       {
-        path: "/shop",
-        element: <Shop />,
-      },
-      {
-        path: "/about",
-        element: <About />,
-      },
-      {
-        path: "/contact",
-        element: <Contact />,
-      },
-      {
-        path: "/product",
-        element: <ProductDetail />,
-      },
-      {
-        path: "/cart",
-        element: <Cart />,
-      },
-      {
-        path: "/signup",
-        element: <Signup />,
-      },
-      {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "/checkout",
-        element: <Checkout />,
-      },
-      {
-        path: "/order-success",
-        element: <OrderSuccess />,
-      },
-      {
-        path: "/profile",
-        element: <Profile />,
-      },
-      {
-        path: "/dashboard",
-        element: <Dashboard />,
+        element: <PrivateRoute />,
+        children: [
+          { path: "/checkout", element: <Checkout /> },
+          { path: "/order-success", element: <OrderSuccess /> },
+          { path: "/profile", element: <Profile /> },
+          { path: "/dashboard", element: <Dashboard /> },
+        ],
       },
     ],
   },
