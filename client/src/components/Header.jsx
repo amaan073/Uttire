@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./ui/Navbar.jsx";
 import NavBtn from "./ui/NavBtn.jsx";
 import { NavLink } from "react-router-dom";
-import AuthContext from "../context/AuthContext.jsx";
-import { useContext } from "react";
+// import AuthContext from "../context/AuthContext.jsx";
+// import { useContext } from "react";
 
 //ICONS
 import mainLogo from "../assets/uttireLogo.png";
@@ -24,7 +24,8 @@ const Header = () => {
   const [isAccountPopupVisible, setisAccountPopupVisible] = useState(false); //login form show and hide
 
   //checking if user is logged in or not (has value or null)
-  const { user, logoutUser } = useContext(AuthContext);
+  // const { user, logoutUser } = useContext(AuthContext);
+  const user = false;
 
   const navigate = useNavigate();
 

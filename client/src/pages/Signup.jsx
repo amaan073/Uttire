@@ -1,60 +1,51 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+import publicAxios from "../api/publicAxios.js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import {
-  isValidName,
-  isValidEmail,
-  isValidPassword,
-} from "../utils/validators.js";
+import { validateSignupForm } from "../utils/formValidators.js";
 
 const Signup = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (!isValidName(name)) {
-      toast.error("Name must be at least 2 characters");
+    //custom validation (fallback)
+    if (!validateSignupForm(formData)) {
+      setLoading(false);
       return;
     }
 
-    if (!isValidEmail(email)) {
-      toast.error("Enter a valid email address");
-      return;
-    }
-
-    if (!isValidPassword(password)) {
-      toast.error(
-        "Password must be at least 6 characters and include a letter and a number"
-      );
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
-    }
+    const sanitizedFormData = {
+      name: formData.name.trim(),
+      email: formData.email.trim().toLowerCase(),
+      password: formData.password,
+    };
 
     try {
-      const res = await axios.post("/api/users/register", {
-        name,
-        email,
-        password,
-      });
+      const res = await publicAxios.post("/users/register", sanitizedFormData);
 
-      console.log(res.data);
-      toast.success("Signup successful! Welcome aboard 🙌");
-      localStorage.setItem("token", res.data.token);
-      navigate("/");
+      toast.success(
+        `Signup successful ! Welcome aboard, ${res.data?.user?.name || ""}!🙌`
+      );
+      // navigate("/");
     } catch (e) {
-      const status = e.response?.status;
-      const message = e.response?.data?.message || "Something went wrong!";
+      const status = e.response?.status || 0;
+      const message =
+        e.response?.data?.message || e.message || "Something went wrong!";
 
       if (status === 400 || status === 401) {
         //client fault
@@ -65,6 +56,8 @@ const Signup = () => {
       } else {
         toast.error("Unexpected error. Check your connection.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,7 +68,7 @@ const Signup = () => {
     >
       <div className="signup-form bg-white shadow rounded p-4">
         <h2 className="fw-semibold my-2 mb-3">Sign up</h2>
-        <form style={{ width: "300px" }} onSubmit={handleSubmit} noValidate>
+        <form style={{ width: "300px" }} onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="small text-muted" htmlFor="name_input">
               Name
@@ -84,8 +77,10 @@ const Signup = () => {
               type="text"
               className="form-control"
               id="name_input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              name="name"
+              onChange={handleChange}
+              disabled={loading}
+              required
             />
           </div>
           <div className="mb-3">
@@ -96,8 +91,10 @@ const Signup = () => {
               type="email"
               className="form-control"
               id="email_input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              onChange={handleChange}
+              disabled={loading}
+              required
             />
           </div>
           <div className="mb-3">
@@ -108,8 +105,10 @@ const Signup = () => {
               type="password"
               className="form-control"
               id="password_input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              onChange={handleChange}
+              disabled={loading}
+              required
             />
           </div>
           <div className="mb-3">
@@ -123,12 +122,18 @@ const Signup = () => {
               type="password"
               className="form-control"
               id="confirm_password_input"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              name="confirmPassword"
+              onChange={handleChange}
+              disabled={loading}
+              required
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">
-            Sign up
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={loading}
+          >
+            {loading ? "Signing up..." : "Sign up"}
           </button>
           <div className="mt-3 text-center" style={{ fontSize: "0.9em" }}>
             Already have an account?

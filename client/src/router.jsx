@@ -45,13 +45,13 @@ const router = createBrowserRouter([
       { path: "/cart", element: <Cart /> },
 
       //Public routes (so user dont access them through url when they are already logged in!)
-      {
-        element: <PublicRoute />, // Wrapper
-        children: [
-          { path: "/signup", element: <Signup /> },
-          { path: "/login", element: <Login /> },
-        ],
-      },
+      // {
+      // element: <PublicRoute />, // Wrapper
+      // children: [
+      { path: "/signup", element: <Signup /> },
+      { path: "/login", element: <Login /> },
+      // ],
+      // },
 
       // 🔒 Protected route wrapper (accessing these routes require going through PrivateRoute component first)
       {

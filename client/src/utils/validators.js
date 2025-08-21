@@ -7,17 +7,19 @@ export const isValidPassword = (password) => {
   const minLength = password.length >= 6;
   const hasLetter = /[a-zA-Z]/.test(password);
   const hasNumber = /\d/.test(password);
+  const noSpaces = !/\s/.test(password); // Disallow any whitespace
 
-  return minLength && hasLetter && hasNumber;    //return true if all of them true
+  return minLength && hasLetter && hasNumber && noSpaces;    //return true if all of them true
 };
 
 export function isValidLoginPassword(password) {
   const minLength = password.length >= 6;
-
   return minLength;
 }
 
-
 export const isValidName = (name) => {
-  return name.trim().length >= 2;
+   // Only letters, at least 2 characters
+  const trimmed = name.trim();
+  const onlyLetters = /^[a-zA-Z\s]+$/.test(trimmed);
+  return trimmed.length >= 2 && onlyLetters;
 };

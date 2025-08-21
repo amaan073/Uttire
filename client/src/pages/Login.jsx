@@ -1,49 +1,49 @@
 import { Link, useLocation } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState } from "react";
-import axios from "axios";
+import publicAxios from "../api/publicAxios.js";
 import { toast } from "react-toastify";
-import { isValidEmail, isValidLoginPassword } from "../utils/validators.js";
+import { validateLoginForm } from "../utils/formValidators.js";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../context/AuthContext.jsx"
+import AuthContext from "../context/AuthContext.jsx";
 import { useContext } from "react";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const navigate = useNavigate();
-  //getting the current route pathname if not available then "/" homepage
+  //getting the current route pathname (the page user was on) if not available then "/" homepage
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/"; // fallback to home
-
-  //context to use the user and its functions through context
-  const { loginUser } = useContext(AuthContext);
+  const from = location.state?.from?.pathname || "/"; // will use this to redirect user back to the protected route they tried to access while being not logged in, after login this takes them back to the proctected route
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (!isValidEmail(email)) {
-      toast.error("Please enter a valid email address.");
-      return;
-    }
-    if (!isValidLoginPassword(password)) {
-      toast.error("Password must be at least 6 characters.");
+    //custom validation (fallback)
+    if (!validateLoginForm(formData)) {
+      setLoading(false);
       return;
     }
 
     try {
-      const res = await axios.post("/api/users/login", {
-        email,
-        password,
+      const res = await publicAxios.post("/users/login", {
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
       });
-      
-      loginUser(res.data.token); // ✅ This sets the token, decodes it, updates user globally
+
       toast.success(`Welcome back, ${res.data?.user?.name || "User"}!`);
-      navigate(from, { replace: true });
+
+      // navigate(from, { replace: true });
     } catch (e) {
-      const status = e.response?.status;
-      const message = e.response?.data?.message || "Something went wrong!";
+      const status = e.response?.status || 0;
+      const message =
+        e.response?.data?.message || e.message || "Something went wrong!";
 
       if (status === 400 || status === 401) {
         //client fault
@@ -54,6 +54,8 @@ const Login = () => {
       } else {
         toast.error("Unexpected error. Check your connection.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,15 +67,17 @@ const Login = () => {
       <div className="login-form bg-white shadow rounded p-4">
         <AccountCircleIcon sx={{ height: "60px", width: "auto" }} />
         <h4 className="fw-semibold my-2 mb-3">Login</h4>
-        <form style={{ width: "300px" }} onSubmit={handleSubmit} noValidate>
+        <form style={{ width: "300px" }} onSubmit={handleSubmit}>
           <div className="mb-3">
             <input
               type="email"
               className="form-control"
               id="email_input"
+              name="email"
               placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleChange}
+              disabled={loading}
+              required
             />
           </div>
           <div className="mb-3">
@@ -81,13 +85,19 @@ const Login = () => {
               type="password"
               className="form-control"
               id="password_input"
+              name="password"
               placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleChange}
+              disabled={loading}
+              required
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">
-            Login
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
           <div className="mt-3" style={{ fontSize: "0.9em" }}>
             {/* eslint-disable-next-line react/no-unescaped-entities */}

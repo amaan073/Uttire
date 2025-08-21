@@ -137,10 +137,97 @@ globalized too.
 Use axiosInstance instead of axios for protected requests:
 const res = await axiosInstance.get("/users/profile");
 /////////////////////////////////////////////////////////
-
 after this we will setup lgout feature.
 
+now after this we will apply the feature token refresh
+for that we have to create a util/helper function like generateRefreshToken for generating a refresh toekn which has different logic than access token
+Here’s the step-by-step flow for clarity:
+
+1. First Login
+
+User enters credentials (email/password).
+
+Server:
+
+Verifies credentials.
+
+Generates:
+
+Access token (short expiry, e.g., 15 min)
+
+Refresh token (long expiry, e.g., 7 days)
+
+Sends both to the client.
+
+Client stores:
+
+Access token → in memory (or short-term storage).
+
+Refresh token → in secure storage (HTTP-only cookie).
+
+2. Using the Web App
+
+Every API request includes the access token in the Authorization header.
+
+Server checks the token — if valid, request succeeds.
+
+3. Token Expiration
+
+Access token eventually expires.
+
+Instead of showing “Please log in again”:
+
+Client automatically sends refresh token to /refresh endpoint.
+
+Server verifies the refresh token and issues a new access token (and optionally a new refresh token).
+Client updates its stored access token.
+User continues using the app without re-entering credentials.
+4. When Refresh Token Expires
+User must log in again manually (full authentication).
 
 
+note: basically if access token is compromised its compromised for like very little time (you set) , so access token is set to expire very early for security reasons, to get a new access token we need to send a request to the server for a new access token basically to refresh token when access token expires. here comes another token that server sends to you named refersh token. just like we need access token to access certain protected routes and send reques to their api, we also use a refersh token that we send to the server so server can check and say yes its him wanting a new ticket basically (token). so the server sends another access token and also another new refresh token because sending another refresh token is good for security because when access token is compromised its compromised for little time so after sometime if the attacker dont have a refresh token( which is stored in http only cookie for security). the attacker cant do any thing after access token is expired but if somehow the attacker get a refresh token what happens is the attacker use refresh token to get a new access token(which is also hard because he has to find a special /refresh endpoint). he may get the new access token but his refersh token is outdated because server sends new refersh token so basically again gets locked out and need to find the refresh token. 
+if we only used access token and set its expiry time for like 30days the attacker if he gets the access token he will get a full access for 30days and then the original client cant do anything but contact the website admin to blacklist the access token and provide a new access token which is very bad practice and goes against jwt token features main motive.
+Thats why we use refresh token
 
+first we create a util function for generateing a refresh token
+then modify login and signup controllers to send both access token and refresh token to client on request as response
+then we creaet a special endpoint controller /api/users/refrsh to handle the request of new refrshing token
+
+
+WE WILL APPLY REFRESH TOKEN WITH ROTATIION WHICH REQUIRES WE STORE BOTH ACCESS AND REFRSH TOKEN IN HTTP ONLY COOKIES
+
+after setting refresh token we create a authMiddleware so whenever a request is sent to procted route(/getUserProfile etc) the middleware checks if accessToken is valid then it lets the client hit the intended endpoint route.
+
+now after this we create a errorMiddleware which we first create a error for if a non existent endpoint is hit with (api/users/fdfhd like this) the error is sent to errorHandler() and the handler handles this error.
+this error hanlde you must be wondering that how does it work, it is a trick that 
+works like this:
+the request come for a route express runs the server js , server js line by line goes until it reaches routes section which dont have a route for this request so program moves on and so we manually set a error and handle it in the end. so it is a trick
+and for this we move the errorMiddlewares to the end of server js file.
+on the client the not found page hanldes the pages but requests url is handled by server. like someone sent a axios request to the server like (api/users/xxxx) then server has to handle it.
+
+
+now we need to validate mongoose user for server side too like we did in client side and also create a validator middleware
+
+after this i tested the backend with postman and proceed to frontend tweak for thsi new http cookie only setup
+
+now in front end ew need to tweak and create a new axios instance with {credentials: true}  after switcing to http only cookie auth based system
+credentials : true is field that is must in both front end side and backend side becasue it allows the browser to send and recieve cookies in every request.
+so instead of including this flag with every request we make in , we create a custom axios instance with credentials true.
+in mern stack when we use this http only cookie based auth system we basically send and recieve cookie in every api request. we must create a custom axios instance
+
+only in some request we dont need this credentials true flag.
+
+we use api/ as base url in backend requests so we can differentiate between frontend pag routes and backend api routes
+
+we need to create a axios instance for public api request and private api requests both has different credentials value both has differen interceptors.
+
+when creating a public axios instance we need to know that interceptors help by preprocessing errors that come from axios so the component can handle it better.
+
+now we create a private axios instance for sending request to protected private routes. there is a problem creating a interceptor for this instance , because we need
+to use navigate() that is a hook , and hook can only be called inside a react component or top level of react component
+
+after both axios instance are created lets fix our old token method in login.jsx and ssignup.jsx
+
+first we remove token method and remove old auth context for global data handlinng. we create a new auth context that will have a feature of login and logout user and that has also featuer of fetching user info profile api that is a private page. or proctected page																																																																																																					
 
