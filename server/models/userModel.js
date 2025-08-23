@@ -20,11 +20,10 @@ const userSchema = new mongoose.Schema(
       type: String, 
       required: [true, "Password is required"], 
       minlength: [6, "Password must be at least 6 characters long"],
+      select : false
     },
-    refreshToken: { 
-      type: String, 
-      default: null 
-    },   
+    refreshToken: { type: String, select: false, default : null, }
+  
   }, 
   { timestamps: true }
 );

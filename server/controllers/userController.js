@@ -82,7 +82,7 @@ export const loginUser = async (req, res) => {
 
   try {
     // Check if user exists
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
       console.log("Invalid email or password");
       return res.status(400).json({ message: "Invalid email or password" });
@@ -119,6 +119,25 @@ export const loginUser = async (req, res) => {
     res.status(500).json({message: "Server error during login"})
   }
 }
+
+// ========================= userInfo (getMe) =========================
+export const getMe = async (req, res) => {
+  try {
+    console.log(req.user);
+    const user = await User.findById(req.user.id).select("name email createdAt updatedAt");
+
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 // ========================= REFRESH (rotation) =========================
 export const refreshAccessToken = async (req,res) => {

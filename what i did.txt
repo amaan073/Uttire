@@ -229,5 +229,27 @@ to use navigate() that is a hook , and hook can only be called inside a react co
 
 after both axios instance are created lets fix our old token method in login.jsx and ssignup.jsx
 
-first we remove token method and remove old auth context for global data handlinng. we create a new auth context that will have a feature of login and logout user and that has also featuer of fetching user info profile api that is a private page. or proctected page																																																																																																					
+first we remove token method and remove old auth context for global data handlinng. we create a new auth context that will have a feature of login and logout user and that has also featuer of fetching user info profile api that is a private page. or proctected page
+
+we have a proctect middleware that is for proctected routes that requires access token so since checking if the user has access token to send user info the route of this (/me) must be used with protect middleware which has a access token checking system and it will be used for many endpoints thats why we created a middleware for this. but what about /refrsh , we can also create a middleware for proctection of this route that checks refresh token but since its not usefual because only this end point has this function not others no reusablity so we handle this in the route handler function of controllers itself.
+
+🔹 Middleware in Express
+
+It’s just a reusable function that runs between the request coming in and your controller handling it.
+
+Purpose: move out repeated code from route handlers (like auth checks, logging, validation).
+
+Signature: (req, res, next) => { ... }
+
+Do something (check token, validate, etc).
+
+Call next() if okay, or res.status(...).json(...) if not.																																																																																																					
+
+
+we create a user, fetchUser(), logoutUser() in auth provider.
+we first call /login endpoint to get the access token and then call fetchUser() to get user info and set global user.
+then we hanlde logout by callinng logoutUser() which has a api request that goes to /logout endpoint to clear coookies(hanlded in bakcend) and set the user gloabbal as null value to remove user data on forntend.
+now we tweak signup to have same logic as login but a little different
+now we add a feature to authContext to be able to visit the website if user is loggd in then show that user is logged in on the wesbite. useEffect()
+now we fix the porblme of expired token . 
 

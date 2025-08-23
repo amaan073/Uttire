@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import publicAxios from "../api/publicAxios.js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { validateSignupForm } from "../utils/formValidators.js";
+import AuthContext from "../context/AuthContext.jsx";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +14,17 @@ const Signup = () => {
     confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
+  const { user, fetchUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  //getting the current route pathname (the page user was on) if not available then "/" homepage
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/"; // will use this to redirect user back to the protected route they tried to access while being not logged in, after login this takes them back to the proctected route
+
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,10 +49,15 @@ const Signup = () => {
     try {
       const res = await publicAxios.post("/users/register", sanitizedFormData);
 
-      toast.success(
-        `Signup successful ! Welcome aboard, ${res.data?.user?.name || ""}!🙌`
-      );
-      // navigate("/");
+      try {
+        await fetchUser(); // sets user in context if OK
+        toast.success(
+          `Signup successful! Welcome aboard${res.data?.user?.name ? ", " + res.data.user.name : ""}! 🙌`
+        );
+      } catch {
+        toast.info("Signup successful. Please login to continue.");
+        navigate("/login");
+      }
     } catch (e) {
       const status = e.response?.status || 0;
       const message =

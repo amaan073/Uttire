@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import publicAxios from "../api/publicAxios.js";
 import { toast } from "react-toastify";
 import { validateLoginForm } from "../utils/formValidators.js";
@@ -12,14 +12,23 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const { user, fetchUser } = useContext(AuthContext);
 
-  const navigate = useNavigate();
   //getting the current route pathname (the page user was on) if not available then "/" homepage
   const location = useLocation();
   const from = location.state?.from?.pathname || "/"; // will use this to redirect user back to the protected route they tried to access while being not logged in, after login this takes them back to the proctected route
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,14 +41,17 @@ const Login = () => {
     }
 
     try {
-      const res = await publicAxios.post("/users/login", {
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password,
+      const res = await publicAxios.post("/users/login", formData, {
+        withCredentials: true, // important for httpOnly cookies
       });
 
-      toast.success(`Welcome back, ${res.data?.user?.name || "User"}!`);
-
-      // navigate(from, { replace: true });
+      try {
+        await fetchUser(); // sets user in context if OK
+        toast.success(`Welcome back, ${res.data?.user?.name ?? "User"}!`);
+        // eslint-disable-next-line no-unused-vars
+      } catch (err) {
+        toast.error("Login failed. Please try again.");
+      }
     } catch (e) {
       const status = e.response?.status || 0;
       const message =

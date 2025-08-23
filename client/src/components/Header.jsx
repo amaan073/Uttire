@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./ui/Navbar.jsx";
 import NavBtn from "./ui/NavBtn.jsx";
 import { NavLink } from "react-router-dom";
-// import AuthContext from "../context/AuthContext.jsx";
-// import { useContext } from "react";
+import AuthContext from "../context/AuthContext.jsx";
+import { useContext } from "react";
 
 //ICONS
 import mainLogo from "../assets/uttireLogo.png";
@@ -15,7 +15,6 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import GridViewIcon from "@mui/icons-material/GridView";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EmailWithTooltip from "../components/ui/EmailWithTooltip.jsx";
-import { toast } from "react-toastify";
 
 const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false); //search bar open and close in small screens
@@ -24,8 +23,7 @@ const Header = () => {
   const [isAccountPopupVisible, setisAccountPopupVisible] = useState(false); //login form show and hide
 
   //checking if user is logged in or not (has value or null)
-  // const { user, logoutUser } = useContext(AuthContext);
-  const user = false;
+  const { user, logoutUser } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -36,10 +34,14 @@ const Header = () => {
     setisAccountPopupVisible(false);
   });
 
-  const handleLogout = () => {
-    logoutUser(); //clears token and user data
-    toast.info("Logged out successfully");
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await logoutUser(); //clears token and user data
+      navigate("/login");
+      setisAccountPopupVisible(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
