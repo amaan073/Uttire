@@ -123,7 +123,6 @@ export const loginUser = async (req, res) => {
 // ========================= userInfo (getMe) =========================
 export const getMe = async (req, res) => {
   try {
-    console.log(req.user);
     const user = await User.findById(req.user.id).select("name email createdAt updatedAt");
 
 
@@ -137,7 +136,6 @@ export const getMe = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // ========================= REFRESH (rotation) =========================
 export const refreshAccessToken = async (req,res) => {

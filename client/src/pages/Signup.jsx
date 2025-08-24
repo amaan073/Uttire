@@ -1,10 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import publicAxios from "../api/publicAxios.js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { validateSignupForm } from "../utils/formValidators.js";
 import AuthContext from "../context/AuthContext.jsx";
+import sessionAxios from "../api/sessionAxios.js";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -47,7 +47,7 @@ const Signup = () => {
     };
 
     try {
-      const res = await publicAxios.post("/users/register", sanitizedFormData);
+      const res = await sessionAxios.post("/users/register", sanitizedFormData);
 
       try {
         await fetchUser(); // sets user in context if OK

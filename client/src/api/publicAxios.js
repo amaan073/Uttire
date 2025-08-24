@@ -1,4 +1,4 @@
-// publicAxios.js
+//for api request that dont need credentials(cookies)
 import axios from "axios";
 
 const publicAxios = axios.create({
@@ -7,5 +7,3 @@ const publicAxios = axios.create({
 });
 
 export default publicAxios;
-
-//for api request that dont need cookies (access token) but it will be used with credentials true when we need to recieve cookie (like in login.jsx)

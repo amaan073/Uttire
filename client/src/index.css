@@ -1,9 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Agbalumo&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 :root {
-  --bs-body-font-family: "Inter", sans-serif !important; /*Bootstrap default font override*/
+  --bs-body-font-family:
+    "Inter", sans-serif !important; /*Bootstrap default font override*/
   --light-bg: 253, 253, 253;
-   --safe-height: 100vh; /* default fallback for height */
+  --safe-height: 100vh; /* default fallback for height */
 }
 @supports (height: 100svh) {
   :root {
@@ -53,7 +54,7 @@ hr.hr {
 input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
   appearance: textfield;
-  text-align: center; 
+  text-align: center;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

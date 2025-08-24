@@ -252,4 +252,7 @@ then we hanlde logout by callinng logoutUser() which has a api request that goes
 now we tweak signup to have same logic as login but a little different
 now we add a feature to authContext to be able to visit the website if user is loggd in then show that user is logged in on the wesbite. useEffect()
 now we fix the porblme of expired token . 
+expierd token is hanldeed by calling refersh for new access token. (refrsh strictmode caused problems calling /users/me twice causing problems in fetching /refersh and users/me when access token is expired but refrsh token is valid). this is only problem in devvelopment not production but we hanlded in dev by using a flag we created a ref variable and then when user effect run this gets true value , so it only allows one useEffect() run.
+
+now to profile fetching
 

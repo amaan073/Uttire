@@ -1,12 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState, useEffect } from "react";
-import publicAxios from "../api/publicAxios.js";
 import { toast } from "react-toastify";
 import { validateLoginForm } from "../utils/formValidators.js";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext.jsx";
 import { useContext } from "react";
+import sessionAxios from "../api/sessionAxios.js";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -41,9 +41,7 @@ const Login = () => {
     }
 
     try {
-      const res = await publicAxios.post("/users/login", formData, {
-        withCredentials: true, // important for httpOnly cookies
-      });
+      const res = await sessionAxios.post("/users/login", formData);
 
       try {
         await fetchUser(); // sets user in context if OK
