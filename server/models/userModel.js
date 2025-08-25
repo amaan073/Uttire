@@ -1,5 +1,14 @@
 import mongoose from "mongoose";
 
+const addressSchema = new mongoose.Schema({
+  street: { type: String, required: true },
+  city:   { type: String, required: true },
+  state:  { type: String, required: true },
+  zip:    { type: String, required: true },
+  country:{ type: String, required: true },
+  isDefault: { type: Boolean, default: false } //default address set
+}, { _id: true }); // allow each address to have an id
+
 const userSchema = new mongoose.Schema(
   {
     name: { 
@@ -20,10 +29,28 @@ const userSchema = new mongoose.Schema(
       type: String, 
       required: [true, "Password is required"], 
       minlength: [6, "Password must be at least 6 characters long"],
-      select : false
+      select: false
     },
-    refreshToken: { type: String, select: false, default : null, }
-  
+    refreshToken: { type: String, select: false, default: null },
+
+    //  Profile Information
+    profileImage: { type: String, default: "" }, // url or placeholder
+    phone: { type: String, default: "" },
+
+    //  Settings
+    accountPrivacy: { type: Boolean, default: true },
+    emailAlerts: { type: Boolean, default: true },
+    twoFactorAuth: { 
+      type: String, 
+      enum: ["off", "sms", "email", "app"], 
+      default: "off" 
+    },
+
+    //  Addresses
+    addresses: [addressSchema],  //subschema
+
+    lastLogin: { type: Date, default: Date.now },
+
   }, 
   { timestamps: true }
 );

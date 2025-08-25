@@ -254,5 +254,7 @@ now we add a feature to authContext to be able to visit the website if user is l
 now we fix the porblme of expired token . 
 expierd token is hanldeed by calling refersh for new access token. (refrsh strictmode caused problems calling /users/me twice causing problems in fetching /refersh and users/me when access token is expired but refrsh token is valid). this is only problem in devvelopment not production but we hanlded in dev by using a flag we created a ref variable and then when user effect run this gets true value , so it only allows one useEffect() run.
 
-now to profile fetching
+now we extend profile data
+1. first lets extender usermodel.js , add profile details and addresses and other settings etc in the user model. and we can create a subschema for address(since it has many data alone)
+2. after creteing the user model we send name, email and profile image(if available) for user from backend. and user <Avatar> component from MUI library to display the user prfolie pic, intials letters or if pfp is availabel then show profile pic.
 

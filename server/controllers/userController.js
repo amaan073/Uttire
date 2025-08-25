@@ -123,7 +123,7 @@ export const loginUser = async (req, res) => {
 // ========================= userInfo (getMe) =========================
 export const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("name email createdAt updatedAt");
+    const user = await User.findById(req.user.id).select("name email profileImage createdAt updatedAt");
 
 
     if (!user) {

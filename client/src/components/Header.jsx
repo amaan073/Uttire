@@ -5,6 +5,7 @@ import NavBtn from "./ui/NavBtn.jsx";
 import { NavLink } from "react-router-dom";
 import AuthContext from "../context/AuthContext.jsx";
 import { useContext } from "react";
+import UserAvatar from "../components/ui/UserAvatar.jsx";
 
 //ICONS
 import mainLogo from "../assets/uttireLogo.png";
@@ -135,7 +136,20 @@ const Header = () => {
                     setisAccountPopupVisible(!isAccountPopupVisible);
                   }}
                 >
-                  <AccountCircleIcon sx={{ height: "38px", width: "auto" }} />
+                  <div style={{ height: "38px", width: "38px" }}>
+                    {user ? (
+                      <div style={{ padding: "2.5px", height: "100%" }}>
+                        <UserAvatar
+                          user={user}
+                          sx={{ backgroundColor: "#d32f2f" }}
+                        />
+                      </div>
+                    ) : (
+                      <AccountCircleIcon
+                        sx={{ height: "100%", width: "100%" }}
+                      />
+                    )}
+                  </div>
                 </button>
                 <div
                   className={`account-popup position-absolute end-0 shadow-lg rounded-4 z-3 bg-body mt-3 text-center border p-3 ${
@@ -145,12 +159,18 @@ const Header = () => {
                   {user ? (
                     <div className="text-start" style={{ minWidth: "340px" }}>
                       <div className="d-flex align-items-center mb-3 gap-2 pe-3">
-                        <div style={{ width: "90px", height: "90px" }}>
-                          <AccountCircleIcon
+                        <div
+                          style={{
+                            width: "90px",
+                            height: "90px",
+                            padding: "10px",
+                          }}
+                        >
+                          <UserAvatar
+                            user={user}
                             sx={{
-                              height: "90px",
-                              width: "auto",
-                              color: "gray",
+                              fontSize: "30px",
+                              backgroundColor: "#d32f2f",
                             }}
                           />
                         </div>
