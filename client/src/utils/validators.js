@@ -23,3 +23,11 @@ export const isValidName = (name) => {
   const onlyLetters = /^[a-zA-Z\s]+$/.test(trimmed);
   return trimmed.length >= 2 && onlyLetters;
 };
+
+// ✅ Phone number validator
+export const isValidPhone = (phone) => {
+  const trimmed = phone.trim();
+  // Only digits, 10–15 characters (supports most international formats)
+  const phoneRegex = /^\+?[0-9]{10,15}$/;
+  return phoneRegex.test(trimmed);
+};

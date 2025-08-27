@@ -16,12 +16,17 @@ connectDB();
 
 const PORT = process.env.PORT || 4000;
 const app = express();
+// __dirname equivalent (because ES modules don’t have it)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser()); // ✅ parse cookies
+// static path for uploads inside server/
+app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // to make files inside uploads avaialble to be view by url (localhost:5000/upload/profile-pics/xx.jng)
+
+
 
 app.use(
   cors({

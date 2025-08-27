@@ -258,3 +258,65 @@ now we extend profile data
 1. first lets extender usermodel.js , add profile details and addresses and other settings etc in the user model. and we can create a subschema for address(since it has many data alone)
 2. after creteing the user model we send name, email and profile image(if available) for user from backend. and user <Avatar> component from MUI library to display the user prfolie pic, intials letters or if pfp is availabel then show profile pic.
 
+in the front end we recieve teh profile data and we display it in the profile.jsx using useEffect()
+
+now in profile.jsx we need the profile updating feature so we send name and phone no etc details to backend in router.put(/profile). to update the profile data. using findByIdAndUpdate for mongo and resendthe updated data to client so client can upate local variable of profile data. to show new data. we validate all input fields in bothclient and frontend.
+
+now we also need to be able to update profile picture. to upload profile picture we need multer middleware inn backend to handle multipart/data in backend
+in routes.js we create a storage config(variable) to explain to backend where to save filedata of profile coming from backend. like a folder named upload/profile picture in server files.(this is low level method to save image files in the server files it self but at advanced level we use cloud services to fetch the image from)
+in storage config we set destination and filenaming config to name the coming file from client as something 
+ then we specify 
+ const upload = multer({upload})
+ to use this upload we specify in the middlewaer as put("/endpoint", upload.single("profileImgae"), controllerFunction) 
+this line here is a middleware that means if client sends a file or a form field with "profileImage" name, this will upload a single file and let the controller handle the file.
+
+NOTE : _   If you deploy to a cloud (Heroku, Vercel, etc.), the uploads/ folder won’t persist between restarts. In production, you’d normally use a storage service (like AWS S3 Cloudinary, etc.).
+
+now in front end we handle the edit mode. in which there in inputs with a edit button on top of the profile image. we need to click it to trigger the whole process of profile image change
+after clicking the edit profile pencil icon button the computer shows fiel upload screen and after uploading file we need to show the preview in the place of the old profile image
+and then after saving the changes the backend saves the file in locacl or cloud storage in server side and then sends teh new profile
+
+Step-by-step plan (high level)
+
+Add a hidden <input type="file"> and a ref so your edit button can trigger it.
+
+Keep a selectedFile state to hold the chosen File object.
+
+Create a previewUrl using URL.createObjectURL(selectedFile) so you can display an immediate preview. Revoke that URL when it’s no longer needed.
+
+On submit, build a FormData object, append text fields and (if present) profileImage file. The field name must match your multer call on backend (we used "profileImage").
+
+Send privateAxios.put("/users/profile", formData, { headers: {"Content-Type":"multipart/form-data"} }).
+
+Disable the Save button while uploading, and update profile state with server response on success. Clean up preview and selectedFile.
+
+Why FormData?
+
+Because you’re uploading a file with other fields. FormData lets you send files and text in the same HTTP request using multipart/form-data. Multer on the server will populate req.file and req.body accordingly.
+
+
+now my process to use other divs in react instead of DOM manipulation we need to use useRef() and create a reference for the fileInput and we will be able to trigger and use the hidden image input after clicking the edit pencil button.
+you must be thinking that why not a make file input and make it clickable to pick files. but this is not good for styling. so professional use a button to trigger the hidden file input
+use button in label and hidden input
+and add the hidden input below it with same id for the label
+now after clicking label (or the penicl icon in disguise) should trigger the hidden file input (file picker client) and after picking file it should validate the file extensionn and file size) after the validation we need to creaet a state variable selectedFile and store the file in this variable.
+
+now after storing the image file in the selectedFile variable, we need to let the client see the preview so we create a previewUrl variable that holds the url( temporary) for the selected image file.
+we use useEffect() for creating, updating and clearing up after component mount, for previewUrl using createObjectURL, useEffect() was since objectURL creation is requires a api use here and also to clear up this object we need to useEffect() which replaced componentDidMount(), componentDidUpdate(), componentWillUnmount() , and these are required for handlign these side effects and also clearnin up. which is done by this syntax below:
+return () => { **clear up logic**}
+
+after this we show conditionally show new pfp using preview Url if it has non-null value .
+after this we handle cancle by clearing object url, preview url, selected file object .
+after this we handle submit by creating a new form data variable with FormData() api or constructor function because the normal json object is not able to hold raw binary data we have to use a enctype=multipart/form-data enabled form data which can done by creating a object with FormData() object so we can add image object url in this new multipart/form-data type form data object 
+
+Summary
+
+FormData is necessary when uploading files.
+
+.append() simulates how fields exist in a normal form submission.
+
+Text fields (name, phone) are appended so the backend gets them in the same request along with the file.
+
+The file is appended separately with the correct field name for Multer.
+
+

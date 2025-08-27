@@ -34,8 +34,8 @@ const userSchema = new mongoose.Schema(
     refreshToken: { type: String, select: false, default: null },
 
     //  Profile Information
-    profileImage: { type: String, default: "" }, // url or placeholder
-    phone: { type: String, default: "" },
+    profileImage: { type: String, default: "" },
+    phone: { type: String, default: "", match: [/^\+?[0-9]{10,15}$/, 'Please enter a valid phone number'] },
 
     //  Settings
     accountPrivacy: { type: Boolean, default: true },

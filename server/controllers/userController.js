@@ -120,23 +120,6 @@ export const loginUser = async (req, res) => {
   }
 }
 
-// ========================= userInfo (getMe) =========================
-export const getMe = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("name email profileImage createdAt updatedAt");
-
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.json({ user });
-  } catch (err) {
-    console.error("Error fetching user:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
 // ========================= REFRESH (rotation) =========================
 export const refreshAccessToken = async (req,res) => {
   const refreshToken = req.cookies.refreshToken;
@@ -195,5 +178,76 @@ export const logoutUser = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error during logout" });
+  }
+};
+
+
+
+// ========================= userInfo (getMe) =========================
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("name email profileImage createdAt updatedAt");
+
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    //sending full url for frontend to be able to use static folder /uploads of the server in the client
+    user.profileImage = `${req.protocol}://${req.get("host")}${user.profileImage}`;
+
+    res.json({ user });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ========================= Profile info (getProfile) =========================
+export const getProfile = async (req, res) => {
+  try {
+    // req.user is coming from protect middleware (decoded JWT)
+    const user = await User.findById(req.user.id).select("-password -refreshToken");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    //sending full url for frontend to be able to use static folder /uploads of the server in the client
+    user.profileImage = `${req.protocol}://${req.get("host")}${user.profileImage}`;
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error in getProfile:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ========================= Update Profile info (updateProfile) =========================
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, phone } = req.body; //form request body
+
+    const updateFields = { name, phone }; //fields to be updated
+
+    //This checks if the user uploaded a file in this request
+    //req.file is added by multer middleware automatically. It contains info of the file like req.file.filename here
+    if (req.file) {
+      updateFields.profileImage = `/uploads/profile-pics/${req.file.filename}`;
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: updateFields },  //merge new fields(updateFields) and also avoid messing
+      { new: true, runValidators: true }
+    ).select("-password -refreshToken");
+
+    //sending full url for frontend to be able to use static folder /uploads of the server in the client
+    user.profileImage = `${req.protocol}://${req.get("host")}${user.profileImage}`;
+
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 };

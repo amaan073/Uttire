@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import privateAxios from "../../api/privateAxios";
 
 import ProfileDetail from "../../components/ProfileDetail";
 import DemoTooltip from "../../components/ui/DemoTooltipButton";
@@ -12,6 +13,21 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const Profile = () => {
   const [mode, setMode] = useState("view"); //view, editProfile or changePassword
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data } = await privateAxios.get("/users/profile");
+        setProfile(data);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  if (!profile) return; //guard for profile fetching
 
   return (
     <>
@@ -23,7 +39,12 @@ const Profile = () => {
         }}
       >
         <div className="d-md-flex gap-3 mb-md-5 align-items-start">
-          <ProfileDetail mode={mode} setMode={setMode} />
+          <ProfileDetail
+            mode={mode}
+            setMode={setMode}
+            profile={profile}
+            setProfile={setProfile}
+          />
           {/*content right */}
           <div>
             {/* Account security */}
