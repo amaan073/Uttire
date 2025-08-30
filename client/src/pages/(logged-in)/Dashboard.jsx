@@ -75,24 +75,20 @@ const Dashboard = () => {
                     <SettingsIcon sx={{ fontSize: "26px" }} />
                     <span>Settings</span>
                   </h4>
-                  <div className="d-flex justify-content-between gap-4">
-                    <p className="text-nowrap fw-semibold">Account Privacy: </p>
-                    <div className="text-nowrap">
-                      Enabled <ExpandMore />
+                  <div className="pt-3">
+                    <div className="d-flex justify-content-between gap-4">
+                      <p className="text-nowrap fw-semibold">
+                        Account Privacy:{" "}
+                      </p>
+                      <div className="text-nowrap">
+                        Enabled <ExpandMore />
+                      </div>
                     </div>
-                  </div>
-                  <div className="d-flex justify-content-between gap-4">
-                    <p className="text-nowrap fw-semibold">Email alets: </p>
-                    <div className="text-nowrap">
-                      Disabled <ExpandMore />
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between gap-4">
-                    <p className="text-nowrap fw-semibold m-0">
-                      2-factor authentication:
-                    </p>
-                    <div className="text-nowrap">
-                      Not set <ExpandMore />
+                    <div className="d-flex justify-content-between gap-4">
+                      <p className="text-nowrap fw-semibold">Email alets: </p>
+                      <div className="text-nowrap">
+                        Disabled <ExpandMore />
+                      </div>
                     </div>
                   </div>
                 </div>

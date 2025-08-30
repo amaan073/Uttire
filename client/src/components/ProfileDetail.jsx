@@ -1,9 +1,10 @@
 import EditIcon from "@mui/icons-material/Edit";
 import UserAvatar from "../components/ui/UserAvatar";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
 import { isValidName, isValidPhone } from "../utils/validators";
+import AuthContext from "../context/AuthContext";
 
 /* eslint-disable react/prop-types */
 const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
@@ -15,6 +16,8 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
   const [previewUrl, setPreviewUrl] = useState(null); // object URL for preview
   const [loading, setLoading] = useState(false); // disable inputs while saving
   const [isChanged, setIsChanged] = useState(false); //to check user has made any changes yet
+
+  const { setUser } = useContext(AuthContext);
 
   // Sync form with profile when entering edit mode
   useEffect(() => {
@@ -109,7 +112,8 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
       setLoading(false);
       return false;
     }
-    if (!isValidPhone(formData.phone)) {
+    // phone input is optional and should only validate when the input is not empty
+    if (formData.phone.trim() !== "" && !isValidPhone(formData.phone)) {
       toast.error("Please enter a valid Phone no.");
       setLoading(false);
       return false;
@@ -131,6 +135,12 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
       });
 
       setProfile(data); //update local state with new data
+      // setting user globally (authContext)
+      setUser({
+        name: data.name,
+        email: data.email,
+        profileImage: data.profileImage,
+      });
       toast.success("Profile updated!");
       // cleanup preview object url (server returns the real image URL)
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -147,15 +157,13 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
 
   return (
     <div
-      className="text-center bg-white p-3 ps-4 rounded-3 border mx-auto mx-md-0 mb-3 mb-md-0"
-      style={{ width: "330px", minHeight: "350px" }}
+      className="text-center bg-white p-3 ps-4 rounded-3 mx-auto mx-md-0 mb-3 mb-md-0 shadow-sm py-4 w-100"
+      style={{ minWidth: "335px", maxWidth: "380px" }}
     >
-      <h5 className="fw-semibold text-start mb-3">Profile information</h5>
-
       {(mode == "view" || mode == "changePassword") && (
         <>
-          <div className="d-flex justify-content-center mb-2">
-            <div className="mb-1" style={{ height: "115px", width: "115px" }}>
+          <div className="d-flex justify-content-center mb-3">
+            <div className="mb-1" style={{ height: "162px", width: "162px" }}>
               <UserAvatar
                 user={profile}
                 sx={{ fontSize: "50px", backgroundColor: "#d32f2f" }}
@@ -200,7 +208,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
               <div className="d-flex justify-content-center">
                 <div
                   className="mb-1"
-                  style={{ height: "115px", width: "115px" }}
+                  style={{ height: "162px", width: "162px" }}
                 >
                   {/* show preview if user selected a file, otherwise show existing avatar */}
                   {previewUrl ? (
@@ -289,7 +297,10 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
                 disabled={loading}
               />
             </div>
-            <div className="form-group d-flex gap-2 w-100 mt-4">
+            <div
+              className="form-group d-flex gap-2 w-100 mt-4"
+              style={{ marginBottom: "-10px" }}
+            >
               <button
                 type="button"
                 className="btn btn-outline-danger w-100"

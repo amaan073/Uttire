@@ -15,6 +15,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (didCheck.current) return;
     didCheck.current = true;
+
     const checkUser = async () => {
       try {
         // Try access token first if available
@@ -78,7 +79,9 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, fetchUser, logoutUser, loading }}>
+    <AuthContext.Provider
+      value={{ user, setUser, fetchUser, logoutUser, loading }}
+    >
       {loading ? "" : children}
     </AuthContext.Provider>
   );
