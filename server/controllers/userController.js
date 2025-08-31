@@ -1,5 +1,5 @@
-import User from '../models/userModel.js';
-import bcrypt from 'bcryptjs';
+import User from "../models/userModel.js";
+import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
 import jwt from "jsonwebtoken";
@@ -19,25 +19,25 @@ const refreshTokenOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
-
 // ========================= REGISTER =========================
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-
     // Basic validation
     if (!name || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required' });
+      return res.status(400).json({ message: "All fields are required" });
     }
     if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
     }
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     // Hash password
@@ -62,7 +62,6 @@ export const registerUser = async (req, res) => {
     res.cookie("accessToken", accessToken, accessTokenOptions);
     res.cookie("refreshToken", refreshToken, refreshTokenOptions);
 
-
     res.status(200).json({
       user: {
         _id: user._id,
@@ -72,13 +71,13 @@ export const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({message: "Server error during sign up!"})
+    res.status(500).json({ message: "Server error during sign up!" });
   }
 };
 
 // ========================= LOGIN =========================
 export const loginUser = async (req, res) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
   try {
     // Check if user exists
@@ -106,7 +105,7 @@ export const loginUser = async (req, res) => {
     // Set cookies
     res.cookie("accessToken", accessToken, accessTokenOptions);
     res.cookie("refreshToken", refreshToken, refreshTokenOptions);
-    
+
     res.status(200).json({
       user: {
         _id: user._id,
@@ -114,49 +113,54 @@ export const loginUser = async (req, res) => {
         email: user.email,
       },
     });
-  } catch(error) {
+  } catch (error) {
     console.log(error);
-    res.status(500).json({message: "Server error during login"})
+    res.status(500).json({ message: "Server error during login" });
   }
-}
+};
 
 // ========================= REFRESH (rotation) =========================
-export const refreshAccessToken = async (req,res) => {
+export const refreshAccessToken = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
-    return res.status(401).json({message: "Refresh token required!"});
+    return res.status(401).json({ message: "Refresh token required!" });
   }
 
   try {
     const user = await User.findOne({ refreshToken });
-    if (!user) return res.status(403).json({ message: "Invalid refresh token" });  //to prevent attackers to use random stolen tokens
+    if (!user)
+      return res.status(403).json({ message: "Invalid refresh token" }); //to prevent attackers to use random stolen tokens
 
     // Verify (checks if the token is expired or tempered with)
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, async (err, decoded) => {
-      if (err || decoded.id !== user._id.toString()) {
-        user.refreshToken = null;
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+      async (err, decoded) => {
+        if (err || decoded.id !== user._id.toString()) {
+          user.refreshToken = null;
+          await user.save();
+          return res.status(403).json({ message: "Invalid refresh token" });
+        }
+
+        // Generate new tokens (rotation)
+        const newAccessToken = generateToken(user._id);
+        const newRefreshToken = generateRefreshToken(user._id);
+
+        user.refreshToken = newRefreshToken;
         await user.save();
-        return res.status(403).json({ message: "Invalid refresh token" });
+
+        // Reset cookies
+        res.cookie("accessToken", newAccessToken, accessTokenOptions);
+        res.cookie("refreshToken", newRefreshToken, refreshTokenOptions);
+
+        res.json({ message: "Token refreshed" });
       }
-
-      // Generate new tokens (rotation)
-      const newAccessToken = generateToken(user._id);
-      const newRefreshToken = generateRefreshToken(user._id);
-
-      user.refreshToken = newRefreshToken;
-      await user.save();
-
-      // Reset cookies
-      res.cookie("accessToken", newAccessToken, accessTokenOptions);
-      res.cookie("refreshToken", newRefreshToken, refreshTokenOptions);
-
-      res.json({ message: "Token refreshed" });
-    });
+    );
   } catch (error) {
     res.status(401).json({ message: "Invalid or expired refresh token" });
   }
-}
+};
 
 // ========================= LOGOUT =========================
 export const logoutUser = async (req, res) => {
@@ -181,13 +185,12 @@ export const logoutUser = async (req, res) => {
   }
 };
 
-
-
 // ========================= userInfo (getMe) =========================
 export const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("name email profileImage createdAt updatedAt");
-
+    const user = await User.findById(req.user.id).select(
+      "name email profileImage createdAt updatedAt"
+    );
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -207,7 +210,9 @@ export const getMe = async (req, res) => {
 export const getProfile = async (req, res) => {
   try {
     // req.user is coming from protect middleware (decoded JWT)
-    const user = await User.findById(req.user.id).select("-password -refreshToken");
+    const user = await User.findById(req.user.id).select(
+      "-password -refreshToken"
+    );
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -238,7 +243,7 @@ export const updateProfile = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { $set: updateFields },  //merge new fields(updateFields) and also avoid messing
+      { $set: updateFields }, //merge new fields(updateFields) and also avoid messing
       { new: true, runValidators: true }
     ).select("-password -refreshToken");
 
@@ -248,6 +253,131 @@ export const updateProfile = async (req, res) => {
     res.json(user);
   } catch (err) {
     console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ========================= Delete Account(deleteProfile) =========================
+export const deleteUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { password } = req.body; // req.user from protect middleware
+
+    if (!password) {
+      return res
+        .status(400)
+        .json({ message: "Password is required to delete account" });
+    }
+
+    const user = await User.findById(userId).select("+password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    //logout
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+
+    res.status(200).json({ message: "Account deleted successfully" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Something went wrong", error: err.message });
+  }
+};
+
+// ========================= Change User Password(changePassword) =========================
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id; // from JWT middleware
+    const { currentPassword, newPassword } = req.body;
+
+    // Check all fields
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    // Password rules
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    if (!passwordRegex.test(newPassword) || /\s/.test(newPassword)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 6 characters, include letters and numbers, and contain no spaces",
+      });
+    }
+
+    // Find user
+    const user = await User.findById(userId).select("+password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    // Hash and update new password
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Password updated successfully. Please log in again." });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// ========================= two factor auth toggle (dummy feature) =========================
+export const toggleTwoFactor = async (req, res) => {
+  try {
+    const { twoFactorAuth } = req.body;
+
+    // Validate request
+    const validOptions = ["off", "sms", "email", "app"];
+    if (!validOptions.includes(twoFactorAuth)) {
+      return res.status(400).json({ message: "Invalid twoFactorAuth option" });
+    }
+
+    // Find and update user
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.twoFactorAuth = twoFactorAuth;
+    await user.save();
+
+    res.status(200).json({
+      message: "Two-factor authentication updated",
+      twoFactorAuth: user.twoFactorAuth,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+//HomePage >>>>
+
+// ========================= fetch featured products for homepage (/api/products/featured) =========================
+export const getFeaturedProducts = async (req, res) => {
+  try {
+    const products = await Product.find(
+      { featured: true }, // only featured ones
+      "name price image description category" // only needed fields
+    ).limit(6); // fetch limited count
+
+    res.json(products);
+  } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };

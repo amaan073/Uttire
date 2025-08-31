@@ -319,4 +319,39 @@ Text fields (name, phone) are appended so the backend gets them in the same requ
 
 The file is appended separately with the correct field name for Multer.
 
+after completing the pfp change . we proceeded to delete account. we showed a confirmation modal with password checking feature and then allowed hitting delete /profile endpoint to delete 
+profile and show success modal when it was successful and redirect using windows.href to reload whole app.
+
+now we go to change password form , after clicking change password the form apppears. we need front end validate the form before submitting the data.
+after submitting data we need to create a /change-password POST endpoint handler to change password
+in the handler we need to do these
+Change Password Backend Flow
+
+Auth required → only logged-in users can hit this endpoint (/change-password).
+
+Input → oldPassword, newPassword, confirmPassword.
+
+Validate on backend:
+
+All fields present
+
+newPassword === confirmPassword
+
+Password strength (same rules as frontend: length, characters, no spaces)
+
+Verify old password against the stored hash (using bcrypt).
+
+Hash new password and update user in DB.
+
+Optional: Invalidate old refresh tokens → force re-login.
+
+Response → success message or error.
+
+
+after completeing profile page. we go to home page that requires a product model, product endpoints
+for products we need to download 25+ images from pexels.com and unsplash.com that gives free images. in put them in one folder
+
+after setting imagee sin public folder of server files , we need to expose them to localhost:5000 server port and in turn be able to use them in client side
+we must create or modify the product model to have featured product flag so we can displya featured products on homepage, just like this be able filter out based on gender, color, size, price range. and be able to apply but feature. we need to have certain properties in this model to do these featuers
+
 

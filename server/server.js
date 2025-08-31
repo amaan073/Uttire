@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
-import cookieParser from "cookie-parser";   
+import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 import connectDB from "./config/connectDB.js";
 import { notFound, errorHandler } from "./middlewares/errorMiddleware.js";
@@ -25,13 +25,13 @@ app.use(express.json());
 app.use(cookieParser()); // ✅ parse cookies
 // static path for uploads inside server/
 app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // to make files inside uploads avaialble to be view by url (localhost:5000/upload/profile-pics/xx.jng)
-
-
+// Serve public folder
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use(
   cors({
     origin: "http://localhost:5173", // frontend URL
-    credentials: true,               // ✅ send cookies
+    credentials: true, // ✅ send cookies
   })
 );
 
@@ -42,7 +42,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", userRoutes);
 
-
 /* If no route matched, notFound runs  (this must come after routes so when there is no route handler for a route that means 
  there is no route for that request so in the end notFound error middleware is executed and error hanlder middleware handles this*/
 app.use(notFound);
@@ -51,6 +50,4 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () =>
-  console.log(`🚀 server is running on port: ${PORT}`)
-);
+app.listen(PORT, () => console.log(`🚀 server is running on port: ${PORT}`));
