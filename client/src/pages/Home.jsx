@@ -122,7 +122,6 @@ const Home = () => {
             </div>
           )}
         </div>
-        <hr />
         {/* Newsletter subsciption */}
         <div className="card shadow-sm border-0 rounded-3 p-4 bg-light">
           <div className="card-body text-center">

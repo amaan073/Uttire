@@ -12,7 +12,7 @@ const Card = ({ product, className, style }) => {
 
   return (
     <div
-      className={`bg-white border rounded-3 shadow-sm d-flex flex-column ${className}`}
+      className={`bg-white border rounded-3 shadow-sm d-flex flex-column mb-4 mb-sm-0 ${className}`}
       style={{ cursor: "pointer", ...style }}
     >
       {/* Image */}
@@ -51,7 +51,7 @@ const Card = ({ product, className, style }) => {
         </div>
 
         {/* Price + Button */}
-        <div className="mt-auto d-flex justify-content-between align-items-center">
+        <div className="mt-auto d-flex justify-content-between align-items-center flex-wrap gap-2">
           <h5 className="text-danger fw-bold mb-0">
             ${discountedPrice}
             {product.discount > 0 && (
@@ -60,7 +60,7 @@ const Card = ({ product, className, style }) => {
               </small>
             )}
           </h5>
-          <button className="btn btn-dark btn-sm">
+          <button className="btn btn-dark btn-sm ms-auto">
             <ShoppingCartIcon fontSize="small" /> Add to cart
           </button>
         </div>

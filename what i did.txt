@@ -354,4 +354,8 @@ for products we need to download 25+ images from pexels.com and unsplash.com tha
 after setting imagee sin public folder of server files , we need to expose them to localhost:5000 server port and in turn be able to use them in client side
 we must create or modify the product model to have featured product flag so we can displya featured products on homepage, just like this be able filter out based on gender, color, size, price range. and be able to apply but feature. we need to have certain properties in this model to do these featuers
 
+after fetching the products we need to display them using <Card> premade <Card> component we gave it to chatgpt to enhance and display many more data on products card. then we fixed the newspaper we told chat gpt to design it . we need to go to shop page now
 
+on shop page we displayed data from endpoint /api/products/all. and displyaed the cards. we enhanced pagination desing with chat pgt.
+now we will do with filter bar
+we used the same backend endpoint for filter bar 
