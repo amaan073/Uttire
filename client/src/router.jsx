@@ -24,9 +24,6 @@ import Dashboard from "./pages/(logged-in)/Dashboard";
 //Private route wrapper
 import PrivateRoute from "./components/PrivateRoute";
 
-//Public route wrapper
-import PublicRoute from "./components/PublicRoute";
-
 //Pages - Admin
 import Admin from "./pages/Admin";
 
@@ -41,17 +38,10 @@ const router = createBrowserRouter([
       { path: "/shop", element: <Shop /> },
       { path: "/about", element: <About /> },
       { path: "/contact", element: <Contact /> },
-      { path: "/product", element: <ProductDetail /> },
+      { path: "/products/:id", element: <ProductDetail /> },
       { path: "/cart", element: <Cart /> },
-
-      //Public routes (so user dont access them through url when they are already logged in!)
-      {
-        element: <PublicRoute />, // Wrapper
-        children: [
-          { path: "/signup", element: <Signup /> },
-          { path: "/login", element: <Login /> },
-        ],
-      },
+      { path: "/signup", element: <Signup /> },
+      { path: "/login", element: <Login /> },
 
       // 🔒 Protected route wrapper (accessing these routes require going through PrivateRoute component first)
       {

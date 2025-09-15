@@ -4,7 +4,7 @@ import DemoTooltip from "./ui/DemoTooltip";
 
 function PaymentMethods() {
   return (
-    <Card className="p-4 shadow-sm rounded-3 mb-3 border-0">
+    <Card className="p-4 shadow-sm rounded-3 mb-3 border">
       <h5 className="mb-3 fw-semibold ">Payment methods</h5>
 
       <ListGroup variant="flush">

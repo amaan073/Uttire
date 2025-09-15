@@ -196,42 +196,15 @@ input[type="range"]::-webkit-slider-thumb {
 
 <--
 */
-
-.star-rating input[type="radio"] {
-  display: none;
+.product-image-wrap {
+  background: #f8f9fa; /* neutral fill (can be brand color) */
+  border-radius: 0.75rem;
 }
 
-.star-rating label {
-  text-shadow: 0px 0px 3px BLACK;
-  border: thick;
-  color: white;
-  transition: color 0.2s;
-  cursor: pointer;
-}
-
-.star-rating input:checked ~ label,
-.star-rating label:hover,
-.star-rating label:hover ~ label {
-  color: gold;
-}
-
-.card-scroll-container::-webkit-scrollbar {
-  height: 3px;
-}
-
-.card-scroll-container::-webkit-scrollbar-track {
-  display: none;
-}
-
-.card-scroll-container::-webkit-scrollbar-thumb {
-  background-color: #999;
-  border-radius: 4px;
-  cursor: pointer;
-}
-@media screen and (max-width: 576px) {
-  .card-scroll-container::-webkit-scrollbar {
-    height: 10px;
-  }
+.product-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* keep square intact */
 }
 
 .arrow-indicator {

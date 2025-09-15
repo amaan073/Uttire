@@ -1,10 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { validateSignupForm } from "../utils/formValidators.js";
 import AuthContext from "../context/AuthContext.jsx";
 import sessionAxios from "../api/sessionAxios.js";
+import { Spinner } from "react-bootstrap";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -16,15 +17,12 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const { user, fetchUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  //getting the current route pathname (the page user was on) if not available then "/" homepage
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/"; // will use this to redirect user back to the protected route they tried to access while being not logged in, after login this takes them back to the proctected route
 
   useEffect(() => {
     if (user) {
-      navigate(from, { replace: true });
+      navigate("/profile", { replace: true });
     }
-  }, [user, navigate, from]);
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,6 +52,7 @@ const Signup = () => {
         toast.success(
           `Signup successful! Welcome aboard${res.data?.user?.name ? ", " + res.data.user.name : ""}! 🙌`
         );
+        // after this when the user gets populated the navigation will be handled by useEffect() in above
       } catch {
         toast.info("Signup successful. Please login to continue.");
         navigate("/login");
@@ -76,6 +75,19 @@ const Signup = () => {
       setLoading(false);
     }
   };
+
+  // prevent user to access signup page after they have already been logged in and redirect to homepage handled by useEffect() as it sees user is populated
+  if (user)
+    return (
+      <div
+        className="min-vh-100 d-flex justify-content-center align-items-center"
+        style={{ marginTop: "-83px" }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
 
   return (
     <div

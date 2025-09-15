@@ -3,6 +3,7 @@ import AuthContext from "./AuthContext.jsx";
 import privateAxios from "../api/privateAxios.js";
 import sessionAxios from "../api/sessionAxios.js";
 import { toast } from "react-toastify";
+import { Spinner } from "react-bootstrap";
 
 // eslint-disable-next-line react/prop-types
 const AuthProvider = ({ children }) => {
@@ -82,7 +83,15 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{ user, setUser, fetchUser, logoutUser, loading }}
     >
-      {loading ? "" : children}
+      {loading ? (
+        <div className="min-vh-100 d-flex justify-content-center align-items-center">
+          <Spinner animation="border" role="status" variant="primary">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   name: { type: String },
   rating: { type: Number },
   comment: { type: String },
@@ -20,8 +21,8 @@ const productSchema = new mongoose.Schema(
     quantity: { type: Number, default: 1 },
     image: { type: String },
     category: { type: String }, // T-Shirts, Hoodies, etc
-    gender: { type: String, enum: ["Men", "Women", "Unisex"] }, // ✅ new
-    color: { type: String }, // ✅ new
+    gender: { type: String, enum: ["Men", "Women", "Unisex"] },
+    color: { type: String },
     featured: { type: Boolean, default: false },
     freeShipping: { type: Boolean, default: false },
     easyReturns: { type: Boolean, default: false },

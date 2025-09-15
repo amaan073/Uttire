@@ -5,7 +5,7 @@ import sessionAxios from "../../api/sessionAxios";
 
 import ProfileDetail from "../../components/ProfileDetail";
 import DeleteAccountModal from "../../components/DeleteAccountModal";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Spinner } from "react-bootstrap";
 import ChangePasswordForm from "../../components/ChangePasswordForm";
 import { toast } from "react-toastify";
 import TwoFactorDemo from "../../components/TwoFactorDemo";
@@ -23,6 +23,7 @@ const Profile = () => {
   //after successful deletion message show in modal
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -31,6 +32,8 @@ const Profile = () => {
         setProfile(data);
       } catch (error) {
         console.error("Error fetching profile:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProfile();
@@ -95,7 +98,17 @@ const Profile = () => {
     }
   };
 
-  if (!profile) return; //guard for profile fetching
+  if (loading)
+    return (
+      <div
+        className="min-vh-100 d-flex justify-content-center align-items-center"
+        style={{ marginTop: "-83px" }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
 
   return (
     <>
@@ -176,7 +189,7 @@ const Profile = () => {
           {/*content right */}
           <div style={{ maxWidth: "460px" }}>
             {/* Account security */}
-            <div className="bg-white p-4 rounded-3 mb-3 shadow-sm">
+            <div className="bg-white p-4 rounded-3 mb-3 shadow-sm border">
               {mode == "changePassword" ? (
                 <>
                   <ChangePasswordForm

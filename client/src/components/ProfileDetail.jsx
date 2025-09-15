@@ -157,7 +157,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
 
   return (
     <div
-      className="text-center bg-white p-3 ps-4 rounded-3 mx-auto mx-md-0 mb-3 mb-md-0 shadow-sm py-4 w-100"
+      className="text-center bg-white p-3 ps-4 rounded-3 mx-auto mx-md-0 mb-3 mb-md-0 shadow-sm py-4 w-100 border"
       style={{ minWidth: "335px", maxWidth: "380px" }}
     >
       {(mode == "view" || mode == "changePassword") && (

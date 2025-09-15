@@ -12,6 +12,10 @@
   }
 }
 
+html {
+  scroll-behavior: auto !important;
+}
+
 body,
 .light-bg {
   background-color: rgb(var(--light-bg)) !important;

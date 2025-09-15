@@ -359,3 +359,19 @@ after fetching the products we need to display them using <Card> premade <Card> 
 on shop page we displayed data from endpoint /api/products/all. and displyaed the cards. we enhanced pagination desing with chat pgt.
 now we will do with filter bar
 we used the same backend endpoint for filter bar 
+now the pagination using page and limit queyr for the same product endpoint.
+we implemented urlparams update when making any query requet so the query shows on URL which is needed for bookmarking, sharing url etc.
+
+now to product detail page.
+
+we first need to add /:id to the /products router link in router.js so it can get the id value from the url and useParams() can fetch the id value so we can use it so fetch product from backend using the product id .
+
+now we fetch product data from backend using useEffect() in the forntend productsDetail.jsx and insert it the product details page
+we need to hanlde review form
+
+when user is not logged in we need to send them to login page and redirect them when the user is logged for that we need to add a query paramter to the login naviagation and then in turn use that querys url to fetch the previous pages url and send user back to that page when user is successfully logged in.
+the redirect is bypassed by the public route guard for login and signup pages which we need to handle because as sson as the user populates the public route guard kicks and redirect to homepage(this was done so client cant access login and signup pages while being loggged in already)
+
+i removed Public Route guard and applied user context check in login and signup.jsx to redirect user if they are already logged in
+
+

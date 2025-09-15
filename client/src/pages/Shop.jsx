@@ -106,8 +106,11 @@ const Shop = () => {
     });
     fetchProducts(1); // reset to page 1 when filters change
     setIsFilterOpen(false); // small screen
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // makes it smooth
+    });
   };
-
   const clearFilters = () => {
     setSelectedGenders([]);
     setSelectedSizes([]);
@@ -116,6 +119,10 @@ const Shop = () => {
     setMaxPrice(100); // reset to default
     setCurrentPage(1);
     setIsFilterOpen(false);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // makes it smooth
+    });
 
     // Reset applied filters too
     setAppliedFilters({

@@ -53,7 +53,7 @@ const Home = () => {
         style={{ maxWidth: "1600px" }}
       >
         <div className="home-header py-3">
-          <h1 className="main-logo-txt">Uttire</h1>
+          <h1 className="main-logo-txt pt-3">Uttire</h1>
           <p
             className="my-2 mx-auto px-3"
             style={{ fontSize: "min(1.1rem,4vw)", color: "#fdf3e7db" }}

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext.jsx";
 import { useContext } from "react";
 import sessionAxios from "../api/sessionAxios.js";
+import { Spinner } from "react-bootstrap";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -14,9 +15,9 @@ const Login = () => {
 
   const { user, fetchUser } = useContext(AuthContext);
 
-  //getting the current route pathname (the page user was on) if not available then "/" homepage
+  // getting the current route pathname (the page user was on) if not available then "/" homepage
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/"; // will use this to redirect user back to the protected route they tried to access while being not logged in, after login this takes them back to the proctected route
+  const from = location.state?.from?.pathname || "/"; // this comes from state object from private route guard logic which navigate us back to the protected route the non logged in user was trying to access , we can use this to again redirect user back to their main target
 
   const navigate = useNavigate();
 
@@ -46,8 +47,9 @@ const Login = () => {
       try {
         await fetchUser(); // sets user in context if OK
         toast.success(`Welcome back, ${res.data?.user?.name ?? "User"}!`);
-        // eslint-disable-next-line no-unused-vars
+        // after this when the user gets populated the navigation will be handled by useEffect() in above
       } catch (err) {
+        console.log(err);
         toast.error("Login failed. Please try again.");
       }
     } catch (e) {
@@ -68,6 +70,19 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  // prevent user to access signup page after they have already been logged in and redirect to homepage handled by useEffect() as it sees user is populated
+  if (user)
+    return (
+      <div
+        className="min-vh-100 d-flex justify-content-center align-items-center"
+        style={{ marginTop: "-83px" }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
 
   return (
     <div

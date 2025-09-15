@@ -1,8 +1,9 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { Outlet, ScrollRestoration } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import ScrollToTop from "./utils/ScrollToTop";
 
 //react toastify
 import { ToastContainer } from "react-toastify";
@@ -12,6 +13,7 @@ const App = () => {
   return (
     <>
       <Header />
+      <ScrollToTop />
       <main style={{ marginTop: "82px" }}>
         <Outlet />
       </main>
@@ -24,7 +26,6 @@ const App = () => {
         closeOnClick
         pauseOnHover
       />
-      <ScrollRestoration />
     </>
   );
 };
