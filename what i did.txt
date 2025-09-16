@@ -374,4 +374,6 @@ the redirect is bypassed by the public route guard for login and signup pages wh
 
 i removed Public Route guard and applied user context check in login and signup.jsx to redirect user if they are already logged in
 
+now to cart feature. first we handle redirect for non logged in user and user logged in for the cart icon in the header. now we need to crate a separeate cart context for this feature.
 
+modified the authcontext and cartcontext to only exposethe loading variable and use this loading variable in the root component to show a loadinng combined for both contexts. thsi way there is only 1 loading animation for both context before app loads.

@@ -12,6 +12,16 @@ const addressSchema = new mongoose.Schema(
   { _id: true }
 ); // allow each address to have an id
 
+const cartItemSchema = new mongoose.Schema({
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  },
+  size: { type: String, required: true },
+  quantity: { type: Number, default: 1 },
+});
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -55,6 +65,9 @@ const userSchema = new mongoose.Schema(
 
     //  Addresses
     addresses: [addressSchema], //subschema
+
+    // 🛒 Cart
+    cart: [cartItemSchema],
 
     lastLogin: { type: Date, default: Date.now },
   },

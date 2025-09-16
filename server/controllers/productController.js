@@ -5,8 +5,7 @@ import mongoose from "mongoose";
 export const getFeaturedProducts = async (req, res) => {
   try {
     const products = await Product.find(
-      { featured: true }, // only featured ones
-      "name price image description category brand discount" // only needed fields
+      { featured: true } // only featured ones
     ).limit(8); // fetch limited count
 
     res.json(products);
