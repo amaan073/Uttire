@@ -4,10 +4,12 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import publicAxios from "../api/publicAxios";
+import { useNavigate } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
 const RelatedProducts = ({ category, excludeId }) => {
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!category) return;
@@ -53,7 +55,10 @@ const RelatedProducts = ({ category, excludeId }) => {
 
           return (
             <SwiperSlide key={product._id}>
-              <div className="bg-white border rounded shadow-sm p-2 h-100 d-flex flex-column">
+              <div
+                className="bg-white border rounded shadow-sm p-2 h-100 d-flex flex-column cursor-pointer"
+                onClick={() => navigate(`/products/${product._id}`)}
+              >
                 <div
                   className="position-relative w-100"
                   style={{ aspectRatio: "1/1", overflow: "hidden" }}
@@ -91,10 +96,10 @@ const RelatedProducts = ({ category, excludeId }) => {
                   {product.discount > 0 ? (
                     <p className="mb-0">
                       <span className="text-danger fw-bold">
-                        ₹{discountedPrice}
+                        ${discountedPrice}
                       </span>{" "}
                       <span className="text-muted text-decoration-line-through small">
-                        ₹{product.price.toFixed(2)}
+                        ${product.price.toFixed(2)}
                       </span>
                     </p>
                   ) : (

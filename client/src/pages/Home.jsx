@@ -116,7 +116,7 @@ const Home = () => {
                 <Card
                   key={product._id}
                   product={product}
-                  className="text-start text-sm-center d-sm-block mb-4 mb-sm-0"
+                  className="text-start text-sm-center mb-4 mb-sm-0"
                 />
               ))}
             </div>

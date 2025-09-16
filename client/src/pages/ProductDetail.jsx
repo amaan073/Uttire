@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import StarRating from "../components/ui/StarRating";
 import DemoTooltip from "../components/ui/DemoTooltip";
 import ReviewSection from "../components/ReviewSection";
@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import { Spinner } from "react-bootstrap";
 import publicAxios from "../api/publicAxios";
+import CartContext from "../context/CartContext";
+import { toast } from "react-toastify";
+import AuthContext from "../context/AuthContext";
 
 const ProductDetail = () => {
   const { id } = useParams(); // URL param
@@ -20,9 +23,17 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // state
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState();
+
+  const { user } = useContext(AuthContext);
+
+  // add to cart feature
+  const { addToCart } = useContext(CartContext);
+  const [adding, setAdding] = useState(false); // adding to cart process feadback
 
   const averageRating = product?.reviews?.length
     ? product.reviews.reduce((sum, review) => sum + review.rating, 0) /
@@ -53,6 +64,9 @@ const ProductDetail = () => {
 
   useEffect(() => {
     fetchProduct();
+    // reset states when product changes
+    setQuantity(1);
+    setSelectedSize(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -67,6 +81,27 @@ const ProductDetail = () => {
       requestAnimationFrame(scrollToHash);
     }
   }, [location]);
+
+  // add to cart handler
+  const handleAddToCart = async () => {
+    if (!user) {
+      toast.info("Please login first");
+      return navigate("/login");
+    }
+    if (!selectedSize) return toast.error("Please select a size");
+    try {
+      setAdding(true);
+      addToCart({
+        productId: product._id,
+        size: selectedSize,
+        quantity,
+      });
+    } catch (err) {
+      console.error("Add to cart failed:", err);
+    } finally {
+      setAdding(false);
+    }
+  };
 
   if (loading)
     return (
@@ -147,13 +182,19 @@ const ProductDetail = () => {
           {/* Sizes */}
           <div className="mb-3">
             <h6>Size</h6>
-            <div className="d-flex gap-2">
-              {["S", "M", "L", "XL"].map((s) => (
+            <div className="d-flex gap-2 align-items-center">
+              {product.sizes.map((size) => (
                 <button
-                  key={s}
-                  className="btn btn-outline-dark rounded-3 px-3 py-1"
+                  key={size}
+                  className={`btn rounded-3 px-3 py-1 ${
+                    selectedSize === size
+                      ? "btn-dark text-white"
+                      : "btn-outline-dark"
+                  }`}
+                  onClick={() => setSelectedSize(size)}
+                  disabled={product?.stock === 0}
                 >
-                  {s}
+                  {size}
                 </button>
               ))}
             </div>
@@ -207,10 +248,20 @@ const ProductDetail = () => {
           <div className="d-flex flex-wrap gap-2 mb-3">
             <button
               className="btn btn-primary d-flex align-items-center gap-2"
-              disabled={product?.stock === 0}
+              disabled={product?.stock === 0 || adding}
+              onClick={handleAddToCart}
             >
-              <ShoppingCartIcon size={18} /> Add to Cart
+              {adding ? (
+                <>
+                  <Spinner animation="border" size="sm" /> Adding...
+                </>
+              ) : (
+                <>
+                  <ShoppingCartIcon size={18} /> Add to Cart
+                </>
+              )}
             </button>
+
             <button
               to="/checkout"
               className="btn btn-success d-flex align-items-center gap-2"
@@ -220,9 +271,10 @@ const ProductDetail = () => {
             </button>
           </div>
 
+          {/* Shipping & Returns Flags */}
           <div className="d-flex flex-wrap gap-3">
-            <span>✅ Free Shipping</span>
-            <span>✅ Easy Returns</span>
+            {product.freeShipping && <span>✅ Free Shipping</span>}
+            {product.easyReturns && <span>✅ Easy Returns</span>}
           </div>
         </div>
       </div>

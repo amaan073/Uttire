@@ -16,6 +16,8 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import GridViewIcon from "@mui/icons-material/GridView";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EmailWithTooltip from "../components/ui/EmailWithTooltip.jsx";
+import { toast } from "react-toastify";
+import CartContext from "../context/CartContext.jsx";
 
 const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false); //search bar open and close in small screens
@@ -25,6 +27,7 @@ const Header = () => {
 
   //checking if user is logged in or not (has value or null)
   const { user, logoutUser } = useContext(AuthContext);
+  const { cart } = useContext(CartContext);
 
   const navigate = useNavigate();
 
@@ -116,17 +119,23 @@ const Header = () => {
             </button>
 
             <div className="text-end">
-              <Link to="/cart">
-                <button
-                  type="button"
-                  className="cart btn p-0 ms-0 me-2 mx-lg-2 border-0 position-relative"
-                >
-                  <ShoppingCartIcon sx={{ height: "38px", width: "auto" }} />
-                  <div className="cart-count bg-warning" data-count="0">
-                    0
-                  </div>
-                </button>
-              </Link>
+              <button
+                type="button"
+                className="cart btn p-0 ms-0 me-2 mx-lg-2 border-0 position-relative"
+                onClick={() => {
+                  if (!user) {
+                    toast.info("Please log in to view your cart");
+                    navigate("/login");
+                    return;
+                  }
+                  navigate("/cart");
+                }}
+              >
+                <ShoppingCartIcon sx={{ height: "38px", width: "auto" }} />
+                {user && (
+                  <div className="cart-count bg-warning">{cart.length}</div>
+                )}
+              </button>
 
               <div className="account-box position-relative d-inline-block">
                 <button

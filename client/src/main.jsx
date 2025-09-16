@@ -1,15 +1,17 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
-import router from "./router.jsx";
 import "./index.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import AuthProvider from "./context/AuthProvider.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import { CartProvider } from "./context/CartContext.jsx";
+import AppWrapper from "./wrappers/AppWrapper.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <CartProvider>
+        <AppWrapper />
+      </CartProvider>
     </AuthProvider>
   </StrictMode>
 );

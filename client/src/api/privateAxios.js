@@ -17,13 +17,13 @@ privateAxios.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; // avoid infinite loop of sending refresh requests
 
-      //to avoid multiple requests if for example user visits the site initially on /orders tab this causes 2 /users/me and /ordrs both will cause this interceptor to send 2 api requsts for /refresh if access token is expired
+      //to avoid multiple requests if for example user visits the site initially on for example /orders tab this causes 2 /users/me and /ordrs both will cause this interceptor to send 2 api requsts for /refresh if access token is expired
       if (!isRefreshing) {
         isRefreshing = true;
         //refresh token process
         try {
           // Call refresh endpoint (cookies handle auth)
-          await axios.post("/api/users/refresh", {} , { withCredentials: true });  //using POST for semantic reasons(server state change)
+          await axios.post("/api/users/refresh", {}, { withCredentials: true }); //using POST for semantic reasons(server state change)
 
           // Retry the original request
           return privateAxios(originalRequest);
