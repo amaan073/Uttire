@@ -2,7 +2,7 @@ import { ShoppingCart as ShoppingCartIcon } from "lucide-react";
 import StarIcon from "@mui/icons-material/Star";
 import { useNavigate } from "react-router-dom";
 import { useState, useContext } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Spinner } from "react-bootstrap";
 import CartContext from "../../context/CartContext";
 import { toast } from "react-toastify";
 import AuthContext from "../../context/AuthContext";
@@ -12,6 +12,7 @@ const Card = ({ product, className, style }) => {
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
+  const [adding, setAdding] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
@@ -30,6 +31,7 @@ const Card = ({ product, className, style }) => {
     }
     if (!selectedSize) return toast.error("Please select a size");
     try {
+      setAdding(true);
       await addToCart({
         productId: product._id,
         size: selectedSize,
@@ -38,7 +40,9 @@ const Card = ({ product, className, style }) => {
       setShowModal(false);
       setSelectedSize("");
     } catch (err) {
-      console.error(err);
+      console.error("Add to cart failed:", err);
+    } finally {
+      setAdding(false);
     }
   };
 
@@ -126,11 +130,25 @@ const Card = ({ product, className, style }) => {
                 ))}
               </Modal.Body>
               <Modal.Footer className="d-flex flex-wrap gap-2 justify-content-center">
-                <Button variant="secondary" onClick={() => setShowModal(false)}>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowModal(false)}
+                  disabled={adding}
+                >
                   Cancel
                 </Button>
-                <Button variant="dark" onClick={handleAddToCart}>
-                  Add to Cart
+                <Button
+                  variant="dark"
+                  onClick={handleAddToCart}
+                  disabled={adding}
+                >
+                  {adding ? (
+                    <>
+                      <Spinner animation="border" size="sm" /> Adding...
+                    </>
+                  ) : (
+                    "Add to Cart"
+                  )}
                 </Button>
               </Modal.Footer>
             </div>

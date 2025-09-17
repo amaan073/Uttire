@@ -91,7 +91,7 @@ const ProductDetail = () => {
     if (!selectedSize) return toast.error("Please select a size");
     try {
       setAdding(true);
-      addToCart({
+      await addToCart({
         productId: product._id,
         size: selectedSize,
         quantity,

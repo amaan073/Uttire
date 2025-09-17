@@ -11,7 +11,6 @@ import Shop from "./pages/Shop";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 
@@ -20,6 +19,7 @@ import Checkout from "./pages/(logged-in)/Checkout";
 import OrderSuccess from "./pages/(logged-in)/OrderSuccess";
 import Profile from "./pages/(logged-in)/Profile";
 import Dashboard from "./pages/(logged-in)/Dashboard";
+import Cart from "./pages/(logged-in)/Cart";
 
 //Private route wrapper
 import PrivateRoute from "./components/PrivateRoute";
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
       { path: "/about", element: <About /> },
       { path: "/contact", element: <Contact /> },
       { path: "/products/:id", element: <ProductDetail /> },
-      { path: "/cart", element: <Cart /> },
+
       { path: "/signup", element: <Signup /> },
       { path: "/login", element: <Login /> },
 
@@ -51,6 +51,7 @@ const router = createBrowserRouter([
           { path: "/order-success", element: <OrderSuccess /> },
           { path: "/profile", element: <Profile /> },
           { path: "/dashboard", element: <Dashboard /> },
+          { path: "/cart", element: <Cart /> },
         ],
       },
     ],

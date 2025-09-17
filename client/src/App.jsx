@@ -21,7 +21,7 @@ const App = () => {
       <ToastContainer
         position="top-right"
         style={{ marginTop: "82px" }}
-        autoClose={3000}
+        autoClose={2000}
         newestOnTop={true}
         closeOnClick
         pauseOnHover
