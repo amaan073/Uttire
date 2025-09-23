@@ -168,7 +168,6 @@ export const getProductReviews = async (req, res) => {
 // ========================= get related products  =========================
 export const getRelatedProducts = async (req, res) => {
   try {
-    console.log(req.query);
     const { category, exclude, limit = 8 } = req.query;
 
     const filter = { category };

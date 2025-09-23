@@ -103,6 +103,25 @@ const ProductDetail = () => {
     }
   };
 
+  const handleBuyNow = () => {
+    if (!user) {
+      toast.info("Please login first");
+      return navigate("/login");
+    }
+    if (!selectedSize) return toast.error("Please select a size");
+
+    navigate(`/products/${product._id}/checkout`, {
+      state: {
+        size: selectedSize,
+        quantity: quantity,
+        name: product.name,
+        image: product.image,
+        discount: product.discount,
+        price: product.price,
+      },
+    });
+  };
+
   if (loading)
     return (
       <div
@@ -143,7 +162,7 @@ const ProductDetail = () => {
         {/* Image */}
         <div className="product-image-wrap col-md-6 col-xl-5 d-flex justify-content-center align-items-center overflow-hidden shadow-sm">
           <img
-            src={`http://localhost:5000/public/${product.image}`}
+            src={`http://localhost:5000/public${product.image}`}
             alt={product.name}
             loading="eager"
           />
@@ -263,9 +282,9 @@ const ProductDetail = () => {
             </button>
 
             <button
-              to="/checkout"
               className="btn btn-success d-flex align-items-center gap-2"
               disabled={product?.stock === 0}
+              onClick={handleBuyNow}
             >
               <ShoppingBagIcon size={18} /> Buy Now
             </button>

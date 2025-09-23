@@ -5,10 +5,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import CartContext from "../../context/CartContext";
 import DemoTooltip from "../../components/ui/DemoTooltip.jsx";
+import { toast } from "react-toastify";
+import AuthContext from "../../context/AuthContext.jsx";
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart, error } =
     useContext(CartContext);
+  const { user } = useContext(AuthContext);
   const [updatingItem, setUpdatingItem] = useState(null); // track which item is updating quanitity
   const [removingItem, setRemovingItem] = useState(null);
   const navigate = useNavigate();
@@ -17,7 +20,12 @@ const Cart = () => {
     return discount > 0 ? price - (price * discount) / 100 : price;
   };
 
-  // Calculate subtotal
+  // without discont total of cart items
+  const originalTotal = cart.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0
+  );
+  // Calculate subtotal (discounted)
   const subtotal = cart.reduce(
     (acc, item) =>
       acc +
@@ -25,6 +33,11 @@ const Cart = () => {
         item.quantity,
     0
   );
+  const savings = originalTotal - subtotal;
+
+  const BASE_SHIPPING = 5;
+
+  const total = subtotal + BASE_SHIPPING; // SHIPPING CHARGES INCLUDED
 
   const handleQuantityChange = async (itemId, newQuantity) => {
     setUpdatingItem(itemId);
@@ -44,6 +57,14 @@ const Cart = () => {
     } finally {
       setRemovingItem(null); // ✅ reset regardless of success or error
     }
+  };
+
+  const handleCheckout = () => {
+    if (!user) {
+      toast.info("Please login first");
+      return navigate("/login");
+    }
+    navigate("/cart/checkout");
   };
 
   if (error) {
@@ -258,24 +279,30 @@ const Cart = () => {
                 <DemoTooltip>
                   <span className="text-muted">Shipping</span>
                 </DemoTooltip>
-                <span className="fw-semibold">Free</span>
+                <span className="fw-semibold">${BASE_SHIPPING}</span>
               </div>
+              {savings > 0 && (
+                <div className="d-flex justify-content-between text-success mb-3">
+                  <span>You saved</span>
+                  <span>${savings.toFixed(2)}</span>
+                </div>
+              )}
 
               <hr className="hr" />
 
               <div className="d-flex justify-content-between align-items-center my-3">
                 <span className="fw-bold fs-5">Total</span>
                 <span className="fw-bold fs-4 text-success">
-                  ${subtotal.toFixed(2)}
+                  ${total.toFixed(2)}
                 </span>
               </div>
 
-              <Link
-                to="/checkout"
+              <button
                 className="btn btn-success w-100 fw-semibold py-2 rounded-pill"
+                onClick={handleCheckout}
               >
                 Proceed to Checkout
-              </Link>
+              </button>
             </div>
           </div>
         </div>

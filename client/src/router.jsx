@@ -15,7 +15,8 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 
 //Pages - Private
-import Checkout from "./pages/(logged-in)/Checkout";
+import DirectCheckout from "./pages/(logged-in)/checkout/DirectCheckout";
+import CartCheckout from "./pages/(logged-in)/checkout/CartCheckout";
 import OrderSuccess from "./pages/(logged-in)/OrderSuccess";
 import Profile from "./pages/(logged-in)/Profile";
 import Dashboard from "./pages/(logged-in)/Dashboard";
@@ -47,7 +48,8 @@ const router = createBrowserRouter([
       {
         element: <PrivateRoute />,
         children: [
-          { path: "/checkout", element: <Checkout /> },
+          { path: "/products/:id/checkout", element: <DirectCheckout /> },
+          { path: "/cart/checkout", element: <CartCheckout /> },
           { path: "/order-success", element: <OrderSuccess /> },
           { path: "/profile", element: <Profile /> },
           { path: "/dashboard", element: <Dashboard /> },

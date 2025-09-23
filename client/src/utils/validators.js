@@ -9,7 +9,7 @@ export const isValidPassword = (password) => {
   const hasNumber = /\d/.test(password);
   const noSpaces = !/\s/.test(password); // Disallow any whitespace
 
-  return minLength && hasLetter && hasNumber && noSpaces;    //return true if all of them true
+  return minLength && hasLetter && hasNumber && noSpaces; //return true if all of them true
 };
 
 export function isValidLoginPassword(password) {
@@ -18,7 +18,7 @@ export function isValidLoginPassword(password) {
 }
 
 export const isValidName = (name) => {
-   // Only letters, at least 2 characters
+  // Only letters, at least 2 characters
   const trimmed = name.trim();
   const onlyLetters = /^[a-zA-Z\s]+$/.test(trimmed);
   return trimmed.length >= 2 && onlyLetters;
@@ -30,4 +30,9 @@ export const isValidPhone = (phone) => {
   // Only digits, 10–15 characters (supports most international formats)
   const phoneRegex = /^\+?[0-9]{10,15}$/;
   return phoneRegex.test(trimmed);
+};
+
+export const isValidZip = (zip) => {
+  const trimmed = zip.trim();
+  return /^\d{4,10}$/.test(trimmed);
 };
