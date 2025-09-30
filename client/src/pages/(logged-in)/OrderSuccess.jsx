@@ -1,41 +1,125 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import privateAxios from "../../api/privateAxios";
+import { Spinner } from "react-bootstrap";
 
 const OrderSuccess = () => {
-  return (
-    <>
+  const { orderId } = useParams();
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // <-- new error state
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const { data } = await privateAxios.get(`/orders/${orderId}`);
+        setOrder(data);
+        setError(null);
+      } catch (error) {
+        console.error(error);
+
+        if (error.response) {
+          if (error.response.status === 401) {
+            setError({ status: 401, message: "Unauthorized access." });
+          } else if (error.response.status === 404) {
+            setError({ status: 404, message: "Order not found." });
+          } else {
+            setError({
+              status: error.response.status,
+              message: "Something went wrong while fetching the order.",
+            });
+          }
+        } else {
+          setError({ status: 0, message: "Network error. Please try again." });
+        }
+
+        setOrder(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrder();
+  }, [orderId]);
+
+  // Loading state
+  if (loading) {
+    return (
       <div
         className="container d-flex justify-content-center align-items-center text-center"
-        style={{ height: "calc(var(--safe-height) - 83px)" }}
+        style={{ minHeight: "calc(var(--safe-height) - 83px)" }}
       >
-        <div className="border bg-white p-4">
-          <CheckCircleIcon
-            sx={{ color: " rgb(42 158 90)", height: "90px", width: "auto" }}
-          />
-          <h1 className="fw-semibold my-3">Order Successful</h1>
-          <p className="mb-3">
-            Thank you! your order has been placed succesfully!
-          </p>
-          <div className="mb-4">
-            <div className="mb-2">
-              <b>Order ID: </b>
-              123456
-            </div>
-            <div className="mb-2">
-              <b>Payment method: </b>
-              Credit Card
-            </div>
-            <div>
-              <b>Estimated Delivery Date: </b>
-              January 25, 2025
-            </div>
-          </div>
-          <Link to="/shop" className="btn btn-primary mb-3">
-            Continue shopping
-          </Link>
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div
+        className="container d-flex justify-content-center align-items-center text-center"
+        style={{ minHeight: "calc(var(--safe-height) - 83px)" }}
+      >
+        <div
+          className="border rounded-4 bg-white shadow-sm p-4"
+          style={{ maxWidth: "500px", width: "100%" }}
+        >
+          <h4 className="fw-bold mb-3">Oops!</h4>
+          <p className="text-muted">{error.message}</p>
+          {error.status === 404 && (
+            <Link to="/shop" className="btn btn-primary mt-3">
+              Go to Shop
+            </Link>
+          )}
+          {error.status === 401 && (
+            <Link to="/orders" className="btn btn-secondary mt-3">
+              Go to My Orders
+            </Link>
+          )}
         </div>
       </div>
-    </>
+    );
+  }
+
+  // Estimate delivery: 7 days after creation
+  const estimatedDelivery = new Date(order.createdAt);
+  estimatedDelivery.setDate(estimatedDelivery.getDate() + 7);
+
+  // Success state
+  return (
+    <div
+      className="container d-flex justify-content-center align-items-center text-center py-5"
+      style={{ minHeight: "calc(var(--safe-height) - 83px)" }}
+    >
+      <div
+        className="border rounded-4 bg-white shadow-sm p-3 p-sm-5 text-center"
+        style={{ maxWidth: "500px", width: "100%" }}
+      >
+        <CheckCircleIcon sx={{ color: "rgb(42 158 90)", fontSize: 80 }} />
+        <h2 className="fw-bold my-3">Order Placed Successfully!</h2>
+        <p className="text-muted mb-4">
+          Thank you for your purchase. We’re preparing your order.
+        </p>
+
+        {/* Minimal Order Info */}
+        <div className="text-center bg-light rounded-3 p-3 mb-4">
+          <div>
+            <b>Order ID:</b> {order._id}
+          </div>
+          <div>
+            <b>Estimated Delivery:</b> {estimatedDelivery.toDateString()}
+          </div>
+        </div>
+
+        <Link to="/shop" className="btn btn-primary w-100 fw-semibold">
+          Continue Shopping
+        </Link>
+      </div>
+    </div>
   );
 };
 

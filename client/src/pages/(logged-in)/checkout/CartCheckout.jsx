@@ -1,67 +1,20 @@
-// ✅ CartCheckout.jsx
 import { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import AuthContext from "../../../context/AuthContext";
 import CartContext from "../../../context/CartContext";
 import CheckoutForm from "../../../components/CheckoutForm";
 
 const CartCheckout = () => {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
-  const { cart, error } = useContext(CartContext);
+  const { cart, error, clearCart } = useContext(CartContext);
+  const [orderCompleted, setOrderCompleted] = useState(false);
 
-  // --- Pre-fill with user info ---
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
-    phone: "",
-    paymentMethod: "debitCard",
-    delivery: "standard",
-  });
+  // Shipping state (controlled by CheckoutForm)
+  const [delivery, setDelivery] = useState("standard");
 
-  // If cart is not available (error or not fetched), redirect to /cart
-  if (!cart || cart.length === 0 || error) {
+  // If cart is not available (error or not fetched), redirect to /cart, also to prevent cart guard navigation when order is successfully placed we need this orderCompleted flag to prevent this navigation
+  if ((!cart || cart.length === 0 || error) && !orderCompleted) {
     return <Navigate to="/cart" replace />;
   }
-
-  // --- Handlers ---
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // ✅ Build order payload
-    const orderData = {
-      userId: user._id,
-      items: cart.map((item) => ({
-        productId: item.productId,
-        size: item.size,
-        quantity: item.quantity,
-      })),
-      shipping: {
-        name: formData.name,
-        email: formData.email,
-        address: formData.address,
-        city: formData.city,
-        state: formData.state,
-        zip: formData.zip,
-        phone: formData.phone,
-      },
-      paymentMethod: formData.paymentMethod,
-      delivery: formData.delivery,
-    };
-
-    console.log("Placing cart order:", orderData);
-    // TODO: call API -> privateAxios.post("/orders", orderData)
-    navigate("/order-success");
-  };
 
   // --- Price calculations ---
   const getDiscountedPrice = (price, discount) => {
@@ -83,14 +36,8 @@ const CartCheckout = () => {
 
   const savings = originalTotal - subtotal;
 
-  // --- Shipping calculations ---
-  const BASE_SHIPPING = 5;
-  const EXPRESS_FEE = 5;
-
-  const shippingCost =
-    formData.delivery === "express"
-      ? BASE_SHIPPING + EXPRESS_FEE
-      : BASE_SHIPPING;
+  // ✅ shipping fee based on delivery type
+  const shippingCost = delivery === "express" ? 10 : 5;
 
   const total = subtotal + shippingCost; // SHIPPING CHARGES INCLUDED
 
@@ -102,9 +49,22 @@ const CartCheckout = () => {
         <div className="col-12 col-lg-7">
           <div className="card shadow-sm p-4">
             <CheckoutForm
-              formData={formData}
-              onChange={handleChange}
-              onSubmit={handleSubmit}
+              items={cart.map((item) => ({
+                productId: item.product._id,
+                name: item.product.name,
+                image: item.product.image,
+                size: item.size,
+                quantity: item.quantity,
+                price: item.product.price,
+                discount: item.product.discount,
+              }))}
+              checkoutType="cart"
+              setDelivery={setDelivery}
+              onOrderSuccess={(orderId) => {
+                setOrderCompleted(true); // prevent cart guard from redirecting
+                navigate(`/checkout/success/${orderId}`, { replace: true });
+                clearCart(); // safe to clear cart now
+              }}
             />
           </div>
         </div>
@@ -124,9 +84,7 @@ const CartCheckout = () => {
                   className="rounded cursor-pointer"
                   width="70"
                   height="70"
-                  onClick={() =>
-                    navigate(`/products/${item.product.productId}`)
-                  }
+                  onClick={() => navigate(`/products/${item.product._id}`)}
                 />
                 <div className="ms-3 me-auto pe-4">
                   <p className="mb-1 fw-semibold">{item.product.name}</p>

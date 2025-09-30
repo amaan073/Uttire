@@ -1,14 +1,14 @@
 // ✅ DirectCheckout.jsx
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { useContext, useState } from "react";
-import AuthContext from "../../../context/AuthContext";
 import CheckoutForm from "../../../components/CheckoutForm";
+import { useState } from "react";
 
 const DirectCheckout = () => {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext); // logged-in user info
   const { id } = useParams(); // productId from URL
   const location = useLocation();
+  // Shipping state (controlled by CheckoutForm)
+  const [delivery, setDelivery] = useState("standard");
 
   // ✅ product info passed via state from Buy Now
   const {
@@ -19,19 +19,6 @@ const DirectCheckout = () => {
     price,
     discount = 0,
   } = location.state || {};
-
-  // Pre-fill form with user info
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
-    phone: "",
-    paymentMethod: "debitCard",
-    delivery: "standard",
-  });
 
   // Guard: if state is missing
   if (!name || !image || !size || !quantity || !price) {
@@ -53,53 +40,10 @@ const DirectCheckout = () => {
   const discountedPrice = price - (price * discount) / 100;
   const itemTotal = discountedPrice * quantity;
   const savings = originalTotal - itemTotal;
-  // --- Shipping calculations ---
-  const BASE_SHIPPING = 5;
-  const EXPRESS_FEE = 5;
-
-  const shippingCost =
-    formData.delivery === "express"
-      ? BASE_SHIPPING + EXPRESS_FEE
-      : BASE_SHIPPING;
+  // ✅ shipping fee based on delivery type
+  const shippingCost = delivery === "express" ? 10 : 5;
 
   const total = itemTotal + shippingCost;
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-    // // ✅ Clean order payload
-    // const orderData = {
-    //   userId: user._id,
-    //   items: [
-    //     {
-    //       productId: id,
-    //       size,
-    //       quantity,
-    //     },
-    //   ],
-    //   shipping: {
-    //     name: formData.name,
-    //     email: formData.email,
-    //     address: formData.address,
-    //     city: formData.city,
-    //     state: formData.state,
-    //     zip: formData.zip,
-    //     phone: formData.phone,
-    //   },
-    //   paymentMethod: formData.paymentMethod,
-    //   delivery: formData.delivery,
-    // };
-
-    // console.log("Placing order:", orderData);
-    // // TODO: call API -> privateAxios.post("/orders", orderData)
-    // navigate("/order-success");
-  };
 
   return (
     <div className="container py-5" style={{ maxWidth: "1200px" }}>
@@ -109,9 +53,22 @@ const DirectCheckout = () => {
         <div className="col-12 col-lg-7">
           <div className="card shadow-sm p-4">
             <CheckoutForm
-              formData={formData}
-              onChange={handleChange}
-              onSubmit={handleSubmit}
+              items={[
+                {
+                  productId: id,
+                  name,
+                  image,
+                  size,
+                  quantity,
+                  price,
+                  discount,
+                },
+              ]}
+              checkoutType="direct"
+              setDelivery={setDelivery}
+              onOrderSuccess={(orderId) =>
+                navigate(`/checkout/success/${orderId}`, { replace: true })
+              }
             />
           </div>
         </div>

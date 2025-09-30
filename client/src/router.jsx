@@ -50,7 +50,7 @@ const router = createBrowserRouter([
         children: [
           { path: "/products/:id/checkout", element: <DirectCheckout /> },
           { path: "/cart/checkout", element: <CartCheckout /> },
-          { path: "/order-success", element: <OrderSuccess /> },
+          { path: "/checkout/success/:orderId", element: <OrderSuccess /> },
           { path: "/profile", element: <Profile /> },
           { path: "/dashboard", element: <Dashboard /> },
           { path: "/cart", element: <Cart /> },

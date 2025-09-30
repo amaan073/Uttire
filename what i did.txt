@@ -377,3 +377,5 @@ i removed Public Route guard and applied user context check in login and signup.
 now to cart feature. first we handle redirect for non logged in user and user logged in for the cart icon in the header. now we need to crate a separeate cart context for this feature.
 
 modified the authcontext and cartcontext to only exposethe loading variable and use this loading variable in the root component to show a loadinng combined for both contexts. thsi way there is only 1 loading animation for both context before app loads.
+
+to create order and at the same time clear cart in the backend we need something called mongodb transaction which is basically doing multiple operations at saem tiem and if only one fails then everything is rolled back.
