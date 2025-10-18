@@ -133,7 +133,7 @@ const Profile = () => {
                 {/* Orders */}
                 <div className="my-3">
                   <Link
-                    to="/dashboard"
+                    to="/orders"
                     className="btn btn-primary shadow-sm d-flex gap-2 justify-content-center align-content-center p-2 px-3  fs-5 fw-semibold w-100 mb-3 mb-md-0"
                   >
                     <ShoppingBagIcon fontSize="large" />

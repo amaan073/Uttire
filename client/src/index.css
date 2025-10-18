@@ -16,6 +16,11 @@ html {
   scroll-behavior: auto !important;
 }
 
+header,
+.navbar {
+  z-index: 2000 !important;
+}
+
 body,
 .light-bg {
   background-color: rgb(var(--light-bg)) !important;

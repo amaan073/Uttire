@@ -13,7 +13,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Search } from "lucide-react";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import GridViewIcon from "@mui/icons-material/GridView";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EmailWithTooltip from "../components/ui/EmailWithTooltip.jsx";
 import { toast } from "react-toastify";
@@ -50,7 +50,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="container-fluid position-fixed z-3 top-0 light-bg border-bottom">
+      <header className="container-fluid position-fixed top-0 light-bg border-bottom">
         <div className="px-1 py-3 px-md-3">
           <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start ">
             <NavBtn isNavActive={isNavActive} setNavActive={setNavActive} />
@@ -203,7 +203,7 @@ const Header = () => {
                           Profile
                         </NavLink>
                         <NavLink
-                          to="/dashboard"
+                          to="/orders"
                           className={({ isActive }) =>
                             `a-link m-0 d-flex align-items-center gap-3 py-2 px-2 mb-1 rounded-3 ${
                               isActive ? "text-secondary bg-light" : "text-dark"
@@ -211,11 +211,12 @@ const Header = () => {
                           }
                           onClick={() => setisAccountPopupVisible(false)}
                         >
-                          <GridViewIcon fontSize="large" />
-                          Dashboard
+                          <ShoppingBagOutlinedIcon fontSize="large" />
+                          Orders
                         </NavLink>
                         <p
-                          className="a-link m-0 d-flex align-items-center gap-3 py-2 px-2 rounded-3 text-danger"
+                          className="a-link m-0 d-flex align-items-center gap-3 py-2 pb-2 rounded-3 text-danger"
+                          style={{ paddingLeft: "11px" }}
                           onClick={handleLogout}
                         >
                           <LogoutIcon fontSize="large" />

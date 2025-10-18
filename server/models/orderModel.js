@@ -7,6 +7,7 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    orderNumber: { type: Number, required: true, unique: true },
     customer: {
       name: { type: String, required: true },
       email: { type: String, required: true },
@@ -21,7 +22,7 @@ const orderSchema = new mongoose.Schema(
     delivery: { type: String, required: true },
     items: [
       {
-        productId: {
+        product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
           required: true,

@@ -19,7 +19,7 @@ import DirectCheckout from "./pages/(logged-in)/checkout/DirectCheckout";
 import CartCheckout from "./pages/(logged-in)/checkout/CartCheckout";
 import OrderSuccess from "./pages/(logged-in)/OrderSuccess";
 import Profile from "./pages/(logged-in)/Profile";
-import Dashboard from "./pages/(logged-in)/Dashboard";
+import Orders from "./pages/(logged-in)/Orders";
 import Cart from "./pages/(logged-in)/Cart";
 
 //Private route wrapper
@@ -52,7 +52,7 @@ const router = createBrowserRouter([
           { path: "/cart/checkout", element: <CartCheckout /> },
           { path: "/checkout/success/:orderId", element: <OrderSuccess /> },
           { path: "/profile", element: <Profile /> },
-          { path: "/dashboard", element: <Dashboard /> },
+          { path: "/orders", element: <Orders /> },
           { path: "/cart", element: <Cart /> },
         ],
       },

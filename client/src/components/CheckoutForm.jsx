@@ -115,7 +115,7 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
           paymentMethod: formData.paymentMethod,
           delivery: formData.delivery,
           items: items.map((item) => ({
-            productId: item.productId,
+            product: item.productId,
             size: item.size,
             quantity: item.quantity,
             price: item.price,
