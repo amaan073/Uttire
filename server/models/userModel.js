@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+//  Address Schema
 const addressSchema = new mongoose.Schema(
   {
     street: { type: String, required: true },
@@ -7,10 +8,10 @@ const addressSchema = new mongoose.Schema(
     state: { type: String, required: true },
     zip: { type: String, required: true },
     country: { type: String, required: true },
-    isDefault: { type: Boolean, default: false }, //default address set
+    type: { type: String, enum: ["home", "office", "other"], default: "home" },
   },
-  { _id: true }
-); // allow each address to have an id
+  { _id: false } // ✅ CHANGED: since only one address, no need for _id in subdocument
+);
 
 const cartItemSchema = new mongoose.Schema({
   product: {
@@ -64,7 +65,7 @@ const userSchema = new mongoose.Schema(
     },
 
     //  Addresses
-    addresses: [addressSchema], //subschema
+    address: { type: addressSchema, default: null },
 
     // 🛒 Cart
     cart: [cartItemSchema],

@@ -325,6 +325,13 @@ input[type="range"]::-webkit-slider-thumb {
   background-color: var(--bs-border-color) !important;
 }
 
+@media screen and (max-width: 830px) and (min-width: 768px),
+  (max-width: 480px) {
+  .p-card > span {
+    display: none;
+  }
+}
+
 /*
 -->
 

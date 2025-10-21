@@ -366,18 +366,52 @@ export const toggleTwoFactor = async (req, res) => {
   }
 };
 
-//HomePage >>>>
-
-// ========================= fetch featured products for homepage (/api/products/featured) =========================
-export const getFeaturedProducts = async (req, res) => {
+// ========================= manage address  =========================
+export const manageAddress = async (req, res) => {
   try {
-    const products = await Product.find(
-      { featured: true }, // only featured ones
-      "name price image description category" // only needed fields
-    ).limit(6); // fetch limited count
+    const { address } = req.body;
 
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    // handle delete address request (null or empty object)
+    if (!address || Object.keys(address).length === 0) {
+      const user = await User.findById(req.user.id);
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      user.address = null; // CLEAR the address
+      await user.save();
+
+      return res
+        .status(200)
+        .json({ message: "Address deleted successfully", address: null });
+    }
+
+    // validate only if address is not null
+    if (
+      !address.street ||
+      address.street.trim().length < 5 ||
+      !/^[a-zA-Z0-9\s]+$/.test(address.street.trim()) ||
+      !address.city ||
+      !address.state ||
+      !address.zip ||
+      !/^\d{4,10}$/.test(address.zip.trim()) ||
+      !address.country
+    ) {
+      return res.status(400).json({ message: "Fields are not valid" });
+    }
+
+    // Find user
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Update user's address
+    user.address = address;
+    await user.save();
+
+    res.status(200).json({
+      message: "Address saved successfully",
+      address: user.address,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to save address" });
   }
 };

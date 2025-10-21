@@ -37,11 +37,15 @@ export default function TwoFactorDemo({ toggleValue }) {
           : "Auth App";
 
   return (
-    <div className="d-flex align-items-center gap-2">
+    <div className="d-flex align-items-center gap-2 w-100">
       <GppGoodIcon />
-      <span className="me-2">2-factor authentication</span>
+      <span>2-factor authentication</span>
 
-      <FormControl size="small" sx={{ minWidth: 117, maxWidth: 117 }}>
+      <FormControl
+        size="small"
+        sx={{ minWidth: 117, maxWidth: 117 }}
+        className="ms-auto"
+      >
         <Select
           value={twoFactorAuth}
           onChange={handleChange}

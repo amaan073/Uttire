@@ -158,11 +158,11 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
   return (
     <div
       className="text-center bg-white p-3 ps-4 rounded-3 mx-auto mx-md-0 mb-3 mb-md-0 shadow-sm py-4 w-100 border"
-      style={{ minWidth: "335px", maxWidth: "380px" }}
+      style={{ minWidth: "335px", maxWidth: "380px", minHeight: "393px" }}
     >
       {(mode == "view" || mode == "changePassword") && (
         <>
-          <div className="d-flex justify-content-center mb-3">
+          <div className="d-flex justify-content-center mb-3 mt-2">
             <div className="mb-1" style={{ height: "162px", width: "162px" }}>
               <UserAvatar
                 user={profile}
@@ -204,7 +204,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
       {mode == "edit" && (
         <>
           <form className="text-start" onSubmit={handleSubmit}>
-            <div className="mb-3 position-relative">
+            <div className="mt-2 mb-3 position-relative">
               <div className="d-flex justify-content-center">
                 <div
                   className="mb-1"
@@ -299,7 +299,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
             </div>
             <div
               className="form-group d-flex gap-2 w-100 mt-4"
-              style={{ marginBottom: "-10px" }}
+              style={{ marginBottom: "6px" }}
             >
               <button
                 type="button"

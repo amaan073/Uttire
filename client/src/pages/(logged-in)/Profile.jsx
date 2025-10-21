@@ -5,6 +5,7 @@ import sessionAxios from "../../api/sessionAxios";
 
 import ProfileDetail from "../../components/ProfileDetail";
 import DeleteAccountModal from "../../components/DeleteAccountModal";
+import ManageAddressModal from "../../components/ManageAddressModal";
 import { Modal, Button, Spinner } from "react-bootstrap";
 import ChangePasswordForm from "../../components/ChangePasswordForm";
 import { toast } from "react-toastify";
@@ -18,20 +19,24 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const Profile = () => {
   const [mode, setMode] = useState("view"); //view, editProfile or changePassword
   const [profile, setProfile] = useState(null);
+  const [fetchError, setFetchError] = useState("");
   const [modalShow, setModalShow] = useState(false);
   const [backendError, setBackendError] = useState("");
   //after successful deletion message show in modal
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showAddressModal, setShowAddressModal] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const { data } = await privateAxios.get("/users/profile");
         setProfile(data);
+        setFetchError("");
       } catch (error) {
         console.error("Error fetching profile:", error);
+        setFetchError("Failed to fetch profile.");
       } finally {
         setLoading(false);
       }
@@ -110,6 +115,23 @@ const Profile = () => {
       </div>
     );
 
+  if (fetchError)
+    return (
+      <div
+        className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
+        style={{ marginTop: "-83px" }}
+      >
+        <i
+          className="bi bi-exclamation-triangle text-danger mb-3"
+          style={{ fontSize: "3rem" }}
+        ></i>
+        <p className="text-danger fw-bold mb-3">{fetchError}</p>
+        <Button onClick={() => window.location.reload()} variant="primary">
+          Retry
+        </Button>
+      </div>
+    );
+
   return (
     <>
       <div
@@ -128,13 +150,13 @@ const Profile = () => {
               profile={profile}
               setProfile={setProfile}
             />
-            {mode == "view" && (
+            {mode != "edit" && (
               <div>
                 {/* Orders */}
                 <div className="my-3">
                   <Link
                     to="/orders"
-                    className="btn btn-primary shadow-sm d-flex gap-2 justify-content-center align-content-center p-2 px-3  fs-5 fw-semibold w-100 mb-3 mb-md-0"
+                    className="btn btn-primary rounded-3 shadow-sm d-flex gap-2 justify-content-center align-content-center p-2 px-3  fs-5 fw-semibold w-100 mb-3 mb-md-0"
                   >
                     <ShoppingBagIcon fontSize="large" />
                     <span style={{ lineHeight: "38px" }}>Orders</span>
@@ -143,7 +165,7 @@ const Profile = () => {
                 {/* Delete Account Button */}
                 <div>
                   <button
-                    className="btn btn-danger shadow-sm d-flex gap-2 justify-content-center align-content-center p-2 px-3 fs-5 fw-semibold w-100 text-nowrap mb-3 mb-md-0"
+                    className="btn btn-danger rounded-3 shadow-sm d-flex gap-2 justify-content-center align-content-center p-2 px-3 fs-5 fw-semibold w-100 text-nowrap mb-3 mb-md-0"
                     onClick={() => setModalShow(true)}
                   >
                     <DeleteIcon fontSize="large" />
@@ -187,7 +209,7 @@ const Profile = () => {
           </div>
 
           {/*content right */}
-          <div style={{ maxWidth: "460px" }}>
+          <div style={{ maxWidth: "450px" }}>
             {/* Account security */}
             <div className="bg-white p-4 rounded-3 mb-3 shadow-sm border">
               {mode == "changePassword" ? (
@@ -209,14 +231,70 @@ const Profile = () => {
                   >
                     <LockIcon /> Change Password
                   </button>
-                  <div className="d-flex align-items-center">
+                  <div className="d-flex align-items-center w-100">
                     <TwoFactorDemo toggleValue={profile.twoFactorAuth} />
                   </div>
                 </>
               )}
             </div>
-            {/* Payment method */}
-            <PaymentMethodsCard />
+            {/* Addresses and Payment method */}
+            <div>
+              {/* Address Section */}
+              <div className="addresses flex-grow-1 p-4 border rounded-3 shadow-sm bg-white">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <h5 className="mb-0 fw-semibold">Address</h5>{" "}
+                  <button
+                    className="btn btn-outline-primary btn-sm rounded-3 px-3"
+                    onClick={() => setShowAddressModal(true)}
+                  >
+                    Manage Address
+                  </button>
+                </div>
+
+                {profile.address ? (
+                  <div
+                    className="border p-3 rounded-3 bg-light"
+                    style={{ height: "114px", overflowY: "auto" }}
+                  >
+                    <div className="d-flex align-items-center mb-2">
+                      <span className="badge bg-primary rounded-pill px-3 py-1 text-uppercase">
+                        {profile.address.type || "Address"}
+                      </span>
+                    </div>
+                    <p
+                      className="mb-0 text-muted"
+                      style={{ lineHeight: "1.4rem" }}
+                    >
+                      {`${profile.address.street}, ${profile.address.city}, ${profile.address.state} - ${profile.address.zip}, ${profile.address.country}`}
+                    </p>
+                  </div>
+                ) : (
+                  <div
+                    className="border p-3 rounded-3 bg-light d-flex flex-column justify-content-center align-items-center text-muted text-center"
+                    style={{ height: "114px" }}
+                  >
+                    <i className="bi bi-geo-alt fs-3 mb-2"></i>
+                    <small>No address set yet</small>
+                    <small className="text-muted mt-1">
+                      Use <strong>&quot;Manage Address&quot;</strong> to add
+                      one.
+                    </small>
+                  </div>
+                )}
+              </div>
+
+              {/* Payment Methods Section */}
+              <div className="mt-3">
+                <PaymentMethodsCard />
+              </div>
+
+              <ManageAddressModal
+                show={showAddressModal}
+                onHide={() => setShowAddressModal(false)}
+                address={profile?.address || null} //
+                setProfile={setProfile}
+              />
+            </div>
           </div>
         </div>
       </div>

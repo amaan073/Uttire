@@ -1,56 +1,51 @@
-import { Card, Button, ListGroup } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import DemoTooltip from "./ui/DemoTooltip";
 
 function PaymentMethods() {
   return (
-    <Card className="p-4 shadow-sm rounded-3 mb-3 border">
-      <h5 className="mb-3 fw-semibold ">Payment methods</h5>
+    <DemoTooltip>
+      <Card
+        className="p-4 shadow-sm rounded-3 mb-3 border bg-white"
+        style={{ minWidth: "340px", height: "127px" }}
+      >
+        {/* Header row */}
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h5 className="mb-0 fw-semibold">Payment Methods</h5>
+          <Button
+            variant="outline-primary"
+            size="sm"
+            className="rounded-3 px-3 py-1 fw-semibold"
+          >
+            + Add
+          </Button>
+        </div>
 
-      <ListGroup variant="flush">
-        {/* Dummy payment method 1 */}
-        <ListGroup.Item className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center">
-            <CreditCardIcon className="me-2 text-primary" />
-            <div>
-              <div className="fw-bold">Visa **** 1234</div>
-              <div className="text-muted small">Expires 12/25</div>
+        <div className="d-flex gap-3 h-100">
+          {/* Card 1 */}
+          <div className="payment-box cursor-pointer px-3 gap-2 d-inline-flex align-items-center justify-content-center  rounded-3 border bg-light shadow-sm">
+            <CreditCardIcon className="text-primary" fontSize="small" />
+            <div
+              className="small text-nowrap p-card"
+              style={{ lineHeight: "12px" }}
+            >
+              Visa <span>****1234</span>
             </div>
           </div>
-          <span className="text-muted small">(Demo)</span>
-        </ListGroup.Item>
 
-        {/* Dummy payment method 2 */}
-        <ListGroup.Item className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center">
-            <CreditCardIcon className="me-2 text-success" />
-            <div>
-              <div className="fw-bold">Mastercard **** 5678</div>
-              <div className="text-muted small">Expires 08/26</div>
+          {/* Card 2 */}
+          <div className="payment-box cursor-pointer px-3 gap-2 d-inline-flex align-items-center justify-content-center rounded-3 border bg-light shadow-sm">
+            <CreditCardIcon className="text-success " fontSize="small" />
+            <div
+              className="small text-nowrap p-card"
+              style={{ lineHeight: "12px" }}
+            >
+              Mastercard <span>****5678</span>
             </div>
           </div>
-          <span className="text-muted small">(Demo)</span>
-        </ListGroup.Item>
-
-        {/* Dummy payment method 3 */}
-        <ListGroup.Item className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center">
-            <CreditCardIcon className="me-2 text-warning" />
-            <div>
-              <div className="fw-bold">Amex **** 9012</div>
-              <div className="text-muted small">Expires 03/27</div>
-            </div>
-          </div>
-          <span className="text-muted small">(Demo)</span>
-        </ListGroup.Item>
-      </ListGroup>
-
-      <div className="mt-3 text-center mb-1">
-        <DemoTooltip>
-          <Button variant="outline-primary">Add Payment Method</Button>
-        </DemoTooltip>
-      </div>
-    </Card>
+        </div>
+      </Card>
+    </DemoTooltip>
   );
 }
 

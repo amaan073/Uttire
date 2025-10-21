@@ -10,7 +10,9 @@ import {
   deleteUser,
   changePassword,
   toggleTwoFactor,
+  manageAddress,
 } from "../controllers/userController.js";
+
 import multer from "multer";
 import path from "path";
 
@@ -61,9 +63,7 @@ router.delete("/profile", protect, deleteUser);
 router.post("/change-password", protect, changePassword);
 router.patch("/twofactor", protect, toggleTwoFactor); // dummy feature for show
 
-// Addresses
-// router.post("/address", protect, addAddress);
-// router.put("/address/:id", protect, updateAddress);
-// router.delete("/address/:id", protect, deleteAddress);
+// manage addresses (3 max)
+router.put("/address", protect, manageAddress);
 
 export default router;
