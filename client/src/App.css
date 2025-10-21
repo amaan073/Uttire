@@ -17,6 +17,33 @@
   border-bottom: var(--bs-border-width) solid var(--bs-border-color);
 }
 
+.search-btn {
+  position: relative;
+}
+.search-btn::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 3.5px;
+  border-radius: 17px;
+  rotate: 0deg;
+  top: 16px;
+  left: -5px;
+  background-color: black;
+  transition: all 0.15s ease;
+}
+.search-btn.search-close::after {
+  width: 45px;
+}
+
+.search-results > a > div:first-child {
+  transition: all 0.3s ease;
+}
+
+.search-results > a:hover div:first-child {
+  width: 80px !important;
+}
+
 .cart-count {
   position: absolute;
   top: -11px;

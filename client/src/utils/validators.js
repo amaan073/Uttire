@@ -36,3 +36,16 @@ export const isValidZip = (zip) => {
   const trimmed = zip.trim();
   return /^\d{4,10}$/.test(trimmed);
 };
+
+export const isValidSearch = (query) => {
+  if (!query) return false; // empty input
+  const trimmed = query.trim();
+  if (trimmed.length === 0) return false; // only spaces
+  if (trimmed.length > 50) return false; // max length
+
+  // Regex: only allow letters, numbers, spaces, - _ . '
+  const validPattern = /^[a-zA-Z0-9\s\-_.']+$/;
+  if (!validPattern.test(trimmed)) return false;
+
+  return true;
+};

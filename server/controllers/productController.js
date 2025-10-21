@@ -187,3 +187,38 @@ export const getRelatedProducts = async (req, res) => {
     });
   }
 };
+
+// ========================= search products  =========================
+export const getSearchedProducts = async (req, res) => {
+  try {
+    const query = req.query.q || "";
+    const trimmed = query.trim();
+
+    //  Validation
+    if (
+      !trimmed || // empty input
+      trimmed.length === 0 || // only spaces
+      trimmed.length > 50 || // max length
+      !/^[a-zA-Z0-9\s\-_.']+$/.test(trimmed) // invalid characters
+    ) {
+      return res.status(400).json({
+        message:
+          "Invalid search query. Only letters, numbers, spaces, - _ . ' allowed, max 50 characters.",
+      });
+    }
+
+    // Perform case-insensitive partial search
+    const regex = new RegExp(trimmed, "i");
+
+    const products = await Product.find({
+      name: { $regex: regex },
+    })
+      .select("name price image")
+      .limit(7);
+
+    res.json(products);
+  } catch (err) {
+    console.error("Search error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

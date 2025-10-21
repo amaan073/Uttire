@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./ui/Navbar.jsx";
 import NavBtn from "./ui/NavBtn.jsx";
@@ -11,17 +11,17 @@ import UserAvatar from "../components/ui/UserAvatar.jsx";
 import mainLogo from "../assets/uttireLogo.png";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Search } from "lucide-react";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EmailWithTooltip from "../components/ui/EmailWithTooltip.jsx";
 import { toast } from "react-toastify";
 import CartContext from "../context/CartContext.jsx";
+import ProductSearchBar from "./ProductSearchBar.jsx";
+import { Search } from "lucide-react";
 
 const Header = () => {
-  const [searchOpen, setSearchOpen] = useState(false); //search bar open and close in small screens
-  const [isResultVisible, setIsResultVisible] = useState(false); //search result hide and show
+  const [searchBarVisible, setSearchBarVisible] = useState(false);
   const [isNavActive, setNavActive] = useState(false); //nav menu button for small screens
   const [isAccountPopupVisible, setisAccountPopupVisible] = useState(false); //login form show and hide
 
@@ -30,13 +30,6 @@ const Header = () => {
   const { cart } = useContext(CartContext);
 
   const navigate = useNavigate();
-
-  //click outside login form to close it /* snippet From [Tech Stacker] https://youtu.be/wX0pb6CBS-c?si=kZtN6kWFqY0yrG1y*/
-  const documentRef = useRef(document);
-  documentRef.current.addEventListener("click", (e) => {
-    if (e.target.closest(".account-box")) return;
-    setisAccountPopupVisible(false);
-  });
 
   const handleLogout = async () => {
     try {
@@ -66,54 +59,14 @@ const Header = () => {
 
             <Navbar isNavActive={isNavActive} />
 
-            {/* Search */}
-            <div
-              className={`search-wrapper position-relative col-12 col-sm-9 col-md-8 col-lg-auto d-lg-block me-lg-2 me-lg-1 ms-lg-auto mt-2 mt-lg-0 mx-auto order-last order-lg-0 ${
-                searchOpen ? "d-block" : "d-none"
-              }`}
-            >
-              <form className="search-bar" role="search">
-                <input
-                  type="search"
-                  className="form-control form-control-white text-bg-white"
-                  placeholder="Search..."
-                  aria-label="Search"
-                  onFocus={() => {
-                    setIsResultVisible(true);
-                  }}
-                  onBlur={() => {
-                    setTimeout(() => {
-                      setIsResultVisible(false);
-                    }, 200);
-                  }}
-                />
-              </form>
-
-              <div
-                className={`search-results shadow rounded border position-absolute end-0 mt-3 w-100 z-2 bg-body ${
-                  isResultVisible ? "d-block" : "d-none"
-                }`}
-                style={{ minWidth: "330px" }}
-              >
-                <a href="#1" className="d-block p-3">
-                  #1
-                </a>
-                <a href="#2" className="d-block p-3">
-                  #2
-                </a>
-                <a href="#3" className="d-block p-3">
-                  #3
-                </a>
-                <p>hd</p>
-              </div>
-            </div>
-
-            {/* searchBtn */}
+            <ProductSearchBar
+              searchBarVisible={searchBarVisible}
+              setSearchBarVisible={setSearchBarVisible}
+            />
+            {/* search button */}
             <button
-              className="search-btn btn border-0 p-0 d-lg-none me-2 me-lg-1 ms-auto"
-              onClick={() => {
-                setSearchOpen(!searchOpen);
-              }}
+              className={`search-btn btn border-0 p-0 d-lg-none me-2 me-lg-1 ms-auto ${searchBarVisible ? "search-close" : ""}`}
+              onClick={() => setSearchBarVisible(!searchBarVisible)}
             >
               <Search style={{ width: "auto", height: "38px" }} />
             </button>
