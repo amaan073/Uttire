@@ -10,7 +10,7 @@ const addressSchema = new mongoose.Schema(
     country: { type: String, required: true },
     type: { type: String, enum: ["home", "office", "other"], default: "home" },
   },
-  { _id: false } // ✅ CHANGED: since only one address, no need for _id in subdocument
+  { _id: false } //
 );
 
 const cartItemSchema = new mongoose.Schema({

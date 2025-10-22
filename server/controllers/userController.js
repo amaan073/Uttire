@@ -189,7 +189,7 @@ export const logoutUser = async (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select(
-      "name email profileImage createdAt updatedAt"
+      "name email phone address profileImage createdAt updatedAt"
     );
 
     if (!user) {
