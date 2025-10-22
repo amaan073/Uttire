@@ -18,12 +18,12 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
-    address: "",
-    city: "",
-    state: "",
-    country: "",
-    zip: "",
-    phone: "",
+    address: user?.address?.street || "",
+    city: user?.address?.city || "",
+    state: user?.address?.state || "",
+    country: user?.address?.country || "",
+    zip: user?.address?.zip || "",
+    phone: user?.phone || "",
     paymentMethod: "debitCard",
     delivery: "standard",
   });
