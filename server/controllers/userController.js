@@ -111,6 +111,7 @@ export const loginUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        isAdmin: user.isAdmin,
       },
     });
   } catch (error) {
@@ -189,7 +190,7 @@ export const logoutUser = async (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select(
-      "name email phone address profileImage createdAt updatedAt"
+      "name email phone address profileImage isAdmin createdAt updatedAt"
     );
 
     if (!user) {

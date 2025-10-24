@@ -45,7 +45,8 @@ export default function RevenueLineChart() {
         </LineChart>
       </ResponsiveContainer>
       <p className="text-muted mt-2" style={{ fontSize: "0.85rem" }}>
-        Demo only – not real data
+        Demo only – not real data (can easily be added once real data is
+        available)
       </p>
     </div>
   );

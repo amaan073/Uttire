@@ -23,7 +23,11 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigate(from, { replace: true });
+      if (user.isAdmin) {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     }
   }, [user, navigate, from]);
 

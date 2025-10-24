@@ -6,7 +6,7 @@ export default function UserAvatar({ user, sx }) {
     <Avatar
       src={user?.profileImage || undefined}
       style={{ width: "100%", height: "100%" }}
-      sx={sx} // MUI's system props (optional, theme-aware)
+      sx={sx}
     >
       {user?.name ? user.name[0].toUpperCase() : ""}
     </Avatar>

@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import connectDB from "./config/connectDB.js";
 import { notFound, errorHandler } from "./middlewares/errorMiddleware.js";
 
@@ -47,6 +48,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+// admin rotes
+app.use("/api/admin", adminRoutes);
 
 /* If no route matched, notFound runs  (this must come after routes so when there is no route handler for a route that means 
  there is no route for that request so in the end notFound error middleware is executed and error hanlder middleware handles this*/

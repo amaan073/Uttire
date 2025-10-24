@@ -71,6 +71,8 @@ const userSchema = new mongoose.Schema(
     cart: [cartItemSchema],
 
     lastLogin: { type: Date, default: Date.now },
+
+    isAdmin: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

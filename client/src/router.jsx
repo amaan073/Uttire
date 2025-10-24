@@ -1,5 +1,5 @@
 //Core
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 //Layout
 import App from "./App";
@@ -26,7 +26,11 @@ import Cart from "./pages/(logged-in)/Cart";
 import PrivateRoute from "./components/PrivateRoute";
 
 //Pages - Admin
-import Admin from "./pages/Admin";
+import AdminDashboard from "./pages/admin-pages/AdminDashboard";
+import AdminProducts from "./pages/admin-pages/AdminProducts";
+// import AdminOrders from "./pages/admin-pages/AdminOrders";
+import AdminLayout from "./pages/admin-pages/AdminLayout";
+import AdminRoute from "./components/AdminRoute";
 
 // ✅ React Router Setup
 const router = createBrowserRouter([
@@ -60,8 +64,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    errorElement: <NotFoundPage />, //just in case
-    element: <Admin />,
+    element: <AdminRoute />, // protect all children
+    errorElement: <NotFoundPage />,
+    children: [
+      {
+        element: <AdminLayout />, // header + toast + outlet
+        children: [
+          { index: true, element: <Navigate to="dashboard" replace /> },
+          { path: "dashboard", element: <AdminDashboard /> },
+          { path: "products", element: <AdminProducts /> },
+          // { path: "orders", element: <AdminOrders /> },
+        ],
+      },
+    ],
   },
 ]);
 
