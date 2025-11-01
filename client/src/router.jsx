@@ -28,6 +28,8 @@ import PrivateRoute from "./components/PrivateRoute";
 //Pages - Admin
 import AdminDashboard from "./pages/admin-pages/AdminDashboard";
 import AdminProducts from "./pages/admin-pages/AdminProducts";
+import AdminProductNew from "./pages/admin-pages/AdminProductNew";
+import AdminProductEdit from "./pages/admin-pages/AdminProductEdit";
 // import AdminOrders from "./pages/admin-pages/AdminOrders";
 import AdminLayout from "./pages/admin-pages/AdminLayout";
 import AdminRoute from "./components/AdminRoute";
@@ -73,6 +75,8 @@ const router = createBrowserRouter([
           { index: true, element: <Navigate to="dashboard" replace /> },
           { path: "dashboard", element: <AdminDashboard /> },
           { path: "products", element: <AdminProducts /> },
+          { path: "products/new", element: <AdminProductNew /> },
+          { path: "products/:id/edit", element: <AdminProductEdit /> },
           // { path: "orders", element: <AdminOrders /> },
         ],
       },

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import privateAxios from "../../api/privateAxios";
 import { Spinner, Button } from "react-bootstrap";
 import ImagePlaceholder from "../../assets/image.png"; // fallback if no image
+import { useNavigate } from "react-router-dom";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -11,6 +12,8 @@ const AdminProducts = () => {
   const [hasMore, setHasMore] = useState(true); // <-- track if more pages exist
   const [loadingMore, setLoadingMore] = useState(false); // <-- spinner for next pages
   const [loadingMoreError, setLoadingMoreError] = useState(false); // <-- retry on scroll error
+
+  const navigate = useNavigate();
 
   const fetchProducts = async (pageNumber) => {
     try {
@@ -107,7 +110,12 @@ const AdminProducts = () => {
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h1 className="display-6">Products</h1>
-        <Button variant="primary">+ Add New Product</Button>
+        <Button
+          variant="primary"
+          onClick={() => navigate("/admin/products/new")}
+        >
+          + Add New Product
+        </Button>
       </div>
 
       <div className="table-responsive">
@@ -127,10 +135,7 @@ const AdminProducts = () => {
                 <tr key={p._id}>
                   <td>
                     <img
-                      src={
-                        "http://localhost:5000/public" + p.image ||
-                        ImagePlaceholder
-                      }
+                      src={p.image || ImagePlaceholder}
                       width="48"
                       style={{ aspectRatio: "1/1" }}
                       className="rounded-3"
@@ -140,7 +145,12 @@ const AdminProducts = () => {
                   <td>${p.price.toFixed(2)}</td>
                   <td>{p.stock}</td>
                   <td>
-                    <Button variant="warning" size="sm" className="me-2">
+                    <Button
+                      variant="warning"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => navigate(`/admin/products/${p._id}/edit`)}
+                    >
                       Edit
                     </Button>
                     <Button variant="danger" size="sm">

@@ -20,6 +20,7 @@ const productSchema = new mongoose.Schema(
     sizes: [{ type: String }], // ["S","M","L","XL"]
     quantity: { type: Number, default: 1 },
     image: { type: String },
+    imagePublicId: { type: String }, // cloudinary image id
     category: { type: String }, // T-Shirts, Hoodies, etc
     gender: { type: String, enum: ["Men", "Women", "Unisex"] },
     color: { type: String },
