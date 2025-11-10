@@ -3,6 +3,8 @@ import privateAxios from "../../api/privateAxios";
 import { Spinner, Button } from "react-bootstrap";
 import ImagePlaceholder from "../../assets/image.png"; // fallback if no image
 import { useNavigate } from "react-router-dom";
+import DeleteProductModal from "../../components/DeleteProductModal";
+import { toast } from "react-toastify";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -17,6 +19,12 @@ const AdminProducts = () => {
 
   const isFetchingRef = useRef(false);
   const navigate = useNavigate();
+
+  // Delete modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteBackendError, setDeleteBackendError] = useState("");
 
   // ---- Fetch helper ----
   const fetchPage = async (cursorToUse = null) => {
@@ -92,17 +100,31 @@ const AdminProducts = () => {
   }, [loading, loadingMore, hasMore, loadingMoreError, cursor]);
 
   // ---- Delete product (no replace, just remove locally) ----
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?"))
-      return;
+  const handleDeleteProduct = async (productId) => {
+    if (!productId) return;
+    setDeleteBackendError("");
+    setDeleteLoading(true);
 
     try {
-      await privateAxios.delete(`/admin/products/${id}`);
-      setProducts((prev) => prev.filter((p) => p._id !== id));
+      await privateAxios.delete(`/admin/product/${productId}`);
+      // On success remove locally and show success modal
+      setProducts((prev) => prev.filter((p) => p._id !== productId));
+      toast.success("Product deleted successfully");
+      // close modal
+      setShowDeleteModal(false);
     } catch (err) {
-      console.error("Failed to delete product:", err);
-      alert("Failed to delete product. Please try again.");
+      setDeleteBackendError("Failed to delete product. Try again.");
+      console.log(err);
+    } finally {
+      setDeleteLoading(false);
     }
+  };
+
+  // ---- Helpers to open modal ----
+  const confirmDelete = (product) => {
+    setProductToDelete(product);
+    setDeleteBackendError("");
+    setShowDeleteModal(true);
   };
 
   if (loading) {
@@ -209,7 +231,11 @@ const AdminProducts = () => {
                     >
                       Edit
                     </Button>
-                    <Button variant="danger" size="sm">
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => confirmDelete(p)}
+                    >
                       Delete
                     </Button>
                   </td>
@@ -241,6 +267,20 @@ const AdminProducts = () => {
           </button>
         </div>
       )}
+
+      {/* Delete product modal (UI only) - parent manages delete logic */}
+      <DeleteProductModal
+        show={showDeleteModal}
+        onHide={() => {
+          setShowDeleteModal(false);
+          setProductToDelete(null);
+          setDeleteBackendError("");
+        }}
+        product={productToDelete}
+        onConfirm={handleDeleteProduct}
+        loading={deleteLoading}
+        backendError={deleteBackendError}
+      />
     </div>
   );
 };

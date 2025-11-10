@@ -103,7 +103,7 @@ const RelatedProducts = ({ category, excludeId }) => {
                       </span>
                     </p>
                   ) : (
-                    <p className="mb-0 fw-bold">₹{product.price.toFixed(2)}</p>
+                    <p className="mb-0 fw-bold">${product.price.toFixed(2)}</p>
                   )}
                 </div>
               </div>

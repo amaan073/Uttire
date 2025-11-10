@@ -335,3 +335,37 @@ export const updateAdminProduct = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const deleteAdminProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const existing = await Product.findById(productId);
+    if (!existing) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Delete the product document from DB first
+    await Product.findByIdAndDelete(productId);
+
+    // 2) Attempt to delete the Cloudinary image (best-effort).
+    // If it fails, log error but DO NOT fail the API response.
+    if (existing.imagePublicId) {
+      try {
+        await cloudinary.uploader.destroy(existing.imagePublicId);
+      } catch (cloudErr) {
+        console.error(
+          `Cloudinary cleanup failed for ${existing.imagePublicId}:`,
+          cloudErr
+        );
+        // intentionally ignore error (do not return non-2xx status)
+      }
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Product deleted successfully", id: productId });
+  } catch (err) {
+    console.error("Delete product error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};

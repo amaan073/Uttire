@@ -4,6 +4,7 @@ import {
   getAdminProducts,
   addAdminProduct,
   updateAdminProduct,
+  deleteAdminProduct,
 } from "../controllers/adminController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import { adminOnly } from "../middlewares/adminMiddleware.js";
@@ -22,8 +23,13 @@ const upload = multer({
   },
 });
 
+// get admin dashboard
 router.get("/dashboard", protect, adminOnly, getAdminDashboard);
+
+// get admin products
 router.get("/products", protect, adminOnly, getAdminProducts);
+
+// add new products
 router.post(
   "/products",
   protect,
@@ -31,6 +37,8 @@ router.post(
   upload.single("image"),
   addAdminProduct
 );
+
+// edit product
 router.put(
   "/product/:id",
   protect,
@@ -38,5 +46,7 @@ router.put(
   upload.single("image"),
   updateAdminProduct
 );
+
+router.delete("/product/:id", protect, adminOnly, deleteAdminProduct);
 
 export default router;
