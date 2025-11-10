@@ -81,7 +81,7 @@ const DirectCheckout = () => {
             {/* Single Product */}
             <div className="d-flex mb-3 align-items-center border-bottom pb-3">
               <img
-                src={`http://localhost:5000/public${image}`}
+                src={image}
                 alt={name}
                 className="rounded cursor-pointer"
                 width="70"

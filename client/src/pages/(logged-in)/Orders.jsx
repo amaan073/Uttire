@@ -333,7 +333,7 @@ export default function Orders() {
                   >
                     <div className="me-3">
                       <img
-                        src={`http://localhost:5000/public${item.product.image}`}
+                        src={item.product.image}
                         alt={item.product.name}
                         className="rounded img_ol"
                         style={{

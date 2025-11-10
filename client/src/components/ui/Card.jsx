@@ -55,7 +55,7 @@ const Card = ({ product, className, style }) => {
       {/* Image */}
       <div className="position-relative">
         <img
-          src={"http://localhost:5000/public" + product.image}
+          src={product.image}
           alt={product.name}
           className="w-100 object-fit-cover rounded-top-3"
         />

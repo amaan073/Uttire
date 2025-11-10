@@ -64,7 +64,7 @@ const RelatedProducts = ({ category, excludeId }) => {
                   style={{ aspectRatio: "1/1", overflow: "hidden" }}
                 >
                   <img
-                    src={`http://localhost:5000/public${product.image}`}
+                    src={product.image}
                     alt={product.name}
                     className="w-100 h-100 rounded"
                     style={{ objectFit: "cover" }}

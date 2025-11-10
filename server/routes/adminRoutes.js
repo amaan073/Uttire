@@ -3,6 +3,7 @@ import {
   getAdminDashboard,
   getAdminProducts,
   addAdminProduct,
+  updateAdminProduct,
 } from "../controllers/adminController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import { adminOnly } from "../middlewares/adminMiddleware.js";
@@ -29,6 +30,13 @@ router.post(
   adminOnly,
   upload.single("image"),
   addAdminProduct
+);
+router.put(
+  "/product/:id",
+  protect,
+  adminOnly,
+  upload.single("image"),
+  updateAdminProduct
 );
 
 export default router;

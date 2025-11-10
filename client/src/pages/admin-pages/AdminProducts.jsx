@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import privateAxios from "../../api/privateAxios";
 import { Spinner, Button } from "react-bootstrap";
 import ImagePlaceholder from "../../assets/image.png"; // fallback if no image
@@ -8,71 +8,102 @@ const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [page, setPage] = useState(1); // <-- added for pagination
-  const [hasMore, setHasMore] = useState(true); // <-- track if more pages exist
-  const [loadingMore, setLoadingMore] = useState(false); // <-- spinner for next pages
-  const [loadingMoreError, setLoadingMoreError] = useState(false); // <-- retry on scroll error
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadingMoreError, setLoadingMoreError] = useState(false);
 
+  // cursor for next page: send null for initial load, backend returns nextCursor
+  const [cursor, setCursor] = useState(null);
+
+  const isFetchingRef = useRef(false);
   const navigate = useNavigate();
 
-  const fetchProducts = async (pageNumber) => {
-    try {
-      if (pageNumber === 1) setError("");
-      else setLoadingMoreError(false);
+  // ---- Fetch helper ----
+  const fetchPage = async (cursorToUse = null) => {
+    const params = new URLSearchParams();
+    params.append("limit", 10);
+    if (cursorToUse) params.append("cursor", cursorToUse);
+    const { data } = await privateAxios.get(
+      `/admin/products?${params.toString()}`
+    );
+    return data; // expected: { products, hasMore, nextCursor }
+  };
 
-      if (pageNumber === 1) setLoading(true);
-      else setLoadingMore(true);
-
-      const { data } = await privateAxios.get(
-        `/admin/products?page=${pageNumber}&limit=10`
-      );
-
-      // expected backend response: { products, totalPages }
-      if (pageNumber === 1) {
+  // ---- Initial load ----
+  useEffect(() => {
+    const load = async () => {
+      setError("");
+      setLoading(true);
+      try {
+        isFetchingRef.current = true;
+        const data = await fetchPage(null);
         setProducts(data.products || []);
-      } else {
-        setProducts((prev) => [...prev, ...(data.products || [])]);
+        setHasMore(Boolean(data.hasMore));
+        setCursor(data.nextCursor || null);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load products.");
+      } finally {
+        isFetchingRef.current = false;
+        setLoading(false);
       }
+    };
+    load();
+  }, []);
 
-      setHasMore(pageNumber < data.totalPages);
+  // ---- Load more (on scroll) ----
+  const loadMore = async () => {
+    if (!hasMore || isFetchingRef.current) return;
+    setLoadingMore(true);
+    setLoadingMoreError(false);
+    isFetchingRef.current = true;
+
+    try {
+      const data = await fetchPage(cursor);
+      const fetched = data.products || [];
+
+      // merge without duplicates
+      setProducts((prev) => [...prev, ...fetched]);
+
+      setHasMore(Boolean(data.hasMore));
+      setCursor(data.nextCursor || null);
     } catch (err) {
-      console.error(err);
-      if (pageNumber === 1) setError("Failed to load products.");
-      else setLoadingMoreError(true);
+      console.error("Failed loading more:", err);
+      setLoadingMoreError(true);
     } finally {
-      setLoading(false);
+      isFetchingRef.current = false;
       setLoadingMore(false);
     }
   };
 
-  // ✅ Initial load
+  // ---- Infinite scroll listener ----
   useEffect(() => {
-    fetchProducts(1);
-  }, []);
-
-  // ✅ Infinite scroll listener
-  useEffect(() => {
-    const handleScroll = () => {
+    const onScroll = () => {
       if (loading || loadingMore || !hasMore || loadingMoreError) return;
-
       const { scrollTop, scrollHeight, clientHeight } =
         document.documentElement;
       if (scrollTop + clientHeight >= scrollHeight - 100) {
-        // near bottom
-        setPage((prev) => prev + 1);
+        loadMore();
       }
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [loading, loadingMore, hasMore, loadingMoreError]);
-
-  // ✅ Fetch more when page changes
-  useEffect(() => {
-    if (page === 1 || !hasMore) return;
-    fetchProducts(page);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, [loading, loadingMore, hasMore, loadingMoreError, cursor]);
+
+  // ---- Delete product (no replace, just remove locally) ----
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
+
+    try {
+      await privateAxios.delete(`/admin/products/${id}`);
+      setProducts((prev) => prev.filter((p) => p._id !== id));
+    } catch (err) {
+      console.error("Failed to delete product:", err);
+      alert("Failed to delete product. Please try again.");
+    }
+  };
 
   if (loading) {
     return (
@@ -102,6 +133,31 @@ const AdminProducts = () => {
         <Button onClick={() => window.location.reload()} variant="primary">
           Retry
         </Button>
+      </div>
+    );
+  }
+
+  // FULL-PAGE Empty state when there are no products (after initial load)
+  if (!loading && products.length === 0) {
+    return (
+      <div
+        className="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center"
+        style={{ marginTop: "-83px" }}
+      >
+        <i
+          className="bi bi-box-seam text-secondary mb-3"
+          style={{ fontSize: "4rem", opacity: 0.85 }}
+        ></i>
+        <h4 className="fw-semibold mb-2">No products yet</h4>
+        <p className="text-muted mb-3">There are no products to display.</p>
+        <div className="d-flex gap-2">
+          <Button
+            variant="primary"
+            onClick={() => navigate("/admin/products/new")}
+          >
+            + Add Product
+          </Button>
+        </div>
       </div>
     );
   }
@@ -180,13 +236,7 @@ const AdminProducts = () => {
       {loadingMoreError && (
         <div className="text-center text-danger mt-2">
           Failed to load more products.{" "}
-          <button
-            className="btn btn-link btn-sm"
-            onClick={() => {
-              setLoadingMoreError(false);
-              fetchProducts(page);
-            }}
-          >
+          <button className="btn btn-link btn-sm" onClick={loadMore}>
             Retry
           </button>
         </div>

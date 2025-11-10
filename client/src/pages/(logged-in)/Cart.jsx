@@ -148,7 +148,7 @@ const Cart = () => {
                     onClick={() => navigate(`/products/${item.product._id}`)}
                   >
                     <img
-                      src={`http://localhost:5000/public${item.product.image}`}
+                      src={item.product.image}
                       alt={item.product?.name || "Product image"}
                       className="w-100 h-100 object-fit-cover"
                     />

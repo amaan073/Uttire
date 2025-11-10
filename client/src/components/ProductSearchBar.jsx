@@ -135,10 +135,7 @@ const ProductSearchBar = ({ searchBarVisible }) => {
                 onClick={() => setIsResultVisible(false)}
               >
                 <div style={{ width: "40px", aspectRatio: "1/1" }}>
-                  <img
-                    src={"http://localhost:5000/public" + product.image}
-                    className="w-100 rounded-1"
-                  />
+                  <img src={product.image} className="w-100 rounded-1" />
                 </div>
                 <div style={{ maxWidth: "150px" }} className="small">
                   {product.name}

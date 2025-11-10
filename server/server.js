@@ -48,7 +48,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
-// admin rotes
+// admin routes
 app.use("/api/admin", adminRoutes);
 
 /* If no route matched, notFound runs  (this must come after routes so when there is no route handler for a route that means 

@@ -79,7 +79,7 @@ const CartCheckout = () => {
                 className="d-flex mb-3 align-items-center border-bottom pb-2"
               >
                 <img
-                  src={`http://localhost:5000/public${item.product.image}`}
+                  src={item.product.image}
                   alt={item.product.name}
                   className="rounded cursor-pointer"
                   width="70"

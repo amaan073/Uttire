@@ -4,11 +4,6 @@ import User from "../models/userModel.js";
 import cloudinary from "../config/cloudinary.js";
 import { Readable } from "stream";
 
-/**
- * @desc Get admin dashboard stats + recent orders
- * @route GET /api/admin/dashboard
- * @access Private (Admin only)
- */
 export const getAdminDashboard = async (req, res) => {
   try {
     // Fetch key stats
@@ -50,43 +45,49 @@ export const getAdminDashboard = async (req, res) => {
   }
 };
 
-/**
- * @desc Get all products for admin panel
- * @route GET /api/admin/products
- * @access Private/Admin
- */
 export const getAdminProducts = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+    const cursor = req.query.cursor || null; // to fetch items using cursor method
 
-    const skip = (page - 1) * limit;
-    const products = await Product.find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    const query = {};
+    if (cursor) {
+      // fetch products older than this cursor (strictly less than)
+      query._id = { $lt: cursor };
+    }
 
-    // count total products for totalPages
-    const total = await Product.countDocuments();
+    // sort newest first
+    const products = await Product.find(query)
+      .sort({ _id: -1 })
+      .limit(limit + 1); // one extra to check for hasMore
 
-    // Return products and metadata
+    // determine if there's more and set nextCursor
+    let hasMore = false;
+    let nextCursor = null;
+    if (products.length > limit) {
+      hasMore = true;
+
+      // get nextCursor BEFORE popping
+      nextCursor = products[limit - 1]._id.toString();
+
+      products.splice(limit);
+    } else if (products.length > 0) {
+      nextCursor = products[products.length - 1]._id.toString();
+    }
+
+    // respond with products and pagination metadata
     res.status(200).json({
       products,
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      hasMore,
+      nextCursor,
+      limit,
+      count: products.length,
     });
   } catch (err) {
     console.error("Admin products fetch error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
-
-/**
- * @desc Add a new product (Admin)
- * @route POST /api/admin/products
- * @access Private/Admin
- */
 
 export const addAdminProduct = async (req, res) => {
   try {
@@ -175,6 +176,162 @@ export const addAdminProduct = async (req, res) => {
     }
   } catch (err) {
     console.error("Add product error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const updateAdminProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const existing = await Product.findById(productId);
+    if (!existing)
+      return res.status(404).json({ message: "Product not found" });
+
+    const {
+      name,
+      brand,
+      description,
+      price,
+      discount = 0,
+      stock,
+      sizes = [],
+      category,
+      gender,
+      color,
+      featured = false,
+      freeShipping = false,
+      easyReturns = false,
+      fabric,
+      care = [],
+      fit,
+      modelInfo = "",
+      // optional: frontend may send image URL and/or imagePublicId when not uploading a file
+      image: imageFromBody,
+      imagePublicId: imagePublicIdFromBody,
+    } = req.body;
+
+    // array parser helper function
+    const parseArray = (val) => {
+      if (Array.isArray(val)) return val;
+      if (typeof val === "string") {
+        try {
+          const parsed = JSON.parse(val);
+          if (Array.isArray(parsed)) return parsed;
+        } catch (e) {
+          // fallback: comma separated
+          return val
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+        }
+      }
+      return [];
+    };
+
+    const updates = {};
+
+    if (typeof name !== "undefined") updates.name = String(name).trim();
+    if (typeof brand !== "undefined") updates.brand = String(brand).trim();
+    if (typeof description !== "undefined")
+      updates.description = String(description).trim();
+    if (typeof price !== "undefined" && price !== "")
+      updates.price = Number(price);
+    if (typeof discount !== "undefined" && discount !== "")
+      updates.discount = Math.min(Math.max(Number(discount), 0), 100);
+    if (typeof stock !== "undefined" && stock !== "")
+      updates.stock = Number(stock);
+
+    // sizes & care may be arrays or JSON strings
+    if (typeof sizes !== "undefined")
+      updates.sizes = Array.isArray(sizes) ? sizes : parseArray(sizes);
+    if (typeof category !== "undefined")
+      updates.category = String(category).trim();
+    if (typeof gender !== "undefined") updates.gender = String(gender).trim();
+    if (typeof color !== "undefined") updates.color = String(color).trim();
+
+    // booleans come as "true"/"false" or "on" or actual booleans (returns false if any of these values dont match)
+    const toBool = (v) => v === true || v === "true" || v === "on";
+    if (typeof featured !== "undefined") updates.featured = toBool(featured);
+    if (typeof freeShipping !== "undefined")
+      updates.freeShipping = toBool(freeShipping);
+    if (typeof easyReturns !== "undefined")
+      updates.easyReturns = toBool(easyReturns);
+
+    if (typeof fabric !== "undefined") updates.fabric = String(fabric).trim();
+    if (typeof care !== "undefined")
+      updates.care = Array.isArray(care) ? care : parseArray(care);
+    if (typeof fit !== "undefined") updates.fit = String(fit).trim();
+    if (typeof modelInfo !== "undefined")
+      updates.modelInfo = String(modelInfo).trim();
+
+    // handle image:
+    // - if req.file present => upload new image to cloudinary, set image & imagePublicId, and later delete old public id
+    // - else if frontend supplied image URL (imageFromBody) possibly with imagePublicId => update fields accordingly (no Cloudinary ops)
+    // - else: do not touch image fields (keep existing)
+    const file = req.file;
+    let uploadResult = null;
+
+    if (file) {
+      // upload via stream (same pattern as addAdminProduct)
+      uploadResult = await new Promise((resolve, reject) => {
+        const cloudinaryUploadStream = cloudinary.uploader.upload_stream(
+          { folder: "uttire/products" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+
+        Readable.from(file.buffer).pipe(cloudinaryUploadStream);
+      });
+
+      updates.image = uploadResult.secure_url;
+      updates.imagePublicId = uploadResult.public_id;
+    } else if (typeof imageFromBody !== "undefined" && imageFromBody !== null) {
+      // frontend explicitly sent an image URL (likely the existing image). Update it as provided.
+      updates.image = String(imageFromBody);
+      if (typeof imagePublicIdFromBody !== "undefined") {
+        updates.imagePublicId = String(imagePublicIdFromBody);
+      }
+    }
+
+    // If nothing to update and no new file, return the existing product (or you can return 400)
+    if (Object.keys(updates).length === 0) {
+      return res.status(200).json(existing);
+    }
+
+    let updatedProduct;
+    // product update
+    try {
+      updatedProduct = await Product.findByIdAndUpdate(productId, updates, {
+        new: true,
+        runValidators: true,
+      });
+    } catch (dbErr) {
+      // If DB failed after we uploaded a new image, cleanup the newly uploaded image to avoid orphaned images
+      if (uploadResult?.public_id) {
+        try {
+          await cloudinary.uploader.destroy(uploadResult.public_id);
+        } catch (cleanupErr) {
+          console.error("Cleanup failed after DB error:", cleanupErr);
+        }
+      }
+      throw dbErr; // rethrow to outer catch
+    }
+
+    // If we uploaded a new image successfully and product created, attempt to destroy the old cloudinary image (best-effort)
+    if (uploadResult && existing.imagePublicId) {
+      try {
+        await cloudinary.uploader.destroy(existing.imagePublicId);
+      } catch (cleanupErr) {
+        console.error("Failed to cleanup old Cloudinary image:", cleanupErr);
+        // don't fail the request because of cleanup failure
+      }
+    }
+
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    console.error("Update product error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

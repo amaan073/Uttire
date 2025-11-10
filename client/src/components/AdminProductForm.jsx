@@ -3,8 +3,8 @@ import { Spinner } from "react-bootstrap";
 
 // eslint-disable-next-line react/prop-types
 const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({}); // form validation errors state
+  const [loading, setLoading] = useState(false); // addding or updating product api state
   const [formData, setFormData] = useState({
     name: "",
     brand: "",
@@ -24,7 +24,6 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
     care: "",
     fit: "",
     modelInfo: "",
-    ...initialData,
   });
 
   const categories = [
@@ -47,11 +46,34 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
   const colors = ["Red", "Green", "Blue", "Black", "White", "Yellow", "Grey"];
 
   useEffect(() => {
-    if (initialData && Object.keys(initialData).length > 0) {
-      setFormData((prev) => ({ ...prev, ...initialData }));
+    if (initialData && Object.keys(initialData).length > 0 && isEdit) {
+      const normalized = {
+        name: initialData.name || "",
+        brand: initialData.brand || "",
+        description: initialData.description || "",
+        price: (initialData.price ?? "") ? String(initialData.price) : "",
+        discount: initialData.discount ?? 0,
+        stock: (initialData.stock ?? "") ? String(initialData.stock) : "",
+        sizes: Array.isArray(initialData.sizes) ? initialData.sizes : [],
+        image: initialData.image || "",
+        imagePublicId: initialData.imagePublicId || "", // extra field since its available in edit mode
+        category: initialData.category || "",
+        gender: initialData.gender || "",
+        color: initialData.color || "",
+        featured: !!initialData.featured,
+        freeShipping: !!initialData.freeShipping,
+        easyReturns: !!initialData.easyReturns,
+        fabric: initialData.fabric || "",
+        care: Array.isArray(initialData.care)
+          ? initialData.care.join(", ")
+          : initialData.care || "",
+        fit: initialData.fit || "",
+        modelInfo: initialData.modelInfo || "",
+      };
+
+      setFormData((prev) => ({ ...prev, ...normalized }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(initialData)]);
+  }, [initialData, isEdit]);
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -88,10 +110,12 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
 
     if (type === "checkbox" && name === "sizes") {
       // Toggle sizes
-      const updatedSizes = checked
-        ? [...formData.sizes, value]
-        : formData.sizes.filter((s) => s !== value);
-      setFormData({ ...formData, sizes: updatedSizes });
+      setFormData((prev) => {
+        const updatedSizes = checked
+          ? [...(prev.sizes || []), value]
+          : (prev.sizes || []).filter((s) => s !== value);
+        return { ...prev, sizes: updatedSizes };
+      });
     } else if (type === "checkbox") {
       setFormData({ ...formData, [name]: checked });
     } else {
@@ -126,19 +150,24 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
 
     if (!formData.gender.trim()) newErrors.gender = "Gender is required.";
 
-    if (!formData.image) newErrors.image = "Product image is required.";
+    if (!formData.image) {
+      // if editing and an existing URL is present, that's fine
+      if (!(isEdit && initialData && initialData.image)) {
+        newErrors.image = "Product image is required.";
+      }
+    }
 
     if (!formData.sizes || formData.sizes.length === 0)
       newErrors.sizes = "Select at least one size.";
 
-    if (!formData.fabric.trim()) {
+    if (!String(formData.fabric || "").trim()) {
       newErrors.fabric = "Fabric is required.";
     }
-    if (!formData.care.trim()) {
+    if (!String(formData.care || "").trim()) {
       newErrors.care = "Care instructions are required.";
     }
 
-    if (!formData.fit.trim()) {
+    if (!String(formData.fit || "").trim()) {
       newErrors.fit = "Fit type is required.";
     }
 
@@ -331,7 +360,10 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
                   type="checkbox"
                   name="sizes"
                   value={size}
-                  checked={formData.sizes.includes(size)}
+                  checked={
+                    Array.isArray(formData.sizes) &&
+                    formData.sizes.includes(size)
+                  }
                   onChange={handleChange}
                   id={`size-${size}`}
                 />
@@ -387,8 +419,7 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
           )}
         </div>
 
-        {/* 🆕 Image File Upload */}
-        {/* 🆕 Image File Upload */}
+        {/*  Image File Upload */}
         <div className="col-md-6">
           <label className="form-label fw-medium">Upload Product Image</label>
           <input
@@ -399,9 +430,13 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
             className={`form-control ${errors.image ? "is-invalid" : ""}`}
           />
           {/* ✅ Preview if a File object exists */}
-          {formData.image && !(formData.image instanceof String) && (
+          {formData.image && (
             <img
-              src={URL.createObjectURL(formData.image)}
+              src={
+                formData.image instanceof File
+                  ? URL.createObjectURL(formData.image)
+                  : formData.image
+              }
               alt="Preview"
               className="mt-2 rounded border"
               style={{ width: "100px", height: "100px", objectFit: "cover" }}
@@ -504,8 +539,12 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
         </div>
 
         {/* Submit */}
-        <div className="col-12 text-center mt-3" disabled={loading}>
-          <button type="submit" className="btn btn-primary px-5">
+        <div className="col-12 text-center mt-3">
+          <button
+            type="submit"
+            className="btn btn-primary px-5"
+            disabled={loading}
+          >
             {loading ? (
               <Spinner animation="border" size="sm" />
             ) : isEdit ? (

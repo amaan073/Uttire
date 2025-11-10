@@ -94,3 +94,8 @@ input[type="search"]::-webkit-search-cancel-button {
 .hidden {
   display: none;
 }
+
+.white-blur-bg {
+  background-color: #ffffffeb;
+  backdrop-filter: blur(10px);
+}

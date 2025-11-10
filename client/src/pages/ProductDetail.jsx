@@ -161,11 +161,7 @@ const ProductDetail = () => {
       <div className="d-md-flex gap-4 align-items-stretch">
         {/* Image */}
         <div className="product-image-wrap col-md-6 col-xl-5 d-flex justify-content-center align-items-center overflow-hidden shadow-sm">
-          <img
-            src={`http://localhost:5000/public${product.image}`}
-            alt={product.name}
-            loading="eager"
-          />
+          <img src={product.image} alt={product.name} loading="eager" />
         </div>
         {/* Info */}
         <div className="col-md-6 col-xl-7 mt-4 mt-md-0">
@@ -221,7 +217,7 @@ const ProductDetail = () => {
 
           {/* Colors */}
 
-          <div className="mb-3">
+          <div className="mb-3 d-inline-block">
             <h6>Color</h6>
             <DemoTooltip>
               <div className="d-flex gap-2">
