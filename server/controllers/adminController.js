@@ -3,6 +3,7 @@ import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
 import cloudinary from "../config/cloudinary.js";
 import { Readable } from "stream";
+import mongoose from "mongoose";
 
 export const getAdminDashboard = async (req, res) => {
   try {
@@ -367,5 +368,102 @@ export const deleteAdminProduct = async (req, res) => {
   } catch (err) {
     console.error("Delete product error:", err);
     return res.status(500).json({ message: "Server error" });
+  }
+};
+
+//ORDERS
+export const getAdminOrders = async (req, res) => {
+  try {
+    const limitParam = Math.min(parseInt(req.query.limit) || 20, 100);
+    const limit = limitParam > 0 ? limitParam : 20;
+    const cursor = req.query.cursor || null;
+
+    const query = {};
+    if (cursor) {
+      // fetch orders older than this cursor (strictly less than)
+      if (!mongoose.Types.ObjectId.isValid(cursor)) {
+        return res.status(400).json({ message: "Invalid cursor" });
+      }
+      query._id = { $lt: cursor };
+    }
+
+    // newest first
+    let orders = await Order.find(query)
+      .sort({ _id: -1 })
+      .limit(limit + 1) // fetch one extra to determine hasMore
+      .populate("user", "name email")
+      .populate("items.product", "name image price");
+
+    let hasMore = false;
+    let nextCursor = null;
+    if (orders.length > limit) {
+      hasMore = true;
+      // next cursor is the last item's _id BEFORE we splice
+      nextCursor = orders[limit - 1]._id.toString();
+      orders.splice(limit); // trim the extra item
+    } else if (orders.length > 0) {
+      nextCursor = orders[orders.length - 1]._id.toString();
+    }
+
+    const enrichedOrders = orders.map((order) => {
+      const obj = order.toObject(); // ✅ converts mongoose doc → plain object
+      const daysToAdd = obj.delivery === "express" ? 4 : 7;
+      const estimated = new Date(obj.createdAt);
+      estimated.setDate(estimated.getDate() + daysToAdd);
+
+      return {
+        ...obj,
+        estimatedDelivery: estimated,
+      };
+    });
+
+    res.status(200).json({
+      orders: enrichedOrders,
+      hasMore,
+      nextCursor,
+      limit,
+      count: orders.length,
+    });
+  } catch (err) {
+    console.error("getAdminOrders error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const updateAdminOrderStatus = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { status } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(400).json({ message: "Invalid order id" });
+
+    const allowed = [
+      "pending",
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+    ];
+    if (!status || !allowed.includes(status))
+      return res
+        .status(400)
+        .json({ message: `Invalid status. Allowed: ${allowed.join(", ")}` });
+
+    const order = await Order.findById(id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.status = status;
+    const updated = await order.save();
+
+    // populate response
+    const populated = await Order.findById(updated._id)
+      .populate("user", "name email")
+      .populate("items.product", "name image price");
+
+    res.status(200).json(populated);
+  } catch (err) {
+    console.error("updateAdminOrderStatus error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };

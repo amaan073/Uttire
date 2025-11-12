@@ -5,6 +5,8 @@ import {
   addAdminProduct,
   updateAdminProduct,
   deleteAdminProduct,
+  getAdminOrders,
+  updateAdminOrderStatus,
 } from "../controllers/adminController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import { adminOnly } from "../middlewares/adminMiddleware.js";
@@ -48,5 +50,10 @@ router.put(
 );
 
 router.delete("/product/:id", protect, adminOnly, deleteAdminProduct);
+
+//ORDER routes
+router.get("/orders", protect, adminOnly, getAdminOrders);
+
+router.put("/order/:id/status", protect, adminOnly, updateAdminOrderStatus);
 
 export default router;

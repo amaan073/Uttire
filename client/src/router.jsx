@@ -30,7 +30,7 @@ import AdminDashboard from "./pages/admin-pages/AdminDashboard";
 import AdminProducts from "./pages/admin-pages/AdminProducts";
 import AdminProductNew from "./pages/admin-pages/AdminProductNew";
 import AdminProductEdit from "./pages/admin-pages/AdminProductEdit";
-// import AdminOrders from "./pages/admin-pages/AdminOrders";
+import AdminOrders from "./pages/admin-pages/AdminOrders";
 import AdminLayout from "./pages/admin-pages/AdminLayout";
 import AdminRoute from "./components/AdminRoute";
 
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
           { path: "products", element: <AdminProducts /> },
           { path: "products/new", element: <AdminProductNew /> },
           { path: "products/:id/edit", element: <AdminProductEdit /> },
-          // { path: "orders", element: <AdminOrders /> },
+          { path: "orders", element: <AdminOrders /> },
         ],
       },
     ],

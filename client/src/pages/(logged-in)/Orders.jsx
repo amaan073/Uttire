@@ -325,6 +325,19 @@ export default function Orders() {
               {order.items.map((item) => {
                 const discountedPrice =
                   item.price - (item.price * item.discount) / 100;
+                const product = item.product; // shorthand
+
+                // 🛑 Skip if product is missing
+                if (!product) {
+                  return (
+                    <div
+                      key={item._id}
+                      className="bg-light p-3 rounded-3 mt-3 text-muted"
+                    >
+                      <p className="mb-0">⚠️ This product no longer exists.</p>
+                    </div>
+                  );
+                }
                 return (
                   <div
                     key={item._id}
