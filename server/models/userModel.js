@@ -49,6 +49,7 @@ const userSchema = new mongoose.Schema(
 
     //  Profile Information
     profileImage: { type: String, default: "" },
+    profileImagePublicId: { type: String, default: "" }, // cloudinary image public id
     phone: {
       type: String,
       default: "",

@@ -5,6 +5,9 @@ import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
 import { isValidName, isValidPhone } from "../utils/validators";
 import AuthContext from "../context/AuthContext";
+import { Spinner } from "react-bootstrap";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Avatar } from "@mui/material";
 
 /* eslint-disable react/prop-types */
 const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
@@ -16,6 +19,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
   const [previewUrl, setPreviewUrl] = useState(null); // object URL for preview
   const [loading, setLoading] = useState(false); // disable inputs while saving
   const [isChanged, setIsChanged] = useState(false); //to check user has made any changes yet
+  const [removeImage, setRemoveImage] = useState(false); // flag to remove
 
   const { setUser } = useContext(AuthContext);
 
@@ -27,6 +31,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
         email: profile.email || "",
         phone: profile.phone || "",
       });
+      setRemoveImage(false);
     }
   }, [mode, profile]);
 
@@ -49,13 +54,17 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
 
   //to track if there is a change in form inputs and only allow to save changes when there is a change
   useEffect(() => {
-    //changed has true value when one of these conditions has happened or false every condition is false
+    const normalizedName = formData.name.trim().replace(/\s+/g, " ");
+    const hasNameChanged = normalizedName !== profile.name;
+    const hasPhoneChanged = formData.phone !== (profile.phone || "");
+    const hasFileChanged = selectedFile !== null;
+    const hasImageRemoved = removeImage === true;
+
     const changed =
-      formData.name.trim().replace(/\s+/g, " ") !== profile.name || // trim or remove whitespaces(extra) before comparing
-      formData.phone !== (profile.phone || "") ||
-      selectedFile !== null; // profile image changed
+      hasNameChanged || hasPhoneChanged || hasFileChanged || hasImageRemoved;
+
     setIsChanged(changed);
-  }, [formData, profile, selectedFile]);
+  }, [formData, profile, selectedFile, removeImage]);
 
   // file input change handler
   const handleFileChange = (e) => {
@@ -76,7 +85,12 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
       e.target.value = "";
       return;
     }
+
+    // ✅ Reset remove flag because a new image is being selected
+    setRemoveImage(false);
+
     setSelectedFile(file);
+    e.target.value = ""; // optional UX improvement
   };
 
   // handle input changes
@@ -97,7 +111,15 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
   // Cancel editing: cleanup preview and return to view mode
   const handleCancel = () => {
     handleRemoveSelectedFile();
+    setRemoveImage(false); // reset flag
     setMode("view");
+  };
+
+  const handleRemoveImage = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setRemoveImage(true); // mark image for removal
   };
 
   const handleSubmit = async (e) => {
@@ -130,11 +152,15 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
         fd.append("profileImage", selectedFile);
       }
 
+      // profile image flag
+      if (removeImage) fd.append("removeImage", true);
+
       const { data } = await privateAxios.put("/users/profile", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setProfile(data); //update local state with new data
+      //update local state with new data
+      setProfile(data);
       // setting user globally (authContext)
       setUser({
         name: data.name,
@@ -211,19 +237,45 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
                   style={{ height: "162px", width: "162px" }}
                 >
                   {/* show preview if user selected a file, otherwise show existing avatar */}
-                  {previewUrl ? (
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="w-100 h-100 object-fit-cover rounded-circle"
-                    />
+                  {!removeImage ? (
+                    previewUrl ? (
+                      <img
+                        src={previewUrl}
+                        alt="Preview"
+                        className="w-100 h-100 object-fit-cover rounded-circle"
+                      />
+                    ) : (
+                      <UserAvatar
+                        user={profile}
+                        sx={{ fontSize: "50px", backgroundColor: "#d32f2f" }}
+                      />
+                    )
                   ) : (
-                    <UserAvatar
-                      user={profile}
+                    <Avatar
+                      style={{ width: "100%", height: "100%" }}
                       sx={{ fontSize: "50px", backgroundColor: "#d32f2f" }}
-                    />
+                    >
+                      {profile?.name ? profile.name[0].toUpperCase() : ""}
+                    </Avatar>
                   )}
                 </div>
+                {/* show remove button only if there’s a current or preview image */}
+                {(previewUrl || profile?.profileImage) && !removeImage && (
+                  <button
+                    type="button"
+                    title="Remove profile picture"
+                    onClick={handleRemoveImage}
+                    className="position-absolute bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      top: "125px",
+                      right: "77px",
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" color="error" />
+                  </button>
+                )}
               </div>
 
               {/* label acting as a button for the hidden file input */}
@@ -314,7 +366,20 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
                 className="btn btn-primary w-100"
                 disabled={!isChanged || loading} // disables until form changes or the profile is loading
               >
-                Save changes
+                {loading ? (
+                  <>
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />{" "}
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
               </button>
             </div>
           </form>

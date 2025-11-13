@@ -24,28 +24,14 @@ import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Storage config (uploads/profile-pics/)
-const storage = multer.diskStorage({
-  //destination → tells multer where to save the uploaded files. In this case: uploads/profile-pics/.
-  destination: (req, file, cb) => {
-    cb(null, "uploads/profile-pics/");
-  },
-  //filename → tells multer what name to use when saving the file
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname); //extracts the extension from filename
-    cb(null, req.user.id + "-avatar" + ext); // e.g. 12345323243232-avatar.png
-  },
-});
+const storage = multer.memoryStorage();
 const upload = multer({
   storage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB limit
   fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png/;
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (allowed.test(ext)) {
-      cb(null, true);
-    } else {
-      cb(new Error("Only .jpg, .jpeg, .png allowed"));
-    }
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (allowed.includes(file.mimetype)) cb(null, true);
+    else cb(new Error("Only JPG, PNG, and WEBP files are allowed"));
   },
 });
 

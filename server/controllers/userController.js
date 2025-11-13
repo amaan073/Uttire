@@ -3,6 +3,9 @@ import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
 import jwt from "jsonwebtoken";
+// image upload
+import cloudinary from "../config/cloudinary.js";
+import { Readable } from "stream";
 
 // Cookie options (for reuse)
 const accessTokenOptions = {
@@ -197,9 +200,6 @@ export const getMe = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    //sending full url for frontend to be able to use static folder /uploads of the server in the client
-    user.profileImage = `${req.protocol}://${req.get("host")}${user.profileImage}`;
-
     res.json({ user });
   } catch (err) {
     console.error("Error fetching user:", err);
@@ -219,9 +219,6 @@ export const getProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    //sending full url for frontend to be able to use static folder /uploads of the server in the client
-    user.profileImage = `${req.protocol}://${req.get("host")}${user.profileImage}`;
-
     res.status(200).json(user);
   } catch (error) {
     console.error("Error in getProfile:", error);
@@ -232,26 +229,85 @@ export const getProfile = async (req, res) => {
 // ========================= Update Profile info (updateProfile) =========================
 export const updateProfile = async (req, res) => {
   try {
-    const { name, phone } = req.body; //form request body
+    const { name, phone, removeImage } = req.body;
 
-    const updateFields = { name, phone }; //fields to be updated
+    // user validation check
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    //This checks if the user uploaded a file in this request
-    //req.file is added by multer middleware automatically. It contains info of the file like req.file.filename here
-    if (req.file) {
-      updateFields.profileImage = `/uploads/profile-pics/${req.file.filename}`;
+    const updateFields = {};
+
+    //  Validate name (required)
+    if (!/^[A-Za-z\s]{2,}$/.test(name.trim())) {
+      return res.status(400).json({
+        message:
+          "Please enter a valid name (only letters, at least 2 characters).",
+      });
+    }
+    updateFields.name = name.trim();
+
+    //  Phone number: can be empty → clear if empty
+    if (phone.trim() === "") {
+      updateFields.phone = ""; // clear phone
+    } else if (!/^\+?[0-9]{10,15}$/.test(phone.trim())) {
+      return res
+        .status(400)
+        .json({ message: "Please enter a valid phone number." });
+    } else {
+      updateFields.phone = phone.trim();
     }
 
-    const user = await User.findByIdAndUpdate(
+    if (removeImage === "true" && req.file) {
+      return res
+        .status(400)
+        .json({ message: "Cannot remove and upload at the same time" });
+    }
+
+    // ✅ Handle image upload/removal
+    if (removeImage === "true") {
+      // user requested image deletion
+      if (user.profileImagePublicId) {
+        try {
+          await cloudinary.uploader.destroy(user.profileImagePublicId);
+        } catch (err) {
+          console.error("Error deleting old image:", err);
+        }
+      }
+      updateFields.profileImage = "";
+      updateFields.profileImagePublicId = "";
+    } else if (req.file) {
+      // user uploaded a new image
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "uttire/profile-pics" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        Readable.from(req.file.buffer).pipe(stream);
+      });
+
+      updateFields.profileImage = uploadResult.secure_url;
+      updateFields.profileImagePublicId = uploadResult.public_id;
+
+      // delete old one if any
+      if (user.profileImagePublicId) {
+        try {
+          await cloudinary.uploader.destroy(user.profileImagePublicId);
+        } catch (err) {
+          console.error("Old image cleanup failed:", err);
+        }
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      { $set: updateFields }, //merge new fields(updateFields) and also avoid messing
+      { $set: updateFields },
       { new: true, runValidators: true }
-    ).select("-password -refreshToken");
+    ).select("-password -refreshToken"); // deselecting password and refresh token
 
-    //sending full url for frontend to be able to use static folder /uploads of the server in the client
-    user.profileImage = `${req.protocol}://${req.get("host")}${user.profileImage}`;
-
-    res.json(user);
+    res.json(updatedUser);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
