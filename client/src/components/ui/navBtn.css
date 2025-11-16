@@ -1,46 +1,40 @@
 .nav-view-btn {
-    height: 32px;
-    width: 32px;
-    padding-right: 3px !important;
-    display: flex !important;
-    flex-direction: column;
-    justify-content: space-around;
+  height: 32px;
+  width: 32px;
+  padding-right: 3px !important;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .nav-view-btn > div {
-    width: 100%;
-    height: 4px;
-    border-radius: 10px;
-    background-color: rgb(65, 65, 65);
-    
-    transition: all 0.2s ease;
+  width: 100%;
+  height: 4px;
+  border-radius: 10px;
+  background-color: rgb(65, 65, 65);
+
+  transition: all 0.2s ease;
 }
-
-.nav-view-btn .line2 {
-    width: 95%;
-}
-
-
 
 /* active class for converting nav button into a cross*/
 
 .nav-view-btn.active {
-    justify-content: center;
-    position: relative;
+  justify-content: center;
+  position: relative;
 }
 
 .nav-view-btn.active div {
-    position: absolute;
+  position: absolute;
 }
 
 .nav-view-btn.active .line1 {
-    transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 
 .nav-view-btn.active .line2 {
-    display: none;
+  display: none;
 }
 
 .nav-view-btn.active .line3 {
-    transform: rotate(-45deg);
+  transform: rotate(-45deg);
 }

@@ -1,8 +1,14 @@
 import { ShoppingCart as ShoppingCartIcon } from "lucide-react";
-import StarIcon from "@mui/icons-material/Star";
+import StarRating from "../../components/ui/StarRating";
 import { useNavigate } from "react-router-dom";
 import { useState, useContext } from "react";
-import { Modal, Button, Spinner } from "react-bootstrap";
+import {
+  Modal,
+  Button,
+  Spinner,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import CartContext from "../../context/CartContext";
 import { toast } from "react-toastify";
 import AuthContext from "../../context/AuthContext";
@@ -71,18 +77,32 @@ const Card = ({ product, className, style }) => {
       <div className="p-3 text-start d-flex flex-column flex-grow-1">
         <h6 className="text-muted mb-1">{product.brand || "No Brand"}</h6>
         <h5 className="fw-bold mb-1">{product.name}</h5>
-        <p className="text-muted small mb-2">{product.description}</p>
+        <OverlayTrigger
+          placement="top"
+          overlay={<Tooltip>{product.description}</Tooltip>}
+        >
+          <p className="text-muted small mb-2" style={{ cursor: "pointer" }}>
+            {product.description.split(" ").slice(0, 10).join(" ") +
+              (product.description.split(" ").length > 10 ? "..." : "")}
+          </p>
+        </OverlayTrigger>
 
         {/* Rating */}
         <div className="d-flex align-items-center mb-2">
-          {[...Array(5)].map((_, i) => (
-            <StarIcon
-              key={i}
-              className={i < 4 ? "text-warning" : "text-secondary"}
-              fontSize="small"
+          {product.reviews?.length > 0 ? (
+            <StarRating
+              rating={
+                product.reviews?.length > 0
+                  ? product.reviews.reduce((sum, r) => sum + r.rating, 0) /
+                    product.reviews.length
+                  : 0
+              }
             />
-          ))}
-          <span className="small text-muted ms-2">
+          ) : (
+            <StarRating />
+          )}
+
+          <span className="small text-muted ms-2" style={{ paddingTop: "2px" }}>
             ({product.reviews?.length || 0} reviews)
           </span>
         </div>
@@ -107,6 +127,7 @@ const Card = ({ product, className, style }) => {
           >
             <ShoppingCartIcon size={18} /> Add to cart
           </button>
+
           {/* Size selection modal */}
           <Modal show={showModal} onHide={() => setShowModal(false)} centered>
             <div onClick={(e) => e.stopPropagation()}>

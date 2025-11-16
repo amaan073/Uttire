@@ -245,7 +245,10 @@ const Profile = () => {
                   <h5 className="mb-0 fw-semibold">Address</h5>{" "}
                   <button
                     className="btn btn-outline-primary btn-sm rounded-3 px-3"
-                    onClick={() => setShowAddressModal(true)}
+                    onClick={() => {
+                      setShowAddressModal(true);
+                      setMode("view");
+                    }}
                   >
                     Manage Address
                   </button>

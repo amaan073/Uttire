@@ -206,7 +206,7 @@ const Shop = () => {
     <>
       <div
         className="container-xxl py-md-5 py-2 d-md-grid gap-4 align-items-start"
-        style={{ gridTemplateColumns: "280px minmax(0,1fr)" }}
+        style={{ gridTemplateColumns: "290px minmax(0,1fr)" }}
       >
         <button
           className="mobile-filter-btn btn btn-primary d-flex align-items-center gap-1  d-md-none my-3 ms-auto"
@@ -264,7 +264,7 @@ const Shop = () => {
             <div className="my-3">
               <h5 className="fw-semibold mb-2">Size</h5>
               <div className="d-flex flex-wrap gap-2">
-                {["S", "M", "L", "XL"].map((size) => (
+                {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
                   <label
                     key={size}
                     className={`btn btn-sm rounded-pill ${

@@ -1,13 +1,19 @@
-import { Link } from "react-router-dom";
+import DemoToolTip from "../components/ui/DemoTooltip";
 
 const Footer = () => {
   return (
     <>
       <footer className="py-3 pt-4 mt-2 bg-dark text-white text-center">
         <div className="d-flex w-100 justify-content-center gap-3">
-          <Link to="#">Privacy Policy</Link>
+          <DemoToolTip>
+            <span className="text-primary cursor-pointer">Privacy Policy</span>
+          </DemoToolTip>
           <p className="text-primary">|</p>
-          <Link to="#">Terms and Conditions</Link>
+          <DemoToolTip>
+            <span className="text-primary cursor-pointer">
+              Terms and Conditions
+            </span>
+          </DemoToolTip>
         </div>
 
         <p>© {new Date().getFullYear()} Uttire, Inc. All rights reserved.</p>

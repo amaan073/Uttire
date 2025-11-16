@@ -84,6 +84,12 @@
   transform: rotate(-45deg);
 }
 
+@media screen and (max-width: 450px) {
+  .account-popup {
+    width: 330px !important;
+  }
+}
+
 .pagination .page-link {
   z-index: 1 !important;
 }

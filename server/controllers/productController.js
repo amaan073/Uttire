@@ -55,7 +55,10 @@ export const getProducts = async (req, res) => {
 
     const skip = (Number(page) - 1) * Number(limit);
     //to skip number of documents in the db collection ex. for 1st skips 0 doc, 2nd page skips 9 and sstart from 10th and send other 9 inlimit
-    const products = await Product.find(filter).skip(skip).limit(Number(limit));
+    const products = await Product.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
 
     const totalProducts = await Product.countDocuments(filter);
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./ui/Navbar.jsx";
 import NavBtn from "./ui/NavBtn.jsx";
@@ -31,6 +31,24 @@ const Header = () => {
 
   const navigate = useNavigate();
 
+  const accountBoxRef = useRef(null);
+  // account popup close
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (accountBoxRef.current && !accountBoxRef.current.contains(e.target)) {
+        setisAccountPopupVisible(false);
+      }
+    }
+
+    if (isAccountPopupVisible) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isAccountPopupVisible]);
+
   const handleLogout = async () => {
     try {
       await logoutUser(); //clears token and user data
@@ -46,8 +64,6 @@ const Header = () => {
       <header className="container-fluid position-fixed top-0 white-blur-bg border-bottom">
         <div className="px-1 py-3 px-md-3">
           <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start ">
-            <NavBtn isNavActive={isNavActive} setNavActive={setNavActive} />
-
             <Link
               to="/"
               className="d-flex align-items-center text-white text-decoration-none me-2"
@@ -56,7 +72,7 @@ const Header = () => {
                 <img src={mainLogo} alt="Uttire logo" height="50" />
               </div>
             </Link>
-
+            <NavBtn isNavActive={isNavActive} setNavActive={setNavActive} />
             <Navbar isNavActive={isNavActive} />
 
             <ProductSearchBar
@@ -90,7 +106,10 @@ const Header = () => {
                 )}
               </button>
 
-              <div className="account-box position-relative d-inline-block">
+              <div
+                className="account-box position-relative d-inline-block"
+                ref={accountBoxRef}
+              >
                 <button
                   type="button"
                   className="btn p-0 border-0"

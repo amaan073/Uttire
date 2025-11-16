@@ -37,8 +37,6 @@ const ProductSearchBar = ({ searchBarVisible }) => {
         );
 
         setSearchResults(data);
-
-        console.log("Searching for:", searchQuery); // temporary debug
       } catch (err) {
         console.error(err);
         setError("Something went wrong. Please try again."); // inline error
