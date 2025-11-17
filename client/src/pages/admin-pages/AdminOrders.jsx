@@ -4,6 +4,7 @@ import privateAxios from "../../api/privateAxios";
 import { Spinner, Button, Modal, Badge } from "react-bootstrap";
 import { toast } from "react-toastify";
 import ChangeStatusModal from "../../components/ChangeStatusModal";
+import useOnlineStatus from "../../hooks/useOnlineStatus";
 
 const formatDate = (iso) => {
   try {
@@ -32,6 +33,7 @@ const StatusBadge = ({ status }) => {
 };
 
 const AdminOrders = () => {
+  const isOnline = useOnlineStatus();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -269,11 +271,11 @@ const AdminOrders = () => {
                       variant="warning"
                       size="sm"
                       className="me-2"
+                      disabled={!isOnline}
                       onClick={() => openChangeStatus(o)}
                     >
                       Update status
                     </Button>
-                    {/* you can add other actions like "Refund" or "Contact customer" here */}
                   </td>
                 </tr>
               ))

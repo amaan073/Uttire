@@ -3,9 +3,11 @@ import GppGoodIcon from "@mui/icons-material/GppGood";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import privateAxios from "../api/privateAxios";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 /* eslint-disable react/prop-types */
 export default function TwoFactorDemo({ toggleValue }) {
+  const isOnline = useOnlineStatus();
   const [twoFactorAuth, setTwoFactorAuth] = useState(toggleValue ?? "off");
 
   const handleChange = async (e) => {
@@ -48,6 +50,7 @@ export default function TwoFactorDemo({ toggleValue }) {
       >
         <Select
           value={twoFactorAuth}
+          disabled={!isOnline}
           onChange={handleChange}
           sx={{
             overflow: "hidden",

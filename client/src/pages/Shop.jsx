@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import publicAxios from "../api/publicAxios";
-
+import useOnlineStatus from "../hooks/useOnlineStatus";
 import Card from "../components/ui/Card";
 import { Filter } from "lucide-react";
 import { Spinner } from "react-bootstrap";
 
 const Shop = () => {
+  const isOnline = useOnlineStatus();
   const [selectedGenders, setSelectedGenders] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
@@ -383,7 +384,7 @@ const Shop = () => {
                 type="button"
                 className="btn btn-outline-secondary px-4 rounded-pill"
                 onClick={clearFilters} //  reset handler
-                disabled={isDefaultFilters}
+                disabled={isDefaultFilters || !isOnline}
               >
                 Clear
               </button>
@@ -391,7 +392,7 @@ const Shop = () => {
               <button
                 type="submit"
                 className="btn btn-primary px-4 rounded-pill text-nowrap"
-                disabled={!filtersChanged}
+                disabled={!filtersChanged || !isOnline}
               >
                 Apply Filters
               </button>
@@ -432,6 +433,7 @@ const Shop = () => {
                     <button
                       className="page-link"
                       onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={!isOnline}
                     >
                       &laquo;
                     </button>
@@ -445,6 +447,7 @@ const Shop = () => {
                       <button
                         className="page-link"
                         onClick={() => handlePageChange(i + 1)}
+                        disabled={!isOnline}
                       >
                         {i + 1}
                       </button>
@@ -457,6 +460,7 @@ const Shop = () => {
                     <button
                       className="page-link"
                       onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={!isOnline}
                     >
                       &raquo;
                     </button>

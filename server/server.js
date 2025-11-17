@@ -27,10 +27,6 @@ const __dirname = path.dirname(__filename);
 // Middleware
 app.use(express.json());
 app.use(cookieParser()); // ✅ parse cookies
-// static path for uploads inside server/
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // to make files inside uploads avaialble to be view by url (localhost:5000/upload/profile-pics/xx.jng)
-// Serve public folder
-app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use(
   cors({

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Modal, Button, Spinner } from "react-bootstrap";
 import ImagePlaceholder from "../assets/image.png";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 const DeleteProductModal = ({
   show,
@@ -10,6 +11,8 @@ const DeleteProductModal = ({
   loading = false,
   backendError = "",
 }) => {
+  const isOnline = useOnlineStatus();
+
   return (
     <Modal
       show={show}
@@ -54,7 +57,7 @@ const DeleteProductModal = ({
         <Button
           variant="danger"
           onClick={() => onConfirm(product?._id)}
-          disabled={loading}
+          disabled={loading || !isOnline}
         >
           {loading ? (
             <>

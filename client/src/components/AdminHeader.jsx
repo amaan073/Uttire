@@ -11,9 +11,11 @@ import {
 } from "lucide-react";
 import UserAvatar from "./ui/UserAvatar";
 import uttireLogo from "../assets/uttireLogo.png";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 const AdminHeader = () => {
   const { user, logoutUser } = useContext(AuthContext);
+  const isOnline = useOnlineStatus();
 
   return (
     <Navbar
@@ -92,6 +94,7 @@ const AdminHeader = () => {
             </Dropdown.Header>
             <Dropdown.Item
               onClick={async () => await logoutUser()}
+              disabled={!isOnline}
               className="text-danger d-flex align-items-center"
             >
               <LogOut size={16} className="me-2" /> Logout

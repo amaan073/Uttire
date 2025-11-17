@@ -5,8 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button, Modal } from "react-bootstrap";
 import { ShoppingBagIcon } from "lucide-react";
+import useOnlineStatus from "../../hooks/useOnlineStatus";
 
 export default function Orders() {
+  const isOnline = useOnlineStatus();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -302,7 +304,7 @@ export default function Orders() {
                     <button
                       className="btn btn-outline-danger btn-sm"
                       onClick={() => confirmCancel(order._id)}
-                      disabled={cancelingOrderId == order._id}
+                      disabled={cancelingOrderId == order._id || !isOnline}
                     >
                       {cancelingOrderId == order._id ? (
                         <div
@@ -433,7 +435,7 @@ export default function Orders() {
           >
             Close
           </Button>
-          <Button variant="danger" onClick={handleCancel}>
+          <Button variant="danger" onClick={handleCancel} disabled={!isOnline}>
             Confirm Cancel
           </Button>
         </Modal.Footer>

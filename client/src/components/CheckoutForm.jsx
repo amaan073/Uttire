@@ -10,9 +10,11 @@ import {
 } from "../utils/validators";
 import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
+import useOnlineStatus from "../hooks/useOnlineStatus.jsx";
 
 const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
   const { user } = useContext(AuthContext);
+  const isOnline = useOnlineStatus();
 
   // --- Pre-fill form with user info ---
   const [formData, setFormData] = useState({
@@ -133,25 +135,7 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
 
       const { data } = await privateAxios.post("/orders", orderPayload);
 
-      toast.success("Order placed successfully!");
-
       if (onOrderSuccess) onOrderSuccess(data._id); // passing order id
-
-      // Reset form
-      setFormData({
-        name: user?.name || "",
-        email: user?.email || "",
-        address: "",
-        city: "",
-        state: "",
-        country: "",
-        zip: "",
-        phone: "",
-        paymentMethod: "debitCard",
-        delivery: "standard",
-      });
-      setDelivery("standard");
-      setErrors({});
     } catch (err) {
       console.error(err?.response?.data?.message || err.message);
       if (err?.response?.data?.code === "INSUFFICIENT_STOCK") {
@@ -390,7 +374,7 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
       <button
         type="submit"
         className="btn btn-primary w-100 mt-4"
-        disabled={loading}
+        disabled={loading || !isOnline}
       >
         {loading ? "Placing Order..." : "Place Order"}
       </button>

@@ -8,10 +8,14 @@ import AuthContext from "../context/AuthContext.jsx";
 import { useContext } from "react";
 import sessionAxios from "../api/sessionAxios.js";
 import { Spinner } from "react-bootstrap";
+import { Eye, EyeOff } from "lucide-react";
+import useOnlineStatus from "../hooks/useOnlineStatus.jsx";
 
 const Login = () => {
+  const isOnline = useOnlineStatus();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false); // show password button state
 
   const { user, fetchUser } = useContext(AuthContext);
 
@@ -109,22 +113,38 @@ const Login = () => {
               required
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-3 position-relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               className="form-control"
               id="password_input"
               name="password"
               placeholder="Password"
               onChange={handleChange}
               disabled={loading}
+              style={{ paddingRight: "40px" }}
               required
             />
+            {/* show password button */}
+            {formData.password.length > 0 && (
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "6px",
+                  cursor: "pointer",
+                  opacity: 0.7,
+                }}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
+            )}
           </div>
           <button
             type="submit"
             className="btn btn-primary w-100"
-            disabled={loading}
+            disabled={loading || !isOnline}
           >
             {loading ? "Logging in..." : "Login"}
           </button>

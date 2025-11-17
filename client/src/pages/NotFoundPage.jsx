@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
 import Header from "../components/Header";
-import Footer from "../components/Footer";
 
 const NotFoundPage = () => {
   return (
@@ -10,7 +9,7 @@ const NotFoundPage = () => {
 
       <div
         className="container text-center p-3 d-flex justify-content-center align-items-center"
-        style={{ height: "calc(var(--safe-height) - 128px)" }}
+        style={{ height: "calc(var(--safe-height) - 83px)" }}
       >
         <div>
           <div className="fw-bolder display-5">404 - Page Not Found</div>
@@ -21,8 +20,6 @@ const NotFoundPage = () => {
           <Link to="/">Go to Homepage 🏠</Link>
         </div>
       </div>
-
-      <Footer />
     </>
   );
 };

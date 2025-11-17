@@ -6,6 +6,8 @@ import { validateSignupForm } from "../utils/formValidators.js";
 import AuthContext from "../context/AuthContext.jsx";
 import sessionAxios from "../api/sessionAxios.js";
 import { Spinner } from "react-bootstrap";
+import { Eye, EyeOff } from "lucide-react";
+import useOnlineStatus from "../hooks/useOnlineStatus.jsx";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +16,13 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const isOnline = useOnlineStatus();
+
+  // password visibility controls
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const { user, fetchUser } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -125,21 +134,37 @@ const Signup = () => {
               required
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-3 position-relative">
             <label className="small text-muted" htmlFor="password_input">
               Password
             </label>
             <input
-              type="password"
+              type={showPass ? "text" : "password"}
               className="form-control"
               id="password_input"
               name="password"
               onChange={handleChange}
               disabled={loading}
+              style={{ paddingRight: "40px" }}
               required
             />
+            {/* show eye icon only if has value */}
+            {formData.password && (
+              <span
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "31px",
+                  cursor: "pointer",
+                  opacity: "0.8",
+                }}
+                onClick={() => setShowPass((prev) => !prev)}
+              >
+                {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
+            )}
           </div>
-          <div className="mb-3">
+          <div className="mb-3 position-relative">
             <label
               className="small text-muted"
               htmlFor="confirm_password_input"
@@ -147,19 +172,34 @@ const Signup = () => {
               Confirm password
             </label>
             <input
-              type="password"
+              type={showConfirmPass ? "text" : "password"}
               className="form-control"
               id="confirm_password_input"
               name="confirmPassword"
               onChange={handleChange}
               disabled={loading}
+              style={{ paddingRight: "40px" }}
               required
             />
+            {formData.confirmPassword && (
+              <span
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "31px",
+                  cursor: "pointer",
+                  opacity: "0.8",
+                }}
+                onClick={() => setShowConfirmPass((prev) => !prev)}
+              >
+                {showConfirmPass ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
+            )}
           </div>
           <button
             type="submit"
             className="btn btn-primary w-100"
-            disabled={loading}
+            disabled={loading || !isOnline}
           >
             {loading ? "Signing up..." : "Sign up"}
           </button>

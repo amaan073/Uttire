@@ -5,8 +5,10 @@ import ImagePlaceholder from "../../assets/image.png"; // fallback if no image
 import { useNavigate } from "react-router-dom";
 import DeleteProductModal from "../../components/DeleteProductModal";
 import { toast } from "react-toastify";
+import useOnlineStatus from "../../hooks/useOnlineStatus";
 
 const AdminProducts = () => {
+  const isOnline = useOnlineStatus();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -176,6 +178,7 @@ const AdminProducts = () => {
           <Button
             variant="primary"
             onClick={() => navigate("/admin/products/new")}
+            disabled={!isOnline}
           >
             + Add Product
           </Button>
@@ -190,6 +193,7 @@ const AdminProducts = () => {
         <h1 className="display-6">Products</h1>
         <Button
           variant="primary"
+          disabled={!isOnline}
           onClick={() => navigate("/admin/products/new")}
         >
           + Add New Product
@@ -227,6 +231,7 @@ const AdminProducts = () => {
                       variant="warning"
                       size="sm"
                       className="me-2"
+                      disabled={!isOnline}
                       onClick={() => navigate(`/admin/products/${p._id}/edit`)}
                     >
                       Edit
@@ -234,6 +239,7 @@ const AdminProducts = () => {
                     <Button
                       variant="danger"
                       size="sm"
+                      disabled={!isOnline}
                       onClick={() => confirmDelete(p)}
                     >
                       Delete

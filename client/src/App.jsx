@@ -14,7 +14,7 @@ const App = () => {
     <>
       <Header />
 
-      <main style={{ marginTop: "82px" }}>
+      <main style={{ paddingTop: "82.8px", minHeight: "var(--safe-height)" }}>
         {/* Smooth global page transitions */}
         <AnimatedOutlet />
       </main>

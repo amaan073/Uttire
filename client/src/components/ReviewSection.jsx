@@ -5,9 +5,11 @@ import publicAxios from "../api/publicAxios";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 const ReviewSection = ({ productId, product, refetchProduct }) => {
   const { user } = useContext(AuthContext);
+  const isOnline = useOnlineStatus();
   const navigate = useNavigate();
 
   const [formVisible, setFormVisible] = useState(false);
@@ -64,8 +66,10 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
       <div className="mb-4">
         <button
           className="btn btn-outline-primary rounded-pill px-4"
+          disabled={!isOnline}
           onClick={() => {
             toast.info("Please log in to write a review.");
+
             navigate("/login", {
               state: {
                 from: { pathname: `/products/${productId}#reviews` },
@@ -149,7 +153,7 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
           <button
             type="submit"
             className="btn btn-primary w-100 rounded-pill"
-            disabled={!formData.rating || loading}
+            disabled={!formData.rating || loading || !isOnline}
           >
             {loading ? "Submitting..." : "Submit Review"}
           </button>

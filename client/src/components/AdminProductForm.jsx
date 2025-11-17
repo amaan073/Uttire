@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Spinner } from "react-bootstrap";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 // eslint-disable-next-line react/prop-types
 const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
+  const isOnline = useOnlineStatus();
   const [errors, setErrors] = useState({}); // form validation errors state
   const [loading, setLoading] = useState(false); // addding or updating product api state
   const [formData, setFormData] = useState({
@@ -543,7 +545,7 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
           <button
             type="submit"
             className="btn btn-primary px-5"
-            disabled={loading}
+            disabled={loading || !isOnline}
           >
             {loading ? (
               <Spinner animation="border" size="sm" />

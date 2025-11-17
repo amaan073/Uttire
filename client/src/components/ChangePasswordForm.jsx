@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { isValidPassword } from "../utils/validators";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 /* eslint-disable react/prop-types */
 export default function ChangePasswordForm({ onCancel, onSubmit }) {
+  const isOnline = useOnlineStatus();
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -149,7 +151,11 @@ export default function ChangePasswordForm({ onCancel, onSubmit }) {
         >
           Cancel
         </button>
-        <button type="submit" className="btn btn-primary w-100 text-nowrap">
+        <button
+          type="submit"
+          className="btn btn-primary w-100 text-nowrap"
+          disabled={!isOnline}
+        >
           Change password
         </button>
       </div>

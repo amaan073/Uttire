@@ -8,6 +8,7 @@ import AuthContext from "../context/AuthContext";
 import { Spinner } from "react-bootstrap";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Avatar } from "@mui/material";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 /* eslint-disable react/prop-types */
 const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
@@ -15,6 +16,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
     name: "",
     phone: "",
   });
+  const isOnline = useOnlineStatus();
   const [selectedFile, setSelectedFile] = useState(null); // File object
   const [previewUrl, setPreviewUrl] = useState(null); // object URL for preview
   const [loading, setLoading] = useState(false); // disable inputs while saving
@@ -220,6 +222,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
             type="button"
             className="btn btn-primary mt-3 px-5 py-2"
             onClick={() => setMode("edit")}
+            disabled={!isOnline}
           >
             Edit Profile
           </button>
@@ -364,7 +367,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
               <button
                 type="submit"
                 className="btn btn-primary w-100"
-                disabled={!isChanged || loading} // disables until form changes or the profile is loading
+                disabled={!isChanged || loading || !isOnline} // disables until form changes or the profile is loading
               >
                 {loading ? (
                   <>

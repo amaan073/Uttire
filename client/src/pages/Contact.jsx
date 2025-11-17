@@ -1,6 +1,9 @@
 import customer_care from "../assets/images/customer_care.webp";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 const Contact = () => {
+  const isOnline = useOnlineStatus();
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -96,6 +99,7 @@ const Contact = () => {
                   type="submit"
                   value="Send Message"
                   className="btn btn-primary"
+                  disabled={!isOnline}
                 />
               </div>
             </div>

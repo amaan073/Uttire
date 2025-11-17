@@ -12,9 +12,11 @@ import {
 import CartContext from "../../context/CartContext";
 import { toast } from "react-toastify";
 import AuthContext from "../../context/AuthContext";
+import useOnlineStatus from "../../hooks/useOnlineStatus";
 
 /* eslint-disable react/prop-types */
 const Card = ({ product, className, style }) => {
+  const isOnline = useOnlineStatus();
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
@@ -118,15 +120,18 @@ const Card = ({ product, className, style }) => {
             )}
           </h5>
           {/* stopPropagation so button click won’t trigger card navigation */}
-          <button
-            className="btn btn-dark btn-sm ms-auto d-flex align-align-items-center gap-2 "
+          <div
+            className={`btn-wrapper ms-auto ${!isOnline ? "disabled" : ""}`}
             onClick={(e) => {
-              e.stopPropagation();
+              e.stopPropagation(); // always stops the card click
+              if (!isOnline) return; // prevent modal open
               setShowModal(true);
             }}
           >
-            <ShoppingCartIcon size={18} /> Add to cart
-          </button>
+            <button className="btn btn-dark btn-sm d-flex align-items-center gap-2">
+              <ShoppingCartIcon size={18} /> Add to Cart
+            </button>
+          </div>
 
           {/* Size selection modal */}
           <Modal show={showModal} onHide={() => setShowModal(false)} centered>
@@ -161,7 +166,7 @@ const Card = ({ product, className, style }) => {
                 <Button
                   variant="dark"
                   onClick={handleAddToCart}
-                  disabled={adding}
+                  disabled={adding || !isOnline}
                 >
                   {adding ? (
                     <>

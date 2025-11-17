@@ -5,8 +5,10 @@ import { Country, State, City } from "country-state-city";
 import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
 import { isValidZip } from "../utils/validators";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
+  const isOnline = useOnlineStatus();
   const [formData, setFormData] = useState({
     street: "",
     city: "",
@@ -253,6 +255,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                 variant="danger"
                 size="sm"
                 onClick={handleDelete}
+                disabled={!isOnline}
                 style={{ fontSize: "0.8rem" }}
               >
                 {isDeleting ? "Deleting..." : "Delete"}
@@ -282,7 +285,8 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                   ) ||
                   (address && Object.keys(address).length > 0
                     ? !isChanged
-                    : false)
+                    : false) ||
+                  !isOnline
                 }
                 style={{ fontSize: "0.8rem" }}
               >

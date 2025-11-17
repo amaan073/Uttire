@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button, Modal, Form, Alert, Stack } from "react-bootstrap";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 /* eslint-disable react/prop-types */
 function DeleteAccountModal({ show, onHide, onConfirm, backendError }) {
+  const isOnline = useOnlineStatus();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -71,7 +73,7 @@ function DeleteAccountModal({ show, onHide, onConfirm, backendError }) {
             >
               Cancel
             </Button>
-            <Button variant="danger" type="submit">
+            <Button variant="danger" type="submit" disabled={!isOnline}>
               Delete Account
             </Button>
           </Stack>

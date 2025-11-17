@@ -5,6 +5,7 @@ import DemoTooltip from "../components/ui/DemoTooltip";
 import ReviewSection from "../components/ReviewSection";
 import ReviewList from "../components/ReviewList";
 import RelatedProducts from "../components/RelatedProducts";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 import {
   ShoppingCart as ShoppingCartIcon,
@@ -17,6 +18,7 @@ import { toast } from "react-toastify";
 import AuthContext from "../context/AuthContext";
 
 const ProductDetail = () => {
+  const isOnline = useOnlineStatus();
   const { id } = useParams(); // URL param
   const location = useLocation();
 
@@ -207,7 +209,7 @@ const ProductDetail = () => {
                       : "btn-outline-dark"
                   }`}
                   onClick={() => setSelectedSize(size)}
-                  disabled={product?.stock === 0}
+                  disabled={product?.stock === 0 || !isOnline}
                 >
                   {size}
                 </button>
@@ -263,7 +265,7 @@ const ProductDetail = () => {
           <div className="d-flex flex-wrap gap-2 mb-3">
             <button
               className="btn btn-primary d-flex align-items-center gap-2"
-              disabled={product?.stock === 0 || adding}
+              disabled={product?.stock === 0 || adding || !isOnline}
               onClick={handleAddToCart}
             >
               {adding ? (
@@ -279,7 +281,7 @@ const ProductDetail = () => {
 
             <button
               className="btn btn-success d-flex align-items-center gap-2"
-              disabled={product?.stock === 0}
+              disabled={product?.stock === 0 || !isOnline}
               onClick={handleBuyNow}
             >
               <ShoppingBagIcon size={18} /> Buy Now

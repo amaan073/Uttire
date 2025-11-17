@@ -15,8 +15,10 @@ import PaymentMethodsCard from "../../components/PaymentMethodsCard";
 import LockIcon from "@mui/icons-material/Lock";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useOnlineStatus from "../../hooks/useOnlineStatus";
 
 const Profile = () => {
+  const isOnline = useOnlineStatus();
   const [mode, setMode] = useState("view"); //view, editProfile or changePassword
   const [profile, setProfile] = useState(null);
   const [fetchError, setFetchError] = useState("");
@@ -167,6 +169,7 @@ const Profile = () => {
                   <button
                     className="btn btn-danger rounded-3 shadow-sm d-flex gap-2 justify-content-center align-content-center p-2 px-3 fs-5 fw-semibold w-100 text-nowrap mb-3 mb-md-0"
                     onClick={() => setModalShow(true)}
+                    disabled={!isOnline}
                   >
                     <DeleteIcon fontSize="large" />
                     <span style={{ lineHeight: "38px" }}>Delete Account</span>
@@ -245,6 +248,7 @@ const Profile = () => {
                   <h5 className="mb-0 fw-semibold">Address</h5>{" "}
                   <button
                     className="btn btn-outline-primary btn-sm rounded-3 px-3"
+                    disabled={!isOnline}
                     onClick={() => {
                       setShowAddressModal(true);
                       setMode("view");

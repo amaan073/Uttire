@@ -10,6 +10,8 @@ const DirectCheckout = () => {
   // Shipping state (controlled by CheckoutForm)
   const [delivery, setDelivery] = useState("standard");
 
+  if (!location.state) return null; // for flickering issues
+
   // ✅ product info passed via state from Buy Now
   const {
     name,

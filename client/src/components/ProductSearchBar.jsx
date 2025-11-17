@@ -3,8 +3,10 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isValidSearch } from "../utils/validators";
 import publicAxios from "../api/publicAxios";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 const ProductSearchBar = ({ searchBarVisible }) => {
+  const isOnline = useOnlineStatus();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isResultVisible, setIsResultVisible] = useState(false);
@@ -83,6 +85,7 @@ const ProductSearchBar = ({ searchBarVisible }) => {
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => setIsResultVisible(true)}
           style={{ paddingRight: "35px" }}
+          disabled={!isOnline}
         />
 
         {/* Loading spinner inside input */}

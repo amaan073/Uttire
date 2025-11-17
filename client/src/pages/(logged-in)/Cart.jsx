@@ -7,10 +7,12 @@ import CartContext from "../../context/CartContext";
 import DemoTooltip from "../../components/ui/DemoTooltip.jsx";
 import { toast } from "react-toastify";
 import AuthContext from "../../context/AuthContext.jsx";
+import useOnlineStatus from "../../hooks/useOnlineStatus.jsx";
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart, error } =
     useContext(CartContext);
+  const isOnline = useOnlineStatus();
   const { user } = useContext(AuthContext);
   const [updatingItem, setUpdatingItem] = useState(null); // track which item is updating quanitity
   const [removingItem, setRemovingItem] = useState(null);
@@ -89,7 +91,10 @@ const Cart = () => {
       {cart.length === 0 ? (
         <div
           className="container text-center d-flex justify-content-center align-items-center pb-5"
-          style={{ maxWidth: "1600px", minHeight: "calc(100vh - 83px)" }}
+          style={{
+            maxWidth: "1600px",
+            minHeight: "calc(var(--safe-height) - 83px)",
+          }}
         >
           <div>
             <div>
@@ -114,7 +119,10 @@ const Cart = () => {
       ) : (
         <div
           className="container-fluid text-center"
-          style={{ maxWidth: "1600px", minHeight: "calc(100vh - 83px)" }}
+          style={{
+            maxWidth: "1600px",
+            minHeight: "calc(var(--safe-height) - 83px)",
+          }}
         >
           <div className="bg-light py-3 pt-4 border-bottom">
             <h1 className="h1 mb-0 me-2 mb-3 d-flex align-items-center gap-2 justify-content-center">
@@ -194,7 +202,9 @@ const Cart = () => {
                             )
                           }
                           disabled={
-                            updatingItem === item._id || item.quantity <= 1
+                            updatingItem === item._id ||
+                            item.quantity <= 1 ||
+                            !isOnline
                           }
                         >
                           −
@@ -206,7 +216,7 @@ const Cart = () => {
                           min={1}
                           max={item.product.stock}
                           value={item.quantity}
-                          disabled={updatingItem === item._id} // ✅ disable while loading
+                          disabled={updatingItem === item._id || !isOnline} // ✅ disable while loading
                           onChange={(e) => {
                             let value = parseInt(e.target.value) || 1;
                             if (value > item.product.stock)
@@ -228,7 +238,8 @@ const Cart = () => {
                           }
                           disabled={
                             updatingItem === item._id ||
-                            item.quantity >= item.product.stock
+                            item.quantity >= item.product.stock ||
+                            !isOnline
                           }
                         >
                           +
@@ -247,7 +258,7 @@ const Cart = () => {
                       className="d-flex align-items-center gap-1 px-2 py-1 rounded-2 justify-content-center"
                       style={{ width: "90px" }}
                       onClick={() => handleRemove(item._id)}
-                      disabled={removingItem === item._id} // ✅ disable while removing
+                      disabled={removingItem === item._id || !isOnline} // ✅ disable while removing
                     >
                       {removingItem === item._id ? (
                         <Spinner animation="border" size="sm" cl /> // ✅ show spinner
@@ -299,6 +310,7 @@ const Cart = () => {
 
               <button
                 className="btn btn-success w-100 fw-semibold py-2 rounded-pill"
+                disabled={!isOnline}
                 onClick={handleCheckout}
               >
                 Proceed to Checkout

@@ -7,11 +7,21 @@ export default function AnimatedOutlet() {
   const location = useLocation();
   const element = useOutlet();
 
-  // Scroll instantly to top whenever the route changes
+  // scroll to top on navigation
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  const noAnimationRoutes = ["/login", "/signup"];
+
+  const shouldAnimate = !noAnimationRoutes.includes(location.pathname);
+
+  if (!shouldAnimate) {
+    // NO ANIMATION, RETURN DIRECT CHILD
+    return <>{element}</>;
+  }
+
+  // NORMAL ANIMATED ROUTES
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
@@ -20,10 +30,9 @@ export default function AnimatedOutlet() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{
-          opacity: { duration: 0.25 }, // old page fades out faster
-          default: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }, // new page fades in slower
+          opacity: { duration: 0.25 },
+          default: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
         }}
-        style={{ minHeight: "100vh", background: "var(--body-bg)" }}
       >
         {element}
       </motion.div>
