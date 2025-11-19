@@ -330,10 +330,11 @@ const Shop = () => {
 
             <hr className="hr" />
 
-            {/* <!-- 
-              Price Range Slider code snippet adapted from GeeksforGeeks 
-              URL: https://www.geeksforgeeks.org/price-range-slider-with-min-max-input-using-html-css-and-javascript/ 
-              --> */}
+            {/* 
+              Price Range Slider code snippet adapted from GeeksforGeeks
+              Source: https://www.geeksforgeeks.org/price-range-slider-with-min-max-input-using-html-css-and-javascript/
+              Adapted and modified for React/JSX implementation
+            */}
             <div className="price-range-filter my-3">
               <div className="form-group">
                 <h5>

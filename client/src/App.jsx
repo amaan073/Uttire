@@ -8,19 +8,18 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 // animated wrapper
 import AnimatedOutlet from "./wrappers/AnimatedOutlet";
+import DocumentTitle from "./components/DocumentTitle";
 
 const App = () => {
   return (
     <>
-      <Header />
-
+      {/* This is the document title component for dynamic tab names */}
+      <DocumentTitle /> <Header />
       <main style={{ paddingTop: "82.8px", minHeight: "var(--safe-height)" }}>
         {/* Smooth global page transitions */}
         <AnimatedOutlet />
       </main>
-
       <Footer />
-
       <ToastContainer
         position="top-right"
         style={{ marginTop: "82px" }}

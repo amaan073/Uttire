@@ -8,7 +8,24 @@ const privateAxios = axios.create({
 
 let refreshPromise = null; // queue system, in which multiple req made with privateAxios while the access token is expired, will only wait for one req to get the new access token not all of them and retry all of them after the refrs is successful
 
-// Response interceptor → handle 401 errors (expired access token)
+// Request interceptor → check online status before making requests
+privateAxios.interceptors.request.use(
+  (config) => {
+    // Check if user is offline
+    if (!navigator.onLine) {
+      return Promise.reject({
+        message: "You are offline. Please check your internet connection.",
+        code: "OFFLINE_ERROR",
+      });
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor → handle 401 errors (expired access token) and network errors
 privateAxios.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -38,6 +55,16 @@ privateAxios.interceptors.response.use(
         console.warn("Refresh token failed. Redirecting to login.");
         window.location.replace("/login");
         return Promise.reject(refreshError);
+      }
+    }
+
+    // Handle network errors (offline, timeout, etc.)
+    if (!error.response && error.request) {
+      // Request was made but no response received (network error)
+      if (!navigator.onLine) {
+        error.code = "OFFLINE_ERROR";
+      } else {
+        error.code = "NETWORK_ERROR";
       }
     }
 

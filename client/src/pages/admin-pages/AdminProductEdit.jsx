@@ -4,6 +4,7 @@ import privateAxios from "../../api/privateAxios";
 import { toast } from "react-toastify";
 import ProductForm from "../../components/AdminProductForm";
 import { Button, Spinner } from "react-bootstrap";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -34,6 +35,11 @@ const EditProductPage = () => {
 
     fetchProduct();
   }, [id]);
+
+  // Update document title when product loads
+  useDocumentTitle(
+    productData ? `Edit ${productData.name}` : "Edit Product"
+  );
 
   const handleUpdate = async (updatedData) => {
     try {

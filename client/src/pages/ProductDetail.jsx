@@ -6,6 +6,7 @@ import ReviewSection from "../components/ReviewSection";
 import ReviewList from "../components/ReviewList";
 import RelatedProducts from "../components/RelatedProducts";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 import {
   ShoppingCart as ShoppingCartIcon,
@@ -71,6 +72,9 @@ const ProductDetail = () => {
     setSelectedSize(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  // Update document title when product loads
+  useDocumentTitle(product?.name || null);
 
   // scroll to hash
   useEffect(() => {

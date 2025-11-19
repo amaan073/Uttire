@@ -213,7 +213,7 @@ export default function Orders() {
       {/* HEADER + STATS */}
       <div className="d-sm-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 ">
         <h1 className="fw-semibold mb-sm-0 mb-3 display-5 text-center text-sm-start">
-          Your Orders
+          My Orders
         </h1>
         <div className="d-flex gap-3 justify-content-center justify-content-sm-start">
           <div

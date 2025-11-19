@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AdminHeader from "../../components/AdminHeader"; // create this later
 import { useContext, useEffect } from "react";
 import AuthContext from "../../context/AuthContext";
+import DocumentTitle from "../../components/DocumentTitle";
 
 const AdminLayout = () => {
   const { user } = useContext(AuthContext);
@@ -15,6 +16,7 @@ const AdminLayout = () => {
   }, [user]);
   return (
     <>
+      <DocumentTitle />
       <AdminHeader />
       <main style={{ marginTop: "82px" }}>
         <Outlet />
