@@ -30,19 +30,13 @@ a {
   text-decoration: none !important;
 }
 
-hr {
-  border-top: 12px dotted !important;
-  width: 50px !important;
-  margin-inline: auto !important;
-}
-
 hr.bold {
   all: unset !important;
   display: block !important;
   border-top: 1px solid rgba(0, 0, 0, 0.452) !important;
 }
 
-hr.hr {
+hr {
   all: unset !important;
   border-top: var(--bs-border-width) var(--bs-border-style)
     var(--bs-border-color) !important;
@@ -98,4 +92,47 @@ input[type="search"]::-webkit-search-cancel-button {
 .white-blur-bg {
   background-color: #ffffffeb;
   backdrop-filter: blur(10px);
+}
+
+/* Cleaner, smoother skeleton pulse */
+.pulse {
+  position: relative;
+  overflow: hidden;
+  background-color: #e9ecef; /* Slightly darker than bg-light */
+}
+
+.pulse::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.5s infinite ease-out;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.2s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }

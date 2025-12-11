@@ -13,6 +13,7 @@ import CartContext from "../../context/CartContext";
 import { toast } from "react-toastify";
 import AuthContext from "../../context/AuthContext";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
+import Image from "../../components/ui/Image";
 
 /* eslint-disable react/prop-types */
 const Card = ({ product, className, style }) => {
@@ -62,10 +63,11 @@ const Card = ({ product, className, style }) => {
     >
       {/* Image */}
       <div className="position-relative">
-        <img
+        <Image
           src={product.image}
           alt={product.name}
-          className="w-100 object-fit-cover rounded-top-3"
+          className="w-100 rounded-top-3"
+          style={{ height: "350px" }}
         />
 
         {product.discount > 0 && (

@@ -15,5 +15,8 @@
     "eslint": "^8.56.0",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5"
+  },
+  "dependencies": {
+    "react-image": "^4.1.0"
   }
 }

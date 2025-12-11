@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import publicAxios from "../api/publicAxios";
 import useOnlineStatus from "../hooks/useOnlineStatus";
 import Card from "../components/ui/Card";
 import { Filter } from "lucide-react";
+import ErrorState from "../components/ui/ErrorState";
+import SkeletonCard from "../components/ui/SkeletonCard";
 import { Spinner } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const Shop = () => {
   const isOnline = useOnlineStatus();
@@ -15,8 +18,28 @@ const Shop = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState({
+    // single loading state object for all loading states
+    initial: false,
+    filter: false,
+    clear: false,
+    pagination: false,
+  });
+  // helper function to set loading state for a specific type
+  const setLoadingState = (type) => {
+    setLoading({
+      initial: false,
+      filter: false,
+      clear: false,
+      pagination: false,
+      [type]: true,
+    });
+  };
   const [error, setError] = useState(null);
+
+  // to check if the grid is loading
+  const isLoadingGrid =
+    loading.initial || loading.filter || loading.clear || loading.pagination;
 
   // pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,7 +69,9 @@ const Shop = () => {
       maxPrice,
     }) !== JSON.stringify(appliedFilters);
 
-  const fetchProducts = async (page = 1) => {
+  const fetchProducts = async (page = 1, type = "initial") => {
+    setLoadingState(type);
+
     const query = new URLSearchParams();
 
     if (selectedGenders.length)
@@ -62,26 +87,46 @@ const Shop = () => {
     query.append("limit", 9);
 
     try {
-      setLoading(true);
       const { data } = await publicAxios.get(`/products?${query.toString()}`);
       setProducts(data.products);
       setTotalPages(data.totalPages);
       setCurrentPage(data.currentPage);
+      if (type === "initial") setError(null); // for initial fetching
     } catch (error) {
-      setError("Error fetching products");
-      console.error("Error fetching products:", error);
+      console.log(error);
+
+      const message =
+        error.code === "OFFLINE_ERROR"
+          ? "You are offline. Check your connection."
+          : error.code === "NETWORK_ERROR"
+            ? "Network error. Please try again."
+            : "Something went wrong.";
+
+      // show error on page for initial fetch errors
+      if (type === "initial") {
+        setError(message);
+        return;
+      }
+
+      // show toast for all other fetch from api buttons
+      toast.error(message);
     } finally {
-      setLoading(false);
-      setIsFilterOpen(false);
+      setLoading({
+        initial: false,
+        filter: false,
+        clear: false,
+        pagination: false,
+      });
+
+      if (type === "filter" || type === "clear") {
+        setIsFilterOpen(false);
+      }
     }
   };
 
-  //initial products fetching
-  useEffect(() => {
-    const init = async () => {
-      await fetchProducts(1); // fetch first page
-    };
-    init();
+  // Avoid flicker on first render
+  useLayoutEffect(() => {
+    fetchProducts(1, "initial"); // initial load
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -105,13 +150,14 @@ const Shop = () => {
       minPrice,
       maxPrice,
     });
-    fetchProducts(1); // reset to page 1 when filters change
+    fetchProducts(1, "filter"); // reset to page 1 when filters change
     setIsFilterOpen(false); // small screen
     window.scrollTo({
       top: 0,
       behavior: "smooth", // makes it smooth
     });
   };
+
   const clearFilters = () => {
     setSelectedGenders([]);
     setSelectedSizes([]);
@@ -134,8 +180,8 @@ const Shop = () => {
       maxPrice: 100,
     });
 
-    // Call backend ignoring current states
-    setLoading(true);
+    // Call backend ignoring current states ( its not duplicated logic but required because state updates problems)
+    setLoadingState("clear");
     publicAxios
       .get("/products?page=1&limit=9")
       .then(({ data }) => {
@@ -144,10 +190,23 @@ const Shop = () => {
         setCurrentPage(data.currentPage);
       })
       .catch((error) => {
-        setError("Error fetching products");
         console.error(error);
+        const message =
+          error.code === "OFFLINE_ERROR"
+            ? "You are offline. Check your connection."
+            : error.code === "NETWORK_ERROR"
+              ? "Network error. Please try again."
+              : "Something went wrong.";
+        toast.error(message);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading({
+          initial: false,
+          filter: false,
+          clear: false,
+          pagination: false,
+        });
+      });
   };
 
   const handleMinRangeChange = (e) => {
@@ -163,45 +222,16 @@ const Shop = () => {
   };
 
   const handlePageChange = (page) => {
-    fetchProducts(page);
+    fetchProducts(page, "pagination");
     window.scrollTo({
       top: 0,
       behavior: "smooth", // makes it smooth
     });
   };
 
-  if (loading)
-    return (
-      <div
-        className="min-vh-100 d-flex justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <Spinner animation="border" role="status" variant="primary">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
-  if (error) {
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <i className="bi bi-exclamation-triangle-fill text-danger display-1 mb-3"></i>
-        <h2 className="fw-bold text-dark">Oops! Something went wrong</h2>
-        <p className="text-muted mb-4">
-          We couldn’t load the products right now. Please try again later.
-        </p>
-        <button
-          className="btn btn-outline-primary rounded-pill px-4"
-          onClick={() => window.location.reload()}
-        >
-          <i className="bi bi-arrow-clockwise me-2"></i>
-          Retry
-        </button>
-      </div>
-    );
-  }
+  // ======= Full Page Error Handling ========
+  if (error)
+    return <ErrorState message={error} retry={() => fetchProducts(1)} />;
 
   return (
     <>
@@ -331,9 +361,7 @@ const Shop = () => {
             <hr className="hr" />
 
             {/* 
-              Price Range Slider code snippet adapted from GeeksforGeeks
-              Source: https://www.geeksforgeeks.org/price-range-slider-with-min-max-input-using-html-css-and-javascript/
-              Adapted and modified for React/JSX implementation
+              Price Range Slider
             */}
             <div className="price-range-filter my-3">
               <div className="form-group">
@@ -383,26 +411,50 @@ const Shop = () => {
             <div className="d-flex justify-content-between mt-4 gap-2">
               <button
                 type="button"
-                className="btn btn-outline-secondary px-4 rounded-pill"
+                className="btn btn-outline-secondary px-4 rounded-pill w-100"
                 onClick={clearFilters} //  reset handler
-                disabled={isDefaultFilters || !isOnline}
+                disabled={isDefaultFilters || !isOnline || loading.clear}
               >
-                Clear
+                {loading.clear ? (
+                  <>
+                    <Spinner animation="border" size="sm" />
+                  </>
+                ) : (
+                  "Clear"
+                )}
               </button>
 
               <button
                 type="submit"
-                className="btn btn-primary px-4 rounded-pill text-nowrap"
-                disabled={!filtersChanged || !isOnline}
+                className="btn btn-primary px-4 rounded-pill text-nowrap w-100"
+                disabled={!filtersChanged || !isOnline || loading.filter}
               >
-                Apply Filters
+                {loading.filter ? (
+                  <>
+                    <Spinner animation="border" size="sm" />
+                  </>
+                ) : (
+                  "Apply Filters"
+                )}
               </button>
             </div>
           </form>
         </section>
 
         <section className="products">
-          {products.length === 0 ? (
+          {isLoadingGrid ? (
+            // show 9 skeleton cards
+            <div
+              className="d-sm-grid gap-4 text-center"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, minmax(244px, 1fr))",
+              }}
+            >
+              {Array.from({ length: 9 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          ) : products.length === 0 ? (
             <div className="w-100 d-flex flex-column align-items-center justify-content-center py-5 text-muted">
               <i className="bi bi-search display-4 mb-3"></i>
               <h5 className="fw-semibold">No Products Found</h5>
@@ -434,7 +486,7 @@ const Shop = () => {
                     <button
                       className="page-link"
                       onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={!isOnline}
+                      disabled={!isOnline || isLoadingGrid}
                     >
                       &laquo;
                     </button>
@@ -448,7 +500,7 @@ const Shop = () => {
                       <button
                         className="page-link"
                         onClick={() => handlePageChange(i + 1)}
-                        disabled={!isOnline}
+                        disabled={!isOnline || isLoadingGrid}
                       >
                         {i + 1}
                       </button>
@@ -461,7 +513,7 @@ const Shop = () => {
                     <button
                       className="page-link"
                       onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={!isOnline}
+                      disabled={!isOnline || isLoadingGrid}
                     >
                       &raquo;
                     </button>

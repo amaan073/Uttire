@@ -18,7 +18,7 @@ const AdminLayout = () => {
     <>
       <DocumentTitle />
       <AdminHeader />
-      <main style={{ marginTop: "82px" }}>
+      <main style={{ paddingTop: "82px" }}>
         <Outlet />
       </main>
 

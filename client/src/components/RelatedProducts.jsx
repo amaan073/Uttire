@@ -5,6 +5,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import publicAxios from "../api/publicAxios";
 import { useNavigate } from "react-router-dom";
+import Image from "./ui/Image";
 
 // eslint-disable-next-line react/prop-types
 const RelatedProducts = ({ category, excludeId }) => {
@@ -63,7 +64,7 @@ const RelatedProducts = ({ category, excludeId }) => {
                   className="position-relative w-100"
                   style={{ aspectRatio: "1/1", overflow: "hidden" }}
                 >
-                  <img
+                  <Image
                     src={product.image}
                     alt={product.name}
                     className="w-100 h-100 rounded"

@@ -61,36 +61,29 @@ const Login = () => {
         toast.error("Login failed. Please try again.");
       }
     } catch (e) {
-      const status = e.response?.status || 0;
-      const message =
-        e.response?.data?.message || e.message || "Something went wrong!";
-
-      if (status === 400 || status === 401) {
-        //client fault
-        toast.error(message);
-      } else if (status === 500) {
-        toast.error("Server error. please try again later.");
-        console.log(e);
+      if (e.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Check your connection.");
+      } else if (e.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
       } else {
-        toast.error("Unexpected error. Check your connection.");
+        const status = e.response?.status || 0;
+        const message =
+          e.response?.data?.message || e.message || "Something went wrong!";
+
+        if (status === 400 || status === 401) {
+          // client fault , credentials invalid
+          toast.error(message);
+        } else if (status === 500) {
+          toast.error("Server error. please try again later.");
+          console.log(e);
+        } else {
+          toast.error("Unexpected error. Check your connection.");
+        }
       }
     } finally {
       setLoading(false);
     }
   };
-
-  // prevent user to access signup page after they have already been logged in and redirect to homepage handled by useEffect() as it sees user is populated
-  if (user)
-    return (
-      <div
-        className="min-vh-100 d-flex justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <Spinner animation="border" role="status" variant="primary">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
 
   return (
     <div
@@ -143,10 +136,16 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className="btn btn-primary w-100"
+            className="btn btn-primary w-100 d-flex justify-content-center align-items-center gap-2"
             disabled={loading || !isOnline}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? (
+              <>
+                <Spinner animation="border" size="sm" /> <span>Logging in</span>
+              </>
+            ) : (
+              "Login"
+            )}
           </button>
           <div className="mt-3" style={{ fontSize: "0.9em" }}>
             {/* eslint-disable-next-line react/no-unescaped-entities */}

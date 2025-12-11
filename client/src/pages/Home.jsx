@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import publicAxios from "../api/publicAxios";
 import { Link } from "react-router-dom";
 
 import Card from "../components/ui/Card";
 import { ShoppingBagIcon } from "lucide-react";
+
+import bg from "../assets/images/bg.webp";
 import home1 from "../assets/images/home1.webp";
 import home2 from "../assets/images/home2.webp";
 import home3 from "../assets/images/home3.webp";
-import { Spinner } from "react-bootstrap";
+
+import LoadingScreen from "../components/ui/LoadingScreen";
+import ErrorState from "../components/ui/ErrorState";
 
 import DemoToolTip from "../components/ui/DemoTooltip";
 
@@ -15,6 +19,9 @@ const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // track static image preload
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
 
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
@@ -31,20 +38,55 @@ const Home = () => {
     setEmail("");
   };
 
-  useEffect(() => {
-    const fetchFeatured = async () => {
-      try {
-        const { data } = await publicAxios.get("/products/featured");
-        setFeaturedProducts(data);
-      } catch (error) {
-        console.error("Error fetching featured products:", error);
-        setError("Failed to fetch featured products");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFeatured();
+  const preloadAssets = useCallback(() => {
+    const images = [bg, home1, home2, home3];
+    let loadedCount = 0;
+
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === images.length) setAssetsLoaded(true);
+      };
+      img.onerror = () => {
+        loadedCount++; // ignore error
+        if (loadedCount === images.length) setAssetsLoaded(true);
+      };
+    });
   }, []);
+
+  // Fetch Featured Products
+  const fetchFeatured = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data } = await publicAxios.get("/products/featured");
+      setFeaturedProducts(data);
+    } catch (error) {
+      console.error("Error fetching featured products:", error);
+
+      // codes from global interceptors of publicAxios
+      if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+        setError("Couldn't reach server. Check your connection and try again.");
+      } else {
+        // Server returned valid error
+        setError("Something went wrong. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    preloadAssets(); // Preload static images first
+    fetchFeatured(); // Begin fetching
+  }, [preloadAssets, fetchFeatured]);
+
+  // ======= Full Page Loading & Error Handling ========
+  if (!assetsLoaded || loading) return <LoadingScreen />;
+  if (error) return <ErrorState message={error} retry={fetchFeatured} />;
 
   return (
     <>
@@ -52,7 +94,15 @@ const Home = () => {
         className="container-fluid text-center pb-3 px-0"
         style={{ maxWidth: "1600px" }}
       >
-        <div className="home-header py-3">
+        <div
+          className="home-header py-3"
+          style={{
+            backgroundImage: `url(${bg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
           <h1 className="main-logo-txt pt-3">Uttire</h1>
           <p
             className="my-2 mx-auto px-3"
@@ -89,38 +139,20 @@ const Home = () => {
         {/* Featured Product */}
         <div className="my-5 mx-3">
           <h2 className="text-md-start mb-5 fw-bold">Featured Products</h2>
-          {loading && (
-            <Spinner animation="border" role="status" variant="primary">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          )}
-          {error && (
-            <div>
-              <p>⚠ Could not load featured products.</p>
-              <button
-                className="btn btn-primary"
-                onClick={() => window.location.reload()}
-              >
-                Retry
-              </button>
-            </div>
-          )}
-          {!loading && !error && (
-            <div
-              className="d-sm-grid w-100 gap-4"
-              style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-              }}
-            >
-              {featuredProducts.map((product) => (
-                <Card
-                  key={product._id}
-                  product={product}
-                  className="text-start text-sm-center mb-4 mb-sm-0"
-                />
-              ))}
-            </div>
-          )}
+          <div
+            className="d-sm-grid w-100 gap-4"
+            style={{
+              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+            }}
+          >
+            {featuredProducts.map((product) => (
+              <Card
+                key={product._id}
+                product={product}
+                className="text-start text-sm-center mb-4 mb-sm-0"
+              />
+            ))}
+          </div>
         </div>
         {/* Newsletter subsciption */}
         <div className="card shadow-sm border-0 rounded-3 p-4 bg-light">

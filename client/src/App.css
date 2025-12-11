@@ -112,41 +112,12 @@
 }
 
 .home-header {
-  background: url("../src/assets/images/bg.webp");
   color: white;
-  background-size: contain;
-  background-position: 50%;
 }
 
 /*
 -->
 
-//ABOUT page styles
-
-<--
-*/
-
-.avatar {
-  width: 100%;
-  max-width: 170px;
-  height: auto;
-  background-color: rgb(43, 58, 124);
-  color: white;
-  aspect-ratio: 1/1;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  font-size: min(4rem, 7vw);
-  font-weight: 600;
-  margin-inline: auto;
-}
-
-.avatar + h4 {
-  font-size: min(1.5rem, 5vw);
-}
-
-/*
--->
 
 //Shop page styles
 

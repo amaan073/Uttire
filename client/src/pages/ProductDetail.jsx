@@ -7,6 +7,9 @@ import ReviewList from "../components/ReviewList";
 import RelatedProducts from "../components/RelatedProducts";
 import useOnlineStatus from "../hooks/useOnlineStatus";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import LoadingScreen from "../components/ui/LoadingScreen";
+import ErrorState from "../components/ui/ErrorState";
+import Image from "../components/ui/Image";
 
 import {
   ShoppingCart as ShoppingCartIcon,
@@ -31,6 +34,7 @@ const ProductDetail = () => {
   // state
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState();
+  const [sizeError, setSizeError] = useState(null);
 
   const { user } = useContext(AuthContext);
 
@@ -57,9 +61,22 @@ const ProductDetail = () => {
       const { data } = await publicAxios.get(`/products/${id}`);
       setProduct(data);
       setError(null);
-    } catch (err) {
-      console.error(err);
-      setError(err);
+    } catch (error) {
+      console.error(error);
+
+      // Network errors
+      if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+        setError("Couldn't reach server. Check your connection and try again.");
+        return;
+      }
+
+      // Product not found error
+      if (error.response?.status === 404) {
+        setError("Product not found");
+        return;
+      }
+
+      setError("Something went wrong. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -94,7 +111,12 @@ const ProductDetail = () => {
       toast.info("Please login first");
       return navigate("/login");
     }
-    if (!selectedSize) return toast.error("Please select a size");
+    if (!selectedSize) {
+      setSizeError("Please select a size");
+      return;
+    }
+
+    setSizeError(null);
     try {
       setAdding(true);
       await addToCart({
@@ -114,7 +136,12 @@ const ProductDetail = () => {
       toast.info("Please login first");
       return navigate("/login");
     }
-    if (!selectedSize) return toast.error("Please select a size");
+    if (!selectedSize) {
+      setSizeError("Please select a size");
+      return;
+    }
+
+    setSizeError(null);
 
     navigate(`/products/${product._id}/checkout`, {
       state: {
@@ -128,38 +155,10 @@ const ProductDetail = () => {
     });
   };
 
-  if (loading)
-    return (
-      <div
-        className="min-vh-100 d-flex justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <Spinner animation="border" role="status" variant="primary">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
-  if (error) {
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <i className="bi bi-exclamation-triangle-fill text-danger display-1 mb-3"></i>
-        <h2 className="fw-bold text-dark">Oops! Something went wrong</h2>
-        <p className="text-muted mb-4">
-          We couldn’t load the products right now. Please try again later.
-        </p>
-        <button
-          className="btn btn-outline-primary rounded-pill px-4"
-          onClick={() => window.location.reload()}
-        >
-          <i className="bi bi-arrow-clockwise me-2"></i>
-          Retry
-        </button>
-      </div>
-    );
-  }
+  // ======= Full Page Loading & Error Handling ========
+  if (loading) return <LoadingScreen />;
+  if (error) return <ErrorState message={error} retry={fetchProduct} />;
+  if (!product) return null;
 
   return (
     <div className="container-xxl px-3 px-md-4 py-4 py-md-5">
@@ -167,7 +166,12 @@ const ProductDetail = () => {
       <div className="d-md-flex gap-4 align-items-stretch">
         {/* Image */}
         <div className="product-image-wrap col-md-6 col-xl-5 d-flex justify-content-center align-items-center overflow-hidden shadow-sm">
-          <img src={product.image} alt={product.name} loading="eager" />
+          <Image
+            src={product.image}
+            alt={product.name}
+            loading="eager"
+            style={{ aspectRatio: "1/1" }}
+          />
         </div>
         {/* Info */}
         <div className="col-md-6 col-xl-7 mt-4 mt-md-0">
@@ -201,7 +205,7 @@ const ProductDetail = () => {
           </p>
 
           {/* Sizes */}
-          <div className="mb-3">
+          <div className="mb-4 position-relative">
             <h6>Size</h6>
             <div className="d-flex gap-2 align-items-center">
               {product.sizes.map((size) => (
@@ -210,15 +214,25 @@ const ProductDetail = () => {
                   className={`btn rounded-3 px-3 py-1 ${
                     selectedSize === size
                       ? "btn-dark text-white"
-                      : "btn-outline-dark"
+                      : sizeError
+                        ? "btn-outline-danger is-invalid"
+                        : "btn-outline-dark"
                   }`}
-                  onClick={() => setSelectedSize(size)}
+                  onClick={() => {
+                    setSelectedSize(size);
+                    setSizeError(null);
+                  }}
                   disabled={product?.stock === 0 || !isOnline}
                 >
                   {size}
                 </button>
               ))}
             </div>
+            {sizeError && (
+              <div className="invalid-feedback d-block m-0 small fw-semibold position-absolute">
+                *{sizeError}
+              </div>
+            )}
           </div>
 
           {/* Colors */}
@@ -274,7 +288,7 @@ const ProductDetail = () => {
             >
               {adding ? (
                 <>
-                  <Spinner animation="border" size="sm" /> Adding...
+                  <Spinner animation="border" size="sm" /> <span>Adding</span>
                 </>
               ) : (
                 <>

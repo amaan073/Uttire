@@ -6,6 +6,7 @@ import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import { Spinner } from "react-bootstrap";
 
 const ReviewSection = ({ productId, product, refetchProduct }) => {
   const { user } = useContext(AuthContext);
@@ -53,8 +54,14 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
         await refetchProduct();
       }
     } catch (error) {
-      toast.error("Failed to submit review. Please try again.");
       console.error(error);
+      if (error.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (error.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to submit review. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -155,7 +162,13 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
             className="btn btn-primary w-100 rounded-pill"
             disabled={!formData.rating || loading || !isOnline}
           >
-            {loading ? "Submitting..." : "Submit Review"}
+            {loading ? (
+              <>
+                <Spinner animation="border" size="sm" /> <span>Submitting</span>
+              </>
+            ) : (
+              "Submit Review"
+            )}
           </button>
         </form>
       )}

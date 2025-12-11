@@ -8,7 +8,6 @@ import { useContext } from "react";
 import UserAvatar from "../components/ui/UserAvatar.jsx";
 
 //ICONS
-import mainLogo from "../assets/uttireLogo.png";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -69,7 +68,7 @@ const Header = () => {
               className="d-flex align-items-center text-white text-decoration-none me-2"
             >
               <div className="mainLogo">
-                <img src={mainLogo} alt="Uttire logo" height="50" />
+                <img src="/uttireLogo.svg" alt="Uttire logo" height="50" />
               </div>
             </Link>
             <NavBtn isNavActive={isNavActive} setNavActive={setNavActive} />

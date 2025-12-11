@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import publicAxios from "../api/publicAxios";
 import Dropdown from "react-bootstrap/Dropdown";
 import StarRating from "./ui/StarRating";
+import { Spinner } from "react-bootstrap";
 
 // eslint-disable-next-line react/prop-types
 const ReviewsList = ({ productId }) => {
@@ -115,7 +116,11 @@ const ReviewsList = ({ productId }) => {
             onClick={() => fetchReviews()}
             disabled={loading}
           >
-            {loading ? "Loading..." : "Load more reviews →"}
+            {loading ? (
+              <Spinner animation="border" size="sm" />
+            ) : (
+              "Load more reviews →"
+            )}
           </button>
         </div>
       )}

@@ -10,7 +10,6 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import UserAvatar from "./ui/UserAvatar";
-import uttireLogo from "../assets/uttireLogo.png";
 import useOnlineStatus from "../hooks/useOnlineStatus";
 
 const AdminHeader = () => {
@@ -31,7 +30,8 @@ const AdminHeader = () => {
         to="/admin/dashboard"
         className="fw-bold text-uppercase d-flex align-items-center gap-2"
       >
-        <img src={uttireLogo} alt="uttire logo" height={38} />
+        <img src="/uttireLogo.svg" alt="Uttire logo" height="38" />
+
         <span>Admin Panel</span>
       </Navbar.Brand>
 

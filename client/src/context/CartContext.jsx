@@ -49,7 +49,13 @@ export const CartProvider = ({ children }) => {
       toast.success("Product added to cart");
     } catch (err) {
       console.error("Error adding to cart:", err);
-      toast.error("Failed to add product");
+      if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to add product");
+      }
       throw err;
     }
   };
