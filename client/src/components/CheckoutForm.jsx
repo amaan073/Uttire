@@ -11,6 +11,7 @@ import {
 import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
 import useOnlineStatus from "../hooks/useOnlineStatus.jsx";
+import { Spinner } from "react-bootstrap";
 
 const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
   const { user } = useContext(AuthContext);
@@ -137,12 +138,16 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
 
       if (onOrderSuccess) onOrderSuccess(data._id); // passing order id
     } catch (err) {
-      console.error(err?.response?.data?.message || err.message);
+      console.log(err);
       if (err?.response?.data?.code === "INSUFFICIENT_STOCK") {
-        toast.error(err?.response?.data?.message);
-        return;
+        toast.error(err.response.data.message);
+      } else if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Check your connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to place order. Try again.");
       }
-      toast.error("Failed to place order. Try again.");
     } finally {
       setLoading(false);
     }
@@ -376,7 +381,13 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
         className="btn btn-primary w-100 mt-4"
         disabled={loading || !isOnline}
       >
-        {loading ? "Placing Order..." : "Place Order"}
+        {loading ? (
+          <>
+            <Spinner animation="border" size="sm" /> Placing Order
+          </>
+        ) : (
+          "Place Order"
+        )}
       </button>
     </form>
   );

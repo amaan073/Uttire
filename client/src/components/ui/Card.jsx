@@ -130,7 +130,10 @@ const Card = ({ product, className, style }) => {
               setShowModal(true);
             }}
           >
-            <button className="btn btn-dark btn-sm d-flex align-items-center gap-2">
+            <button
+              className="btn btn-dark btn-sm d-flex align-items-center gap-2"
+              disabled={product.stock === 0}
+            >
               <ShoppingCartIcon size={18} /> Add to Cart
             </button>
           </div>
@@ -168,7 +171,7 @@ const Card = ({ product, className, style }) => {
                 <Button
                   variant="dark"
                   onClick={handleAddToCart}
-                  disabled={adding || !isOnline}
+                  disabled={adding || !isOnline || product.stock === 0}
                 >
                   {adding ? (
                     <>

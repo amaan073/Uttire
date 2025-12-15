@@ -8,9 +8,10 @@ import DemoTooltip from "../../components/ui/DemoTooltip.jsx";
 import { toast } from "react-toastify";
 import AuthContext from "../../context/AuthContext.jsx";
 import useOnlineStatus from "../../hooks/useOnlineStatus.jsx";
+import ErrorState from "../../components/ui/ErrorState.jsx";
 
 const Cart = () => {
-  const { cart, updateQuantity, removeFromCart, error } =
+  const { cart, fetchCart, updateQuantity, removeFromCart, error } =
     useContext(CartContext);
   const isOnline = useOnlineStatus();
   const { user } = useContext(AuthContext);
@@ -53,11 +54,11 @@ const Cart = () => {
   };
 
   const handleRemove = async (itemId) => {
-    setRemovingItem(itemId); // ✅ mark this item as being removed
+    setRemovingItem(itemId); //  mark this item as being removed
     try {
       await removeFromCart(itemId);
     } finally {
-      setRemovingItem(null); // ✅ reset regardless of success or error
+      setRemovingItem(null); //  reset regardless of success or error
     }
   };
 
@@ -69,22 +70,7 @@ const Cart = () => {
     navigate("/cart/checkout");
   };
 
-  if (error) {
-    return (
-      <div
-        className="container text-center d-flex justify-content-center align-items-center pb-5"
-        style={{ maxWidth: "1600px", minHeight: "calc(100vh - 83px)" }}
-      >
-        <div className="text-danger">
-          <h3 className="fw-semibold mb-2">⚠️ Error</h3>
-          <p>{error}</p>
-          <Button variant="primary" onClick={() => window.location.reload()}>
-            Retry
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  if (error) return <ErrorState message={error} retry={fetchCart} />;
 
   return (
     <>
@@ -216,7 +202,7 @@ const Cart = () => {
                           min={1}
                           max={item.product.stock}
                           value={item.quantity}
-                          disabled={updatingItem === item._id || !isOnline} // ✅ disable while loading
+                          disabled={updatingItem === item._id || !isOnline} //  disable while loading
                           onChange={(e) => {
                             let value = parseInt(e.target.value) || 1;
                             if (value > item.product.stock)
@@ -258,10 +244,10 @@ const Cart = () => {
                       className="d-flex align-items-center gap-1 px-2 py-1 rounded-2 justify-content-center"
                       style={{ width: "90px" }}
                       onClick={() => handleRemove(item._id)}
-                      disabled={removingItem === item._id || !isOnline} // ✅ disable while removing
+                      disabled={removingItem === item._id || !isOnline} //  disable while removing
                     >
                       {removingItem === item._id ? (
-                        <Spinner animation="border" size="sm" cl /> // ✅ show spinner
+                        <Spinner animation="border" size="sm" cl /> //  show spinner
                       ) : (
                         <>
                           <i className="bi bi-trash"></i> <span>Remove</span>

@@ -13,32 +13,38 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchCart = async () => {
+    setLoading(true);
+
+    if (!user) {
+      setCart([]); // no user → empty cart
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data } = await sessionAxios.get("/cart");
+      setCart(data);
+      setError(null); // clear old error
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+        setError("Couldn't reach server. Check your connection and try again.");
+        return;
+      }
+      setError("Failed to load your cart. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (authLoading) return; // wait until AuthContext is ready
 
-    const fetchCart = async () => {
-      if (!user) {
-        setCart([]); // no user → empty cart
-        setError(null);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const { data } = await sessionAxios.get("/cart");
-        setCart(data);
-        setError(null); // clear old error
-      } catch (err) {
-        console.error("Error fetching cart:", err);
-        toast.error("Failed to fetch cart.");
-        setError("Failed to load your cart. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCart();
-  }, [user, authLoading]); // runs when user is set
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, user]); // runs when user is set
 
   const addToCart = async (item) => {
     if (!user) return toast.info("Please login to add items to cart");
@@ -66,10 +72,15 @@ export const CartProvider = ({ children }) => {
     try {
       const { data } = await privateAxios.put(`/cart/${id}`, { quantity });
       setCart(data);
-      toast.success("Cart updated");
     } catch (err) {
       console.error("Error updating quantity:", err);
-      toast.error("Failed to update quantity");
+      if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to update quantity");
+      }
       throw err;
     }
   };
@@ -83,7 +94,13 @@ export const CartProvider = ({ children }) => {
       toast.info("Product removed from cart");
     } catch (err) {
       console.error("Error removing from cart:", err);
-      toast.error("Failed to remove product");
+      if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to remove product");
+      }
       throw err;
     }
   };
@@ -99,6 +116,7 @@ export const CartProvider = ({ children }) => {
         cart,
         loading,
         error,
+        fetchCart,
         addToCart,
         removeFromCart,
         updateQuantity,
