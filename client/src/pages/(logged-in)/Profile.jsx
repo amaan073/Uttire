@@ -6,7 +6,7 @@ import sessionAxios from "../../api/sessionAxios";
 import ProfileDetail from "../../components/ProfileDetail";
 import DeleteAccountModal from "../../components/DeleteAccountModal";
 import ManageAddressModal from "../../components/ManageAddressModal";
-import { Modal, Button, Spinner } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import ChangePasswordForm from "../../components/ChangePasswordForm";
 import { toast } from "react-toastify";
 import TwoFactorDemo from "../../components/TwoFactorDemo";
@@ -16,6 +16,8 @@ import LockIcon from "@mui/icons-material/Lock";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
+import LoadingScreen from "../../components/ui/LoadingScreen";
+import ErrorState from "../../components/ui/ErrorState";
 
 const Profile = () => {
   const isOnline = useOnlineStatus();
@@ -30,19 +32,22 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [showAddressModal, setShowAddressModal] = useState(false);
 
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const { data } = await privateAxios.get("/users/profile");
+      setProfile(data);
+      setFetchError("");
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setFetchError("Failed to fetch profile.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // initial fetch
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const { data } = await privateAxios.get("/users/profile");
-        setProfile(data);
-        setFetchError("");
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        setFetchError("Failed to fetch profile.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProfile();
   }, []);
 
@@ -105,34 +110,9 @@ const Profile = () => {
     }
   };
 
-  if (loading)
-    return (
-      <div
-        className="min-vh-100 d-flex justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <Spinner animation="border" role="status" variant="primary">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
-
+  if (loading) return <LoadingScreen />;
   if (fetchError)
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <i
-          className="bi bi-exclamation-triangle text-danger mb-3"
-          style={{ fontSize: "3rem" }}
-        ></i>
-        <p className="text-danger fw-bold mb-3">{fetchError}</p>
-        <Button onClick={() => window.location.reload()} variant="primary">
-          Retry
-        </Button>
-      </div>
-    );
+    return <ErrorState message={fetchError} retry={() => fetchProfile()} />;
 
   return (
     <>

@@ -9,9 +9,10 @@ import { toast } from "react-toastify";
 import AuthContext from "../../context/AuthContext.jsx";
 import useOnlineStatus from "../../hooks/useOnlineStatus.jsx";
 import ErrorState from "../../components/ui/ErrorState.jsx";
+import LoadingScreen from "../../components/ui/LoadingScreen.jsx";
 
 const Cart = () => {
-  const { cart, fetchCart, updateQuantity, removeFromCart, error } =
+  const { cart, fetchCart, loading, updateQuantity, removeFromCart, error } =
     useContext(CartContext);
   const isOnline = useOnlineStatus();
   const { user } = useContext(AuthContext);
@@ -70,6 +71,7 @@ const Cart = () => {
     navigate("/cart/checkout");
   };
 
+  if (loading) return <LoadingScreen />;
   if (error) return <ErrorState message={error} retry={fetchCart} />;
 
   return (

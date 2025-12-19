@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useRef } from "react";
 import privateAxios from "../api/privateAxios.js";
 import sessionAxios from "../api/sessionAxios.js";
 import { toast } from "react-toastify";
+import { Spinner } from "react-bootstrap";
 
 const AuthContext = createContext();
 
@@ -78,6 +79,16 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-vh-100 d-flex justify-content-center align-items-center">
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider

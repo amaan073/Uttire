@@ -100,7 +100,7 @@ const Header = () => {
                 }}
               >
                 <ShoppingCartIcon sx={{ height: "38px", width: "auto" }} />
-                {user && (
+                {user && cart.length > 0 && (
                   <div className="cart-count bg-warning">{cart.length}</div>
                 )}
               </button>

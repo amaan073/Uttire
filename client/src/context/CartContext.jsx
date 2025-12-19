@@ -8,7 +8,7 @@ const CartContext = createContext();
 
 // eslint-disable-next-line react/prop-types
 export const CartProvider = ({ children }) => {
-  const { user, loading: authLoading } = useContext(AuthContext); // get user from AuthContext, get the loading var value from auth context and use deconstruct to assing the value to authloadinng var
+  const { user } = useContext(AuthContext); // get user from AuthContext, get the loading var value from auth context and use deconstruct to assing the value to authloadinng var
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,20 +31,18 @@ export const CartProvider = ({ children }) => {
       console.error("Error fetching cart:", err);
       if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
-        return;
+      } else {
+        setError("Failed to load your cart. Please try again later.");
       }
-      setError("Failed to load your cart. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (authLoading) return; // wait until AuthContext is ready
-
     fetchCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, user]); // runs when user is set
+  }, [user]); // runs when user is set
 
   const addToCart = async (item) => {
     if (!user) return toast.info("Please login to add items to cart");
