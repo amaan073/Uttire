@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import { Button, Modal } from "react-bootstrap";
 import { ShoppingBagIcon } from "lucide-react";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
+import LoadingScreen from "../../components/ui/LoadingScreen";
+import ErrorState from "../../components/ui/ErrorState";
 
 export default function Orders() {
   const isOnline = useOnlineStatus();
@@ -33,13 +35,14 @@ export default function Orders() {
 
   const fetchOrders = async (pageNumber) => {
     try {
-      // reset errors
+      // 🔄 RESET ERROR STATES
       if (pageNumber === 1) {
         setError(null); // initial fetch error
       } else {
         setLoadingMoreError(false); // infinite scroll error
       }
 
+      // ⏳ SET LOADING STATES
       if (pageNumber === 1)
         setLoading(true); // initial loader
       else setLoadingMore(true); // loader for more items
@@ -49,23 +52,35 @@ export default function Orders() {
       ); // limit per page
 
       if (pageNumber === 1) {
+        // First page replaces existing data
         setOrders(data.orders || []);
         setStats({
           totalOrders: data.totalOrders || 0,
           totalSpent: data.totalSpent || 0,
         });
       } else {
+        // Pagination appends new orders
         setOrders((prev) => [...prev, ...(data.orders || [])]);
       }
 
+      // 📄 Update pagination state
       setHasMore(pageNumber < data.totalPages);
     } catch (err) {
       console.error("Failed to fetch orders:", err);
+
+      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+        if (pageNumber === 1) {
+          setError(
+            "Couldn't reach server. Check your connection and try again."
+          );
+        } else {
+          setLoadingMoreError(true);
+        }
+        return;
+      }
+
       if (pageNumber === 1) {
-        setError(
-          err.response?.data?.message ||
-            "Something went wrong while fetching orders."
-        );
+        setError("Something went wrong while fetching orders.");
       } else {
         setLoadingMoreError(true);
       }
@@ -78,7 +93,8 @@ export default function Orders() {
   // Infinite scroll
   useEffect(() => {
     const handleScroll = () => {
-      if (!hasMore || loadingMore || loading || loadingMoreError) return;
+      if (!hasMore || loadingMore || loading || loadingMoreError || error)
+        return;
 
       const { scrollTop, scrollHeight, clientHeight } =
         document.documentElement;
@@ -123,8 +139,15 @@ export default function Orders() {
 
       toast.success("Order cancelled Successfully!");
     } catch (err) {
+      console.error(err);
       const errorCode = err.response?.data?.code;
-      if (errorCode === "ALREADY_CANCELLED") {
+
+      // err.code from global axios interceptors
+      if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else if (errorCode === "ALREADY_CANCELLED") {
         toast.info("Order was already cancelled.");
         setOrders((prevOrders) =>
           prevOrders.map((order) =>
@@ -133,49 +156,16 @@ export default function Orders() {
               : order
           )
         );
-        return;
+      } else {
+        toast.error("Failed to cancel order!");
       }
-
-      console.error(err);
-      toast.error("Failed to cancel order!");
     } finally {
       setCancelingOrderId(null);
     }
   };
 
-  if (loading)
-    return (
-      <div
-        className="min-vh-100 d-flex justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <Spinner animation="border" role="status" variant="primary">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
-
-  if (error) {
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <i
-          className="bi bi-exclamation-triangle text-danger mb-3"
-          style={{ fontSize: "3rem" }}
-        ></i>
-        <h5 className="fw-semibold mb-2">Unable to fetch orders</h5>
-        <p className="text-muted mb-4">
-          Something went wrong. Please try again.
-        </p>
-        <Button variant="primary" onClick={() => fetchOrders(1)}>
-          Retry
-        </Button>
-      </div>
-    );
-  }
-
+  if (loading) return <LoadingScreen />;
+  if (error) return <ErrorState message={error} retry={() => fetchOrders(1)} />;
   if (orders.length === 0) {
     return (
       <div
@@ -346,16 +336,18 @@ export default function Orders() {
                     className="d-flex align-items-center bg-light p-3 rounded-3 shadow-sm cursor-pointer mt-3"
                     onClick={() => navigate(`/products/${item.product._id}`)}
                   >
-                    <div className="me-3">
+                    <div
+                      className="me-3 border rounded overflow-hidden img_ol"
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        objectFit: "cover",
+                      }}
+                    >
                       <img
                         src={item.product.image}
                         alt={item.product.name}
-                        className="rounded img_ol"
-                        style={{
-                          width: "80px",
-                          height: "80px",
-                          objectFit: "cover",
-                        }}
+                        className="w-100 h-100"
                       />
                     </div>
                     <div className="flex-grow-1 ol_product">

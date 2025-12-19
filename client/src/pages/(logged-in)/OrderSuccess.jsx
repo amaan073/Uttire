@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import privateAxios from "../../api/privateAxios";
-import { Spinner } from "react-bootstrap";
+import LoadingScreen from "../../components/ui/LoadingScreen";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 
 const OrderSuccess = () => {
   const { orderId } = useParams();
@@ -10,54 +11,46 @@ const OrderSuccess = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); // <-- new error state
 
-  useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        const { data } = await privateAxios.get(`/orders/${orderId}`);
-        setOrder(data);
-        setError(null);
-      } catch (error) {
-        console.error(error);
+  // default tab title
+  useDocumentTitle(
+    order?.orderNumber ? `Order #${order.orderNumber}` : "Order Success"
+  );
 
-        if (error.response) {
-          if (error.response.status === 401) {
-            setError({ status: 401, message: "Unauthorized access." });
-          } else if (error.response.status === 404) {
-            setError({ status: 404, message: "Order not found." });
-          } else {
-            setError({
-              status: error.response.status,
-              message: "Something went wrong while fetching the order.",
-            });
-          }
+  const fetchOrder = async () => {
+    try {
+      const { data } = await privateAxios.get(`/orders/${orderId}`);
+      setOrder(data);
+      setError(null);
+    } catch (error) {
+      console.error(error);
+
+      if (error.response) {
+        if (error.response.status === 401) {
+          setError({ status: 401, message: "Unauthorized access." });
+        } else if (error.response.status === 404) {
+          setError({ status: 404, message: "Order not found." });
         } else {
-          setError({ status: 0, message: "Network error. Please try again." });
+          setError({
+            status: error.response.status,
+            message: "Something went wrong while fetching the order.",
+          });
         }
-
-        setOrder(null);
-      } finally {
-        setLoading(false);
+      } else {
+        setError({ status: 0, message: "Network error. Please try again." });
       }
-    };
 
+      setOrder(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchOrder();
-  }, [orderId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Loading state
-  if (loading) {
-    return (
-      <div
-        className="container d-flex justify-content-center align-items-center text-center"
-        style={{ minHeight: "calc(var(--safe-height) - 83px)" }}
-      >
-        <Spinner animation="border" role="status" variant="primary">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
-  }
-
-  // Error state
+  if (loading) return <LoadingScreen />;
   if (error) {
     return (
       <div
@@ -108,7 +101,9 @@ const OrderSuccess = () => {
         {/* Minimal Order Info */}
         <div className="text-center bg-light rounded-3 p-3 mb-4">
           <div>
-            <b>Order ID:</b> {order._id}
+            <b>Order ID:</b>{" "}
+            <span className="me-1 fw-semibold">#{order.orderNumber}</span>
+            <span className="small text-muted">({order._id})</span>
           </div>
           <div>
             <b>Estimated Delivery:</b> {estimatedDelivery.toDateString()}

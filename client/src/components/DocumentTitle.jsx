@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 
 /**
@@ -6,7 +6,6 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
  */
 const DocumentTitle = () => {
   const location = useLocation();
-  const params = useParams();
 
   // Route to title mapping
   const getTitleFromRoute = () => {
@@ -66,8 +65,8 @@ const DocumentTitle = () => {
       return "Checkout";
     }
     if (path.match(/^\/checkout\/success\/.+/)) {
-      const orderId = params.orderId;
-      return orderId ? `Order - #${orderId}` : "Order Success";
+      // order success page will handle
+      return null;
     }
     if (path === "/profile") {
       return "Profile";
