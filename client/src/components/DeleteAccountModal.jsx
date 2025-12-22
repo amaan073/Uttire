@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
-import { Button, Modal, Form, Alert, Stack } from "react-bootstrap";
+import { Button, Modal, Form, Alert, Stack, Spinner } from "react-bootstrap";
 import useOnlineStatus from "../hooks/useOnlineStatus";
 
 /* eslint-disable react/prop-types */
-function DeleteAccountModal({ show, onHide, onConfirm, backendError }) {
+function DeleteAccountModal({
+  show,
+  onHide,
+  onConfirm,
+  backendError,
+  loading,
+}) {
   const isOnline = useOnlineStatus();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -35,9 +41,11 @@ function DeleteAccountModal({ show, onHide, onConfirm, backendError }) {
       }} //clear error variable when modal hides
       size="md"
       aria-labelledby="delete-account-modal"
+      backdrop={loading ? "static" : true}
+      keyboard={!loading}
       centered
     >
-      <Modal.Header closeButton>
+      <Modal.Header closeButton={!loading}>
         <Modal.Title id="delete-account-modal">
           Confirm Delete Account
         </Modal.Title>
@@ -48,7 +56,6 @@ function DeleteAccountModal({ show, onHide, onConfirm, backendError }) {
           password to confirm.
         </p>
         {error && <Alert variant="danger">{error}</Alert>}
-        {backendError && <p className="error">{backendError}</p>}
         {/* show backend error */}
         <Form onSubmit={handleSubmit}>
           <Form.Group>
@@ -57,6 +64,7 @@ function DeleteAccountModal({ show, onHide, onConfirm, backendError }) {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
             />
           </Form.Group>
           <Stack
@@ -70,11 +78,22 @@ function DeleteAccountModal({ show, onHide, onConfirm, backendError }) {
                 setError(""); // clear error when closing modal
                 onHide();
               }}
+              disabled={loading}
             >
               Cancel
             </Button>
-            <Button variant="danger" type="submit" disabled={!isOnline}>
-              Delete Account
+            <Button
+              variant="danger"
+              type="submit"
+              disabled={!isOnline || loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner animation="border" size="sm" /> Deleting...
+                </>
+              ) : (
+                "Delete Account"
+              )}
             </Button>
           </Stack>
         </Form>

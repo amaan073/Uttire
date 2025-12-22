@@ -4,18 +4,23 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import privateAxios from "../api/privateAxios";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import { Spinner } from "react-bootstrap";
 
 /* eslint-disable react/prop-types */
 export default function TwoFactorDemo({ toggleValue }) {
   const isOnline = useOnlineStatus();
   const [twoFactorAuth, setTwoFactorAuth] = useState(toggleValue ?? "off");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = async (e) => {
+    if (loading) return;
+
     const newValue = e.target.value;
     const oldValue = twoFactorAuth;
 
     // Optimistic UI update
     setTwoFactorAuth(newValue);
+    setLoading(true);
 
     try {
       await privateAxios.patch("/users/twofactor", {
@@ -25,7 +30,15 @@ export default function TwoFactorDemo({ toggleValue }) {
     } catch (error) {
       setTwoFactorAuth(oldValue); // rollback if failed
       console.error(error);
-      toast.error("Failed to update two-factor authentication");
+      if (error.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (error.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to update two-factor authentication");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,14 +56,13 @@ export default function TwoFactorDemo({ toggleValue }) {
       <GppGoodIcon />
       <span>2-factor authentication</span>
 
-      <FormControl
-        size="small"
-        sx={{ minWidth: 117, maxWidth: 117 }}
-        className="ms-auto"
-      >
+      <div className="ms-auto">
+        {loading && <Spinner animation="border" size="sm" />}
+      </div>
+      <FormControl size="small" sx={{ minWidth: 117, maxWidth: 117 }}>
         <Select
           value={twoFactorAuth}
-          disabled={!isOnline}
+          disabled={!isOnline || loading}
           onChange={handleChange}
           sx={{
             overflow: "hidden",

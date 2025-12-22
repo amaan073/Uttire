@@ -176,8 +176,14 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
       setPreviewUrl(null);
       setMode("view");
     } catch (error) {
-      toast.error("Update failed");
-      console.log(error.response?.data?.message);
+      console.log(error);
+      if (error.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (error.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to update profile");
+      }
     } finally {
       setLoading(false);
     }
@@ -371,14 +377,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
               >
                 {loading ? (
                   <>
-                    <Spinner
-                      as="span"
-                      animation="border"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
-                    />{" "}
-                    Saving...
+                    <Spinner animation="border" size="sm" /> Saving
                   </>
                 ) : (
                   "Save Changes"

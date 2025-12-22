@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { isValidPassword } from "../utils/validators";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import { Spinner } from "react-bootstrap";
 
 /* eslint-disable react/prop-types */
-export default function ChangePasswordForm({ onCancel, onSubmit }) {
+export default function ChangePasswordForm({ onCancel, onSubmit, loading }) {
   const isOnline = useOnlineStatus();
   const [formData, setFormData] = useState({
     currentPassword: "",
@@ -88,6 +89,7 @@ export default function ChangePasswordForm({ onCancel, onSubmit }) {
           name="currentPassword"
           value={formData.currentPassword}
           onChange={handleChange}
+          disabled={loading}
           required
         />
         {errors.currentPassword && (
@@ -111,6 +113,7 @@ export default function ChangePasswordForm({ onCancel, onSubmit }) {
           name="newPassword"
           value={formData.newPassword}
           onChange={handleChange}
+          disabled={loading}
           required
         />
         {errors.newPassword && (
@@ -134,6 +137,7 @@ export default function ChangePasswordForm({ onCancel, onSubmit }) {
           name="confirmPassword"
           value={formData.confirmPassword}
           onChange={handleChange}
+          disabled={loading}
           required
         />
         {errors.confirmPassword && (
@@ -148,15 +152,22 @@ export default function ChangePasswordForm({ onCancel, onSubmit }) {
           type="button"
           className="btn btn-outline-danger w-100"
           onClick={onCancel}
+          disabled={loading}
         >
           Cancel
         </button>
         <button
           type="submit"
           className="btn btn-primary w-100 text-nowrap"
-          disabled={!isOnline}
+          disabled={!isOnline || loading}
         >
-          Change password
+          {loading ? (
+            <>
+              <Spinner animation="border" size="sm" /> Changing
+            </>
+          ) : (
+            "Change password"
+          )}
         </button>
       </div>
     </form>

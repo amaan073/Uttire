@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useMemo } from "react";
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, Spinner } from "react-bootstrap";
 import { Country, State, City } from "country-state-city";
 import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
@@ -93,7 +93,13 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
       onHide(); // close modal
     } catch (err) {
       console.error(err);
-      toast.error("Failed to delete address");
+      if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to delete address");
+      }
     } finally {
       setIsDeleting(false);
     }
@@ -130,135 +136,160 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
       onHide(); // close modal
     } catch (err) {
       console.error(err);
-      toast.error("Failed to save address");
+      if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to save address");
+      }
     } finally {
       setIsSaving(false);
     }
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered size="md">
-      <Modal.Header closeButton>
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      size="md"
+      backdrop={isSaving || isDeleting ? "static" : true}
+      keyboard={!(isSaving || isDeleting)}
+    >
+      <Modal.Header closeButton={!isSaving && !isDeleting}>
         <Modal.Title style={{ fontSize: "1rem" }}>Manage Address</Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ fontSize: "0.85rem" }}>
-        <Form className="p-2" style={{ fontSize: "0.85rem" }}>
-          <Row className="g-2">
-            <Col xs={12}>
-              <Form.Control
-                name="street"
-                placeholder="Street"
-                value={formData.street}
-                onChange={handleChange}
-                required
-                className={`py-1 ${errors.street ? "is-invalid" : ""}`}
-                style={{ fontSize: "0.85rem" }}
-              />
-              {errors.street && (
-                <Form.Control.Feedback type="invalid">
-                  {errors.street}
-                </Form.Control.Feedback>
-              )}
-            </Col>
+        <Form
+          className="p-2"
+          style={{ fontSize: "0.85rem" }}
+          disabled={isSaving || isDeleting}
+        >
+          <fieldset disabled={isSaving || isDeleting}>
+            <Row className="g-2">
+              <Col xs={12}>
+                <Form.Control
+                  name="street"
+                  placeholder="Street"
+                  value={formData.street}
+                  onChange={handleChange}
+                  required
+                  className={`py-1 ${errors.street ? "is-invalid" : ""}`}
+                  style={{ fontSize: "0.85rem" }}
+                />
+                {errors.street && (
+                  <Form.Control.Feedback type="invalid">
+                    {errors.street}
+                  </Form.Control.Feedback>
+                )}
+              </Col>
 
-            <Col xs={6}>
-              <Form.Select
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                className="py-1"
-                style={{ fontSize: "0.85rem" }}
-                required
-              >
-                <option value="">Country</option>
-                {countries.map((c) => (
-                  <option key={c.isoCode} value={c.isoCode}>
-                    {c.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
+              <Col xs={6}>
+                <Form.Select
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="py-1"
+                  style={{ fontSize: "0.85rem" }}
+                  required
+                >
+                  <option value="">Country</option>
+                  {countries.map((c) => (
+                    <option key={c.isoCode} value={c.isoCode}>
+                      {c.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
 
-            <Col xs={6}>
-              <Form.Select
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                className="py-1"
-                style={{ fontSize: "0.85rem" }}
-                required
-                disabled={!formData.country}
-              >
-                <option value="">State</option>
-                {states.map((s) => (
-                  <option key={s.isoCode} value={s.isoCode}>
-                    {s.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
+              <Col xs={6}>
+                <Form.Select
+                  name="state"
+                  value={formData.state}
+                  onChange={handleChange}
+                  className="py-1"
+                  style={{ fontSize: "0.85rem" }}
+                  required
+                  disabled={!formData.country}
+                >
+                  <option value="">State</option>
+                  {states.map((s) => (
+                    <option key={s.isoCode} value={s.isoCode}>
+                      {s.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
 
-            <Col xs={6}>
-              <Form.Select
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                className="py-1"
-                style={{ fontSize: "0.85rem" }}
-                required
-                disabled={!formData.state}
-              >
-                <option value="">City</option>
-                {cities.map((ct) => (
-                  <option key={ct.name} value={ct.name}>
-                    {ct.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
+              <Col xs={6}>
+                <Form.Select
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  className="py-1"
+                  style={{ fontSize: "0.85rem" }}
+                  required
+                  disabled={!formData.state}
+                >
+                  <option value="">City</option>
+                  {cities.map((ct) => (
+                    <option key={ct.name} value={ct.name}>
+                      {ct.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
 
-            <Col xs={6}>
-              <Form.Control
-                name="zip"
-                type="number"
-                placeholder="ZIP / Postal Code"
-                value={formData.zip}
-                onChange={handleChange}
-                required
-                className={`py-1 ${errors.zip ? "is-invalid" : ""}`}
-                style={{ fontSize: "0.85rem" }}
-              />
-              {errors.zip && (
-                <Form.Control.Feedback type="invalid">
-                  {errors.zip}
-                </Form.Control.Feedback>
-              )}
-            </Col>
+              <Col xs={6}>
+                <Form.Control
+                  name="zip"
+                  type="number"
+                  placeholder="ZIP / Postal Code"
+                  value={formData.zip}
+                  onChange={handleChange}
+                  required
+                  className={`py-1 ${errors.zip ? "is-invalid" : ""}`}
+                  style={{ fontSize: "0.85rem" }}
+                />
+                {errors.zip && (
+                  <Form.Control.Feedback type="invalid">
+                    {errors.zip}
+                  </Form.Control.Feedback>
+                )}
+              </Col>
 
-            <Col xs={12}>
-              <Form.Select
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                className="py-1"
-                style={{ fontSize: "0.85rem" }}
-              >
-                <option value="home">Home</option>
-                <option value="office">Office</option>
-                <option value="other">Other</option>
-              </Form.Select>
-            </Col>
-          </Row>
+              <Col xs={12}>
+                <Form.Select
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  className="py-1"
+                  style={{ fontSize: "0.85rem" }}
+                >
+                  <option value="home">Home</option>
+                  <option value="office">Office</option>
+                  <option value="other">Other</option>
+                </Form.Select>
+              </Col>
+            </Row>
+          </fieldset>
           <div className="d-flex mt-3">
             {address && Object.keys(address).length > 0 && (
               <Button
                 variant="danger"
                 size="sm"
                 onClick={handleDelete}
-                disabled={!isOnline}
+                disabled={!isOnline || isSaving || isDeleting}
                 style={{ fontSize: "0.8rem" }}
               >
-                {isDeleting ? "Deleting..." : "Delete"}
+                {isDeleting ? (
+                  <>
+                    <Spinner animation="border" size="sm" /> Deleting
+                  </>
+                ) : (
+                  "Delete"
+                )}
               </Button>
             )}
 
@@ -286,11 +317,19 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                   (address && Object.keys(address).length > 0
                     ? !isChanged
                     : false) ||
-                  !isOnline
+                  !isOnline ||
+                  isSaving ||
+                  isDeleting
                 }
                 style={{ fontSize: "0.8rem" }}
               >
-                {isSaving ? "Saving..." : "Save"}
+                {isSaving ? (
+                  <>
+                    <Spinner animation="border" size="sm" /> Saving
+                  </>
+                ) : (
+                  "Save"
+                )}
               </Button>
             </div>
           </div>

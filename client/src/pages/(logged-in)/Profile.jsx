@@ -23,13 +23,17 @@ const Profile = () => {
   const isOnline = useOnlineStatus();
   const [mode, setMode] = useState("view"); //view, editProfile or changePassword
   const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState("");
   const [modalShow, setModalShow] = useState(false);
   const [backendError, setBackendError] = useState("");
   //after successful deletion message show in modal
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
   const [showAddressModal, setShowAddressModal] = useState(false);
 
   const fetchProfile = async () => {
@@ -40,7 +44,14 @@ const Profile = () => {
       setFetchError("");
     } catch (error) {
       console.error("Error fetching profile:", error);
-      setFetchError("Failed to fetch profile.");
+      if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+        setFetchError(
+          "Couldn't reach server. Check your connection and try again."
+        );
+        return;
+      } else {
+        setFetchError("Failed to fetch profile.");
+      }
     } finally {
       setLoading(false);
     }
@@ -53,6 +64,8 @@ const Profile = () => {
 
   const handlePasswordChange = async (data, setErrors) => {
     try {
+      setIsChangingPassword(true);
+
       const response = await privateAxios.post("/users/change-password", {
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
@@ -72,20 +85,26 @@ const Profile = () => {
         }
       }
     } catch (error) {
-      const message =
-        error.response?.data?.message || "Failed to change password.";
-
-      if (message.toLowerCase().includes("current password is incorrect")) {
+      console.log(error);
+      if (error.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (error.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else if (error.response?.data?.code === "INCORRECT_CURRENT_PASSWORD") {
         setErrors({ currentPassword: "Current password is incorrect" });
       } else {
-        toast.error(message);
+        toast.error("Failed to change passoword");
       }
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
   const handleDeleteAccount = async (password) => {
     try {
       setBackendError(""); // reset previous error
+      setIsDeleting(true);
+
       const res = await privateAxios.delete("/users/profile", {
         data: { password }, // send password in request body
       });
@@ -100,19 +119,30 @@ const Profile = () => {
         window.location.href = "/";
       }, 2000);
     } catch (err) {
+      console.error(err);
+      if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      }
       // Only show "Incorrect password" in modal
-      if (err.response?.status === 401) {
+      else if (err.response?.status === 401) {
         setBackendError("Incorrect password");
       } else {
-        console.log(err);
-        setBackendError("Something went wrong, try again.");
+        toast.error("Something went wrong, try again.");
       }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   if (loading) return <LoadingScreen />;
   if (fetchError)
     return <ErrorState message={fetchError} retry={() => fetchProfile()} />;
+  // malformed profile guard
+  if (!loading && !fetchError && !profile) {
+    return <ErrorState message="Profile not available" retry={fetchProfile} />;
+  }
 
   return (
     <>
@@ -160,6 +190,7 @@ const Profile = () => {
                     onHide={() => setModalShow(false)}
                     onConfirm={handleDeleteAccount} // Pass API function as callback
                     backendError={backendError} // passed to modal
+                    loading={isDeleting}
                   />
                   {/* after successful deletion modal  */}
                   <Modal
@@ -202,6 +233,7 @@ const Profile = () => {
                     onSubmit={(data, setErrors) => {
                       handlePasswordChange(data, setErrors);
                     }}
+                    loading={isChangingPassword}
                   />
                 </>
               ) : (
