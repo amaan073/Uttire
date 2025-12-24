@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 const ChangeStatusModal = ({
   show,
@@ -11,6 +12,7 @@ const ChangeStatusModal = ({
   backendError,
 }) => {
   const [newStatus, setNewStatus] = useState(order?.status || "");
+  const isOnline = useOnlineStatus();
 
   const STATUS_OPTIONS = [
     "pending",
@@ -23,8 +25,14 @@ const ChangeStatusModal = ({
   useEffect(() => setNewStatus(order?.status || ""), [order]);
 
   return (
-    <Modal show={show} onHide={onHide} centered>
-      <Modal.Header closeButton>
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      backdrop={loading ? "static" : true}
+      keyboard={!loading}
+    >
+      <Modal.Header closeButton={!loading}>
         <Modal.Title>Update Order Status</Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -37,6 +45,7 @@ const ChangeStatusModal = ({
             <Form.Select
               value={newStatus}
               onChange={(e) => setNewStatus(e.target.value)}
+              disabled={loading}
             >
               {STATUS_OPTIONS.map((s) => (
                 <option key={s} value={s}>
@@ -57,11 +66,11 @@ const ChangeStatusModal = ({
         <Button
           variant="primary"
           onClick={() => onConfirm(order?._id, newStatus)}
-          disabled={loading || newStatus === order?.status}
+          disabled={loading || newStatus === order?.status || !isOnline}
         >
           {loading ? (
             <>
-              <Spinner animation="border" size="sm" /> Saving...
+              <Spinner animation="border" size="sm" /> Saving
             </>
           ) : (
             "Save"

@@ -3,64 +3,41 @@ import privateAxios from "../../api/privateAxios"; // your axios instance
 import ChartCard from "../../components/ui/ChartCard";
 import DemoTooltip from "../../components/ui/DemoTooltip";
 import "../../components/ui/admin.css";
-import { Button, Spinner } from "react-bootstrap";
+import LoadingScreen from "../../components/ui/LoadingScreen";
+import ErrorState from "../../components/ui/ErrorState";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await privateAxios.get("/admin/dashboard");
+      setStats(res?.data?.stats || null);
+      setRecentOrders(res?.data?.recentOrders || []);
+    } catch (err) {
+      console.error(err);
+      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+        setError("Couldn't reach server. Check your connection and try again.");
+      } else {
+        setError("Failed to load dashboard data.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 🔹 Fetch dashboard data
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        setError("");
-        const res = await privateAxios.get("/admin/dashboard");
-        setStats(res.data.stats);
-        setRecentOrders(res.data.recentOrders);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load dashboard data.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchDashboardData();
   }, []);
 
-  if (loading) {
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <div className="d-flex justify-content-center align-items-center py-5">
-          <Spinner animation="border" variant="primary" role="status" />
-          <span className="ms-3 fs-5 text-muted">Loading dashboard...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <i
-          className="bi bi-exclamation-triangle text-danger mb-3"
-          style={{ fontSize: "3rem" }}
-        ></i>
-        <p className="text-danger fw-bold mb-3">{error}</p>
-        <Button onClick={() => window.location.reload()} variant="primary">
-          Retry
-        </Button>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
+  if (error) return <ErrorState message={error} retry={fetchDashboardData} />;
 
   return (
     <div className="container py-4">
@@ -73,17 +50,23 @@ const AdminDashboard = () => {
       <div className="d-flex justify-content-center gap-3 flex-wrap my-3">
         <div className="border bg-white p-3 rounded-4 flex-grow-1 px-4 shadow-sm">
           <h5 className="p-0 m-0 text-muted">Total Orders</h5>
-          <h2 className="m-0 mt-2">{stats.totalOrders}</h2>
+          <h2 className="m-0 mt-2">{stats?.totalOrders ?? 0}</h2>
         </div>
 
         <div className="border bg-white p-3 rounded-4 flex-grow-1 px-4 shadow-sm">
           <h5 className="p-0 m-0 text-muted">Total Products</h5>
-          <h2 className="m-0 mt-2">{stats.totalProducts}</h2>
+          <h2 className="m-0 mt-2">{stats?.totalProducts ?? 0}</h2>
         </div>
 
         <div className="border bg-white p-3 rounded-4 flex-grow-1 px-4 shadow-sm">
           <h5 className="p-0 m-0 text-muted">Total Revenue</h5>
-          <h2 className="m-0 mt-2">${stats.totalRevenue.toLocaleString()}</h2>
+          <h2 className="m-0 mt-2">
+            $
+            {Number(stats?.totalRevenue || 0).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </h2>
         </div>
       </div>
 
@@ -120,27 +103,29 @@ const AdminDashboard = () => {
             <tbody>
               {recentOrders.length > 0 ? (
                 recentOrders.map((order) => (
-                  <tr key={order._id}>
-                    <td>#{order.orderNumber}</td>
-                    <td>{order.customer.name}</td>
-                    <td>${order.totals.total.toFixed(2)}</td>
+                  <tr key={order?._id ?? order?.orderNumber}>
+                    <td>#{order?.orderNumber ?? "—"}</td>
+                    <td>{order?.customer?.name ?? "Unknown"}</td>
+                    <td>${Number(order?.totals?.total || 0).toFixed(2)}</td>
                     <td>
                       <span
                         className={`badge bg-${
-                          order.status === "delivered"
+                          order?.status === "delivered"
                             ? "success"
-                            : order.status === "processing"
+                            : order?.status === "processing"
                               ? "warning text-dark"
-                              : order.status === "cancelled"
+                              : order?.status === "cancelled"
                                 ? "danger"
                                 : "secondary"
                         }`}
                       >
-                        {order.status}
+                        {order?.status ?? "unknown"}
                       </span>
                     </td>
                     <td>
-                      {new Date(order.createdAt).toLocaleDateString("en-GB")}
+                      {order?.createdAt
+                        ? new Date(order.createdAt).toLocaleDateString("en-GB")
+                        : "—"}
                     </td>
                   </tr>
                 ))

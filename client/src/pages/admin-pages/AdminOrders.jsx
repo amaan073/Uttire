@@ -5,6 +5,10 @@ import { Spinner, Button, Modal, Badge } from "react-bootstrap";
 import { toast } from "react-toastify";
 import ChangeStatusModal from "../../components/ChangeStatusModal";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
+import LoadingScreen from "../../components/ui/LoadingScreen";
+import ErrorState from "../../components/ui/ErrorState";
+import { Img } from "react-image";
+import { ImageOff } from "lucide-react";
 
 const formatDate = (iso) => {
   try {
@@ -50,6 +54,34 @@ const AdminOrders = () => {
   const [statusChangeLoading, setStatusChangeLoading] = useState(false);
   const [statusChangeError, setStatusChangeError] = useState("");
 
+  const fetchOrders = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      isFetchingRef.current = true;
+      const data = await fetchPage(null);
+      setOrders(data.orders || []);
+      setHasMore(Boolean(data.hasMore));
+      setCursor(data.nextCursor || null);
+    } catch (err) {
+      console.error("Failed to load orders:", err);
+      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+        setError("Couldn't reach server. Check your connection and try again.");
+      } else {
+        setError("Failed to load orders.");
+      }
+    } finally {
+      isFetchingRef.current = false;
+      setLoading(false);
+    }
+  };
+
+  // Initial load
+  useEffect(() => {
+    fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Fetch helper (cursor pagination)
   const fetchPage = async (cursorToUse = null) => {
     const params = new URLSearchParams();
@@ -60,28 +92,6 @@ const AdminOrders = () => {
     );
     return data; // expected: { orders, hasMore, nextCursor }
   };
-
-  // Initial load
-  useEffect(() => {
-    const load = async () => {
-      setError("");
-      setLoading(true);
-      try {
-        isFetchingRef.current = true;
-        const data = await fetchPage(null);
-        setOrders(data.orders || []);
-        setHasMore(Boolean(data.hasMore));
-        setCursor(data.nextCursor || null);
-      } catch (err) {
-        console.error("Failed to load orders:", err);
-        setError("Failed to load orders.");
-      } finally {
-        isFetchingRef.current = false;
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
 
   // Load more (infinite scroll)
   const loadMore = async () => {
@@ -155,9 +165,17 @@ const AdminOrders = () => {
       setOrderToChange(null);
     } catch (err) {
       console.error("Failed to update status:", err);
+
       // rollback
       setOrders(prev);
-      setStatusChangeError("Failed to update status. Try again.");
+
+      if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        setStatusChangeError("Failed to update status. Try again.");
+      }
     } finally {
       setStatusChangeLoading(false);
     }
@@ -172,38 +190,8 @@ const AdminOrders = () => {
     setShowDetailsModal(true);
   };
 
-  if (loading) {
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <div className="d-flex justify-content-center align-items-center py-5">
-          <Spinner animation="border" role="status" />
-          <span className="ms-3 fs-5 text-muted">Loading orders...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <i
-          className="bi bi-exclamation-triangle text-danger mb-3"
-          style={{ fontSize: "3rem" }}
-        />
-        <p className="text-danger fw-bold mb-3">{error}</p>
-        <Button onClick={() => window.location.reload()} variant="primary">
-          Retry
-        </Button>
-      </div>
-    );
-  }
-
+  if (loading) return <LoadingScreen />;
+  if (error) return <ErrorState message={error} retry={fetchOrders} />;
   if (!loading && orders.length === 0) {
     return (
       <div
@@ -226,11 +214,11 @@ const AdminOrders = () => {
         <h1 className="display-6">Orders</h1>
       </div>
 
-      <div className="table-responsive">
+      <div className="table-responsive border">
         <table className="table align-middle">
           <thead className="bg-light">
             <tr>
-              <th>Order #</th>
+              <th className="text-nowrap">Order ID</th>
               <th>Customer</th>
               <th>Items</th>
               <th>Total</th>
@@ -244,7 +232,7 @@ const AdminOrders = () => {
               orders.map((o) => (
                 <tr key={o._id}>
                   <td className="fw-medium">
-                    {o.orderNumber || o._id.slice(-6).toUpperCase()}
+                    #{o.orderNumber || o._id.slice(-6).toUpperCase()}
                   </td>
                   <td>
                     <div className="fw-semibold">{o.user?.name || "-"}</div>
@@ -258,11 +246,10 @@ const AdminOrders = () => {
                   <td>
                     <StatusBadge status={o.status} />
                   </td>
-                  <td>
+                  <td className="d-flex justify-content-end align-items-center gap-2 flex-wrap">
                     <Button
                       variant="outline-primary"
                       size="sm"
-                      className="me-2"
                       onClick={() => openDetails(o)}
                     >
                       View
@@ -270,8 +257,8 @@ const AdminOrders = () => {
                     <Button
                       variant="warning"
                       size="sm"
-                      className="me-2"
                       disabled={!isOnline}
+                      className="text-nowrap"
                       onClick={() => openChangeStatus(o)}
                     >
                       Update status
@@ -408,29 +395,33 @@ const AdminOrders = () => {
                       >
                         <div className="d-flex align-items-center">
                           {/* ✅ Product image */}
-                          {it.product?.image ? (
-                            <img
-                              src={it.product.image}
-                              alt={it.product.name}
-                              style={{
-                                width: 60,
-                                height: 60,
-                                objectFit: "cover",
-                                borderRadius: 8,
-                                marginRight: 12,
-                              }}
+
+                          <div
+                            style={{ width: "60px", height: "60px" }}
+                            className="rounded-3 overflow-hidden me-3"
+                          >
+                            <Img
+                              src={it?.product?.image}
+                              alt={it?.product?.name}
+                              className="w-100 h-100"
+                              style={{ objectFit: "contain" }}
+                              loader={
+                                <div
+                                  className="w-100 h-100 bg-light rounded pulse"
+                                  role="status"
+                                  aria-label="Loading image"
+                                />
+                              }
+                              unloader={
+                                <div
+                                  role="alert"
+                                  className="w-100 h-100 bg-light d-flex flex-column align-items-center justify-content-center"
+                                >
+                                  <ImageOff size={20} className="text-muted" />
+                                </div>
+                              }
                             />
-                          ) : (
-                            <div
-                              style={{
-                                width: 60,
-                                height: 60,
-                                background: "#f0f0f0",
-                                borderRadius: 8,
-                                marginRight: 12,
-                              }}
-                            />
-                          )}
+                          </div>
 
                           {/* ✅ Product info */}
                           <div>

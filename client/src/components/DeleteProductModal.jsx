@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 import { Modal, Button, Spinner } from "react-bootstrap";
-import ImagePlaceholder from "../assets/image.png";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import { Img } from "react-image";
+import { ImageOff } from "lucide-react";
 
 const DeleteProductModal = ({
   show,
@@ -27,13 +28,32 @@ const DeleteProductModal = ({
 
       <Modal.Body>
         <div className="d-flex gap-3 align-items-center">
-          <img
-            src={(product && product.image) || ImagePlaceholder}
-            alt={product?.name}
-            width={64}
-            height={64}
-            style={{ objectFit: "cover", borderRadius: 8 }}
-          />
+          <div
+            style={{ width: "64px", height: "64px" }}
+            className="rounded-3 overflow-hidden mx-auto"
+          >
+            <Img
+              src={product?.image}
+              alt={product?.name}
+              className="w-100 h-100"
+              style={{ objectFit: "contain" }}
+              loader={
+                <div
+                  className="w-100 h-100 bg-light rounded pulse"
+                  role="status"
+                  aria-label="Loading image"
+                />
+              }
+              unloader={
+                <div
+                  role="alert"
+                  className="w-100 h-100 bg-light d-flex flex-column align-items-center justify-content-center"
+                >
+                  <ImageOff size={20} className="text-muted" />
+                </div>
+              }
+            />
+          </div>
           <div>
             <div className="fw-semibold">{product?.name}</div>
             <div className="text-muted small">
@@ -67,7 +87,7 @@ const DeleteProductModal = ({
                 role="status"
                 className="me-2"
               />
-              Deleting...
+              Deleting
             </>
           ) : (
             "Delete"

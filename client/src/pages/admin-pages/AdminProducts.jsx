@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import privateAxios from "../../api/privateAxios";
 import { Spinner, Button } from "react-bootstrap";
-import ImagePlaceholder from "../../assets/image.png"; // fallback if no image
+import { Img } from "react-image";
+import { ImageOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DeleteProductModal from "../../components/DeleteProductModal";
 import { toast } from "react-toastify";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
+import LoadingScreen from "../../components/ui/LoadingScreen";
+import ErrorState from "../../components/ui/ErrorState";
 
 const AdminProducts = () => {
   const isOnline = useOnlineStatus();
@@ -28,6 +31,35 @@ const AdminProducts = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteBackendError, setDeleteBackendError] = useState("");
 
+  // initial load function
+  const fetchProducts = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      isFetchingRef.current = true;
+      const data = await fetchPage(null);
+      setProducts(data.products || []);
+      setHasMore(Boolean(data.hasMore));
+      setCursor(data.nextCursor || null);
+    } catch (err) {
+      console.error(err);
+      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+        setError("Couldn't reach server. Check your connection and try again.");
+      } else {
+        setError("Failed to load products.");
+      }
+    } finally {
+      isFetchingRef.current = false;
+      setLoading(false);
+    }
+  };
+
+  // ---- Initial load ----
+  useEffect(() => {
+    fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ---- Fetch helper ----
   const fetchPage = async (cursorToUse = null) => {
     const params = new URLSearchParams();
@@ -38,28 +70,6 @@ const AdminProducts = () => {
     );
     return data; // expected: { products, hasMore, nextCursor }
   };
-
-  // ---- Initial load ----
-  useEffect(() => {
-    const load = async () => {
-      setError("");
-      setLoading(true);
-      try {
-        isFetchingRef.current = true;
-        const data = await fetchPage(null);
-        setProducts(data.products || []);
-        setHasMore(Boolean(data.hasMore));
-        setCursor(data.nextCursor || null);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load products.");
-      } finally {
-        isFetchingRef.current = false;
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
 
   // ---- Load more (on scroll) ----
   const loadMore = async () => {
@@ -115,8 +125,14 @@ const AdminProducts = () => {
       // close modal
       setShowDeleteModal(false);
     } catch (err) {
-      setDeleteBackendError("Failed to delete product. Try again.");
       console.log(err);
+      if (err.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (err.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        setDeleteBackendError("Failed to delete product. Try again.");
+      }
     } finally {
       setDeleteLoading(false);
     }
@@ -129,40 +145,11 @@ const AdminProducts = () => {
     setShowDeleteModal(true);
   };
 
-  if (loading) {
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <div className="d-flex justify-content-center align-items-center py-5">
-          <Spinner animation="border" variant="primary" role="status" />
-          <span className="ms-3 fs-5 text-muted">Loading products...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div
-        className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
-        style={{ marginTop: "-83px" }}
-      >
-        <i
-          className="bi bi-exclamation-triangle text-danger mb-3"
-          style={{ fontSize: "3rem" }}
-        ></i>
-        <p className="text-danger fw-bold mb-3">{error}</p>
-        <Button onClick={() => window.location.reload()} variant="primary">
-          Retry
-        </Button>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
+  if (error) return <ErrorState message={error} retry={fetchProducts} />;
 
   // FULL-PAGE Empty state when there are no products (after initial load)
-  if (!loading && products.length === 0) {
+  if (!loading && products?.length === 0) {
     return (
       <div
         className="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center"
@@ -188,7 +175,7 @@ const AdminProducts = () => {
   }
 
   return (
-    <div className="container py-4">
+    <div className="container-lg py-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h1 className="display-6">Products</h1>
         <Button
@@ -200,7 +187,7 @@ const AdminProducts = () => {
         </Button>
       </div>
 
-      <div className="table-responsive">
+      <div className="table-responsive border">
         <table className="table align-middle">
           <thead className="bg-light">
             <tr>
@@ -212,27 +199,53 @@ const AdminProducts = () => {
             </tr>
           </thead>
           <tbody>
-            {products.length > 0 ? (
-              products.map((p) => (
-                <tr key={p._id}>
+            {products?.length > 0 ? (
+              products?.map((p) => (
+                <tr key={p?._id ?? Math.random()}>
                   <td>
-                    <img
-                      src={p.image || ImagePlaceholder}
-                      width="48"
-                      style={{ aspectRatio: "1/1" }}
-                      className="rounded-3"
-                    />
+                    <div
+                      style={{ width: "48px", height: "48px" }}
+                      className="rounded-3 overflow-hidden mx-auto"
+                    >
+                      <Img
+                        src={p?.image}
+                        alt={p?.name}
+                        className="w-100 h-100"
+                        style={{ objectFit: "contain" }}
+                        loader={
+                          <div
+                            className="w-100 h-100 bg-light rounded pulse"
+                            role="status"
+                            aria-label="Loading image"
+                          />
+                        }
+                        unloader={
+                          <div
+                            role="alert"
+                            className="w-100 h-100 bg-light d-flex flex-column align-items-center justify-content-center"
+                          >
+                            <ImageOff size={20} className="text-muted" />
+                          </div>
+                        }
+                      />
+                    </div>
                   </td>
-                  <td>{p.name}</td>
-                  <td>${p.price.toFixed(2)}</td>
-                  <td>{p.stock}</td>
+                  <td>{p?.name ?? "—"}</td>
+                  <td>
+                    {typeof p?.price === "number"
+                      ? `$${p.price.toFixed(2)}`
+                      : "—"}
+                  </td>
+                  <td>{p?.stock ?? "—"}</td>
                   <td>
                     <Button
                       variant="warning"
                       size="sm"
                       className="me-2"
                       disabled={!isOnline}
-                      onClick={() => navigate(`/admin/products/${p._id}/edit`)}
+                      onClick={() =>
+                        p?._id && navigate(`/admin/products/${p._id}/edit`)
+                      }
                     >
                       Edit
                     </Button>
@@ -240,7 +253,7 @@ const AdminProducts = () => {
                       variant="danger"
                       size="sm"
                       disabled={!isOnline}
-                      onClick={() => confirmDelete(p)}
+                      onClick={() => p && confirmDelete(p)}
                     >
                       Delete
                     </Button>

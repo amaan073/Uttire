@@ -13,8 +13,14 @@ const AddProductPage = () => {
       toast.success("✅ Product added successfully!");
       navigate("/admin/products");
     } catch (error) {
-      toast.error("❌ Failed to add product!");
       console.error(error);
+      if (error.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (error.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to add product!");
+      }
       throw error;
     }
   };
