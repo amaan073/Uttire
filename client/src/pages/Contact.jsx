@@ -2,6 +2,8 @@ import useOnlineStatus from "../hooks/useOnlineStatus";
 import Image from "../components/ui/Image";
 import customer_care from "../assets/images/customer_care.webp";
 import { useState } from "react";
+import { isValidEmail, isValidName } from "../utils/validators";
+import OfflineNote from "../components/ui/OfflineNote";
 
 const Contact = () => {
   const isOnline = useOnlineStatus();
@@ -10,20 +12,49 @@ const Contact = () => {
     email: "",
     message: "",
   });
+  const [errors, setErrors] = useState({}); // input validation errors state
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+    // 🔧 CHANGED: clear error for this field when user types again
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) newErrors.name = "Name is required.";
+    else if (!isValidName(formData.name))
+      newErrors.name = "Please enter a valid name.";
+
+    if (!formData.email.trim()) newErrors.email = "Email is required.";
+    else if (!isValidEmail(formData.email))
+      newErrors.email = "Please enter a valid email.";
+
+    if (!formData.message.trim())
+      newErrors.message = "Message cannot be empty.";
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // block submit
+    if (!validateForm()) return;
+
     const mailto = `mailto:support@uttire.com?body=${encodeURIComponent(
       formData.message
     )}%0A%0AFrom:%20${formData.name}<${formData.email}>`;
 
     window.location.href = mailto;
 
-    setFormData({
-      name: "",
-      email: "",
-      message: "",
-    });
+    setFormData({ name: "", email: "", message: "" });
+    setErrors({});
   };
 
   return (
@@ -79,21 +110,22 @@ const Contact = () => {
         <div className="col-lg-6">
           <div className="p-4 p-sm-5 rounded-4 shadow-lg bg-white">
             <h3 className="mb-4 fw-bold text-center">Send a Message</h3>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               <div className="mb-3">
                 <label htmlFor="name" className="form-label">
                   Name
                 </label>
                 <input
                   type="text"
-                  className="form-control"
+                  name="name"
+                  className={`form-control ${errors.name ? "is-invalid" : ""}`}
                   id="name"
                   value={formData.name}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                  required
+                  onChange={handleChange}
                 />
+                {errors.name && (
+                  <div className="invalid-feedback">{errors.name}</div>
+                )}
               </div>
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">
@@ -101,33 +133,34 @@ const Contact = () => {
                 </label>
                 <input
                   type="email"
-                  className="form-control"
+                  name="email"
+                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
                   id="email"
                   placeholder="name@example.com"
                   value={formData.email}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                  required
+                  onChange={handleChange}
                 />
+                {errors.email && (
+                  <div className="invalid-feedback">{errors.email}</div>
+                )}
               </div>
               <div className="mb-3">
                 <label htmlFor="message" className="form-label">
                   Message
                 </label>
                 <textarea
-                  className="form-control"
-                  id="message"
                   rows="5"
+                  name="message"
+                  className={`form-control ${
+                    errors.message ? "is-invalid" : ""
+                  }`}
+                  id="message"
                   value={formData.message}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      message: e.target.value,
-                    }))
-                  }
-                  required
+                  onChange={handleChange}
                 ></textarea>
+                {errors.message && (
+                  <div className="invalid-feedback">{errors.message}</div>
+                )}
               </div>
               <div className="d-grid">
                 <input
@@ -136,12 +169,7 @@ const Contact = () => {
                   className="btn btn-primary"
                   disabled={!isOnline}
                 />
-                {!isOnline && (
-                  <p className="text-danger mt-2 small text-center">
-                    Oops! You’re offline. Connect to the internet to send your
-                    message.
-                  </p>
-                )}
+                <OfflineNote isOnline={isOnline} />
               </div>
             </form>
           </div>
