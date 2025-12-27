@@ -86,15 +86,19 @@ export const loginUser = async (req, res) => {
     // Check if user exists
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      console.log("Invalid email or password");
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(401).json({
+        code: "INVALID_CREDENTIALS",
+        message: "Invalid email or password",
+      });
     }
 
     // Compare password using bcrypt
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      console.log("Invalid password");
-      return res.status(400).json({ message: "Invalid password" });
+      return res.status(401).json({
+        code: "INVALID_CREDENTIALS",
+        message: "Invalid email or password",
+      });
     }
 
     // Generate tokens
