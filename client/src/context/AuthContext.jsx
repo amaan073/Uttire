@@ -53,6 +53,7 @@ export const AuthProvider = ({ children }) => {
   const fetchUser = async () => {
     try {
       const res = await privateAxios.get("/users/me");
+      console.log(res.data);
       setUser(res.data.user); //set user globally
     } catch (err) {
       console.error("Fetching user (/me) failed:", err);

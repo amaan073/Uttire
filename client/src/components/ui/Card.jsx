@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import AuthContext from "../../context/AuthContext";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
 import Image from "../../components/ui/Image";
+import OfflineNote from "./OfflineNote";
 
 /* eslint-disable react/prop-types */
 const Card = ({ product, className, style }) => {
@@ -126,14 +127,10 @@ const Card = ({ product, className, style }) => {
             className={`btn-wrapper ms-auto ${!isOnline ? "disabled" : ""}`}
             onClick={(e) => {
               e.stopPropagation(); // always stops the card click
-              if (!isOnline) return; // prevent modal open
               setShowModal(true);
             }}
           >
-            <button
-              className="btn btn-dark btn-sm d-flex align-items-center gap-2"
-              disabled={product.stock === 0}
-            >
+            <button className="btn btn-dark btn-sm d-flex align-items-center gap-2">
               <ShoppingCartIcon size={18} /> Add to Cart
             </button>
           </div>
@@ -182,6 +179,8 @@ const Card = ({ product, className, style }) => {
                   )}
                 </Button>
               </Modal.Footer>
+              {product.stock === 0 && "Out of stock"}
+              <OfflineNote isOnline={isOnline} />
             </div>
           </Modal>
         </div>

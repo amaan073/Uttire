@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { validateLoginForm } from "../utils/formValidators.js";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext.jsx";
 import { useContext } from "react";
@@ -10,14 +9,17 @@ import sessionAxios from "../api/sessionAxios.js";
 import { Spinner } from "react-bootstrap";
 import { Eye, EyeOff } from "lucide-react";
 import useOnlineStatus from "../hooks/useOnlineStatus.jsx";
+import OfflineNote from "../components/ui/OfflineNote.jsx";
+import { isValidEmail } from "../utils/validators.js";
 
 const Login = () => {
   const isOnline = useOnlineStatus();
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({}); // inline validation error state
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false); // show password button state
 
-  const { user, fetchUser } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
 
   // getting the current route pathname (the page user was on) if not available then "/" homepage
   const location = useLocation();
@@ -36,49 +38,50 @@ const Login = () => {
   }, [user, navigate, from]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.email.trim()) newErrors.email = "Email is required.";
+    else if (!isValidEmail(formData.email))
+      newErrors.email = "Please enter a valid email.";
+
+    if (!formData.password.trim()) newErrors.password = "Password is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    //custom validation (fallback)
-    if (!validateLoginForm(formData)) {
-      setLoading(false);
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
-      const res = await sessionAxios.post("/users/login", formData);
+      setLoading(true);
 
-      try {
-        await fetchUser(); // sets user in context if OK
-        toast.success(`Welcome back, ${res.data?.user?.name ?? "User"}!`);
-        // after this when the user gets populated the navigation will be handled by useEffect() in above
-      } catch (err) {
-        console.log(err);
-        toast.error("Login failed. Please try again.");
-      }
+      const { data } = await sessionAxios.post("/users/login", formData);
+
+      setUser(data.user); // set user in global context
+
+      toast.success(`Welcome back, ${data.user.name}!`);
     } catch (e) {
+      console.error(e);
+
+      const status = e.response?.status;
+      const code = e.response?.data?.code;
+
       if (e.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Check your connection.");
       } else if (e.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
+      } else if (status === 401 && code === "INVALID_CREDENTIALS") {
+        setErrors({ form: "Invalid email or password." });
       } else {
-        const status = e.response?.status || 0;
-        const message =
-          e.response?.data?.message || e.message || "Something went wrong!";
-
-        if (status === 400 || status === 401) {
-          // client fault , credentials invalid
-          toast.error(message);
-        } else if (status === 500) {
-          toast.error("Server error. please try again later.");
-          console.log(e);
-        } else {
-          toast.error("Unexpected error. Check your connection.");
-        }
+        toast.error("Failed to login. Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -93,11 +96,14 @@ const Login = () => {
       <div className="login-form bg-white shadow rounded p-4">
         <AccountCircleIcon sx={{ height: "60px", width: "auto" }} />
         <h4 className="fw-semibold my-2 mb-3">Login</h4>
-        <form style={{ width: "300px" }} onSubmit={handleSubmit}>
+        <form style={{ width: "300px" }} onSubmit={handleSubmit} noValidate>
+          {errors.form && (
+            <div className="alert alert-danger py-2">{errors.form}</div>
+          )}
           <div className="mb-3">
             <input
               type="email"
-              className="form-control"
+              className={`form-control ${errors.email ? "is-invalid" : ""}`}
               id="email_input"
               name="email"
               placeholder="Email address"
@@ -105,11 +111,14 @@ const Login = () => {
               disabled={loading}
               required
             />
+            {errors.email && (
+              <div className="invalid-feedback text-start">{errors.email}</div>
+            )}
           </div>
           <div className="mb-3 position-relative">
             <input
               type={showPassword ? "text" : "password"}
-              className="form-control"
+              className={`form-control ${errors.password ? "is-invalid" : ""}`}
               id="password_input"
               name="password"
               placeholder="Password"
@@ -133,6 +142,11 @@ const Login = () => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
             )}
+            {errors.password && (
+              <div className="invalid-feedback text-start">
+                {errors.password}
+              </div>
+            )}
           </div>
           <button
             type="submit"
@@ -147,6 +161,7 @@ const Login = () => {
               "Login"
             )}
           </button>
+          <OfflineNote isOnline={isOnline} />
           <div className="mt-3" style={{ fontSize: "0.9em" }}>
             {/* eslint-disable-next-line react/no-unescaped-entities */}
             Don't have an account?

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import publicAxios from "../api/publicAxios";
 import { Link } from "react-router-dom";
+import { isValidEmail } from "../utils/validators";
 
 import Card from "../components/ui/Card";
 import { ShoppingBagIcon } from "lucide-react";
@@ -14,8 +15,11 @@ import LoadingScreen from "../components/ui/LoadingScreen";
 import ErrorState from "../components/ui/ErrorState";
 
 import DemoToolTip from "../components/ui/DemoTooltip";
+import useOnlineStatus from "../hooks/useOnlineStatus";
+import OfflineNote from "../components/ui/OfflineNote";
 
 const Home = () => {
+  const isOnline = useOnlineStatus();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -167,6 +171,7 @@ const Home = () => {
               <form
                 onSubmit={handleSubscribe}
                 className="d-flex flex-column flex-sm-row gap-2 justify-content-center"
+                noValidate
               >
                 <input
                   type="email"
@@ -175,10 +180,13 @@ const Home = () => {
                   value={email}
                   style={{ maxWidth: "400px" }}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
                 />
                 <DemoToolTip>
-                  <button type="submit" className="btn btn-dark">
+                  <button
+                    type="submit"
+                    className="btn btn-dark"
+                    disabled={!isValidEmail(email) || !isOnline}
+                  >
                     Subscribe
                   </button>
                 </DemoToolTip>
@@ -198,6 +206,7 @@ const Home = () => {
                 </DemoToolTip>
               </div>
             )}
+            <OfflineNote isOnline={isOnline} />
           </div>
         </div>
       </div>

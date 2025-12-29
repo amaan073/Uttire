@@ -6,7 +6,7 @@ const OfflineNote = ({ isOnline }) => {
 
   return (
     <p className="text-muted mt-2 small text-center mb-0">
-      <i>🚫🌐Offline — connect to continue.</i>
+      <i>🚫Offline — connect to continue.</i>
     </p>
   );
 };
