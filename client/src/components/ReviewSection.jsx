@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useOnlineStatus from "../hooks/useOnlineStatus";
 import { Spinner } from "react-bootstrap";
+import OfflineNote from "./ui/OfflineNote";
 
 const ReviewSection = ({ productId, product, refetchProduct }) => {
   const { user } = useContext(AuthContext);
@@ -72,7 +73,7 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
     return (
       <div className="mb-4">
         <button
-          className="btn btn-outline-primary rounded-pill px-4"
+          className="btn btn-primary rounded-pill px-4"
           disabled={!isOnline}
           onClick={() => {
             toast.info("Please log in to write a review.");
@@ -86,6 +87,7 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
         >
           Write a Review
         </button>
+        <OfflineNote isOnline={isOnline} />
       </div>
     );
   }
@@ -98,12 +100,16 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
           ✅ You’ve already submitted a review for this product.
         </div>
       ) : !formVisible ? (
-        <button
-          className="btn btn-primary rounded-pill px-4"
-          onClick={() => setFormVisible(true)}
-        >
-          Write a Review
-        </button>
+        <>
+          <button
+            className="btn btn-primary rounded-pill px-4"
+            onClick={() => setFormVisible(true)}
+            disabled={!isOnline}
+          >
+            Write a Review
+          </button>
+          <OfflineNote isOnline={isOnline} />
+        </>
       ) : (
         <form
           className="border rounded-4 p-4 shadow-sm bg-light"
@@ -154,6 +160,7 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
               onChange={(e) =>
                 setFormData({ ...formData, comment: e.target.value })
               }
+              disabled={loading}
             />
           </div>
 
@@ -170,6 +177,7 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
               "Submit Review"
             )}
           </button>
+          <OfflineNote isOnline={isOnline} className="text-center" />
         </form>
       )}
     </div>

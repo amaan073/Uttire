@@ -1,4 +1,3 @@
-// src/wrappers/AnimatedOutlet.jsx
 import { useOutlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";

@@ -2,12 +2,16 @@ import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { validateSignupForm } from "../utils/formValidators.js";
 import AuthContext from "../context/AuthContext.jsx";
 import sessionAxios from "../api/sessionAxios.js";
 import { Spinner } from "react-bootstrap";
 import { Eye, EyeOff } from "lucide-react";
 import useOnlineStatus from "../hooks/useOnlineStatus.jsx";
+import {
+  isValidEmail,
+  isValidPassword,
+  isValidName,
+} from "../utils/validators.js";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -24,7 +28,8 @@ const Signup = () => {
   const [showConfirmPass, setShowConfirmPass] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const { user, fetchUser } = useContext(AuthContext);
+  const [errors, setErrors] = useState({});
+  const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,18 +39,48 @@ const Signup = () => {
   }, [user, navigate]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required.";
+    } else if (!isValidName(formData.name)) {
+      newErrors.name = "Name must be at least 2 letters (letters only).";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!isValidEmail(formData.email)) {
+      newErrors.email = "Please enter a valid email.";
+    }
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required.";
+    } else if (!isValidPassword(formData.password)) {
+      newErrors.password =
+        "Password must be 6+ characters with a letter and number (no spaces).";
+    }
+
+    if (!formData.confirmPassword.trim()) {
+      newErrors.confirmPassword = "Please confirm your password.";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (!validateForm()) return;
 
-    //custom validation (fallback)
-    if (!validateSignupForm(formData)) {
-      setLoading(false);
-      return;
-    }
+    setLoading(true);
 
     const sanitizedFormData = {
       name: formData.name.trim(),
@@ -54,37 +89,30 @@ const Signup = () => {
     };
 
     try {
-      const res = await sessionAxios.post("/users/register", sanitizedFormData);
+      const { data } = await sessionAxios.post(
+        "/users/register",
+        sanitizedFormData
+      );
 
-      try {
-        await fetchUser(); // sets user in context if OK
-        toast.success(
-          `Signup successful! Welcome aboard${res.data?.user?.name ? ", " + res.data.user.name : ""}! 🙌`
-        );
-        // after this when the user gets populated the navigation will be handled by useEffect() in above
-      } catch {
-        toast.info("Signup successful. Please login to continue.");
-        navigate("/login");
-      }
+      setUser(data.user);
+
+      toast.success(
+        `Signup successful! Welcome aboard${data?.user?.name ? ", " + data.user.name : ""}! 🙌`
+      );
     } catch (e) {
+      console.error(e);
+
+      const status = e.response?.status;
+      const code = e.response?.data?.code;
+
       if (e.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Check your connection.");
       } else if (e.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
+      } else if (status === 409 && code === "USER_EXISTS") {
+        setErrors({ email: "Email already in use. Try logging in instead." });
       } else {
-        const status = e.response?.status || 0;
-        const message =
-          e.response?.data?.message || e.message || "Something went wrong!";
-
-        if (status === 400 || status === 401) {
-          // client fault , credentials invalid
-          toast.error(message);
-        } else if (status === 500) {
-          toast.error("Server error. please try again later.");
-          console.log(e);
-        } else {
-          toast.error("Unexpected error. Check your connection.");
-        }
+        toast.error("Failed to Sign up. Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -98,20 +126,23 @@ const Signup = () => {
     >
       <div className="signup-form bg-white shadow rounded p-4">
         <h2 className="fw-semibold my-2 mb-3">Sign up</h2>
-        <form style={{ width: "300px" }} onSubmit={handleSubmit}>
+        <form style={{ width: "300px" }} onSubmit={handleSubmit} noValidate>
           <div className="mb-3">
             <label className="small text-muted" htmlFor="name_input">
               Name
             </label>
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${errors.name ? "is-invalid" : ""}`}
               id="name_input"
               name="name"
               onChange={handleChange}
               disabled={loading}
               required
             />
+            {errors.name && (
+              <div className="invalid-feedback text-start">{errors.name}</div>
+            )}
           </div>
           <div className="mb-3">
             <label className="small text-muted" htmlFor="email_input">
@@ -119,13 +150,16 @@ const Signup = () => {
             </label>
             <input
               type="email"
-              className="form-control"
+              className={`form-control ${errors.email ? "is-invalid" : ""}`}
               id="email_input"
               name="email"
               onChange={handleChange}
               disabled={loading}
               required
             />
+            {errors.email && (
+              <div className="invalid-feedback text-start">{errors.email}</div>
+            )}
           </div>
           <div className="mb-3 position-relative">
             <label className="small text-muted" htmlFor="password_input">
@@ -133,7 +167,7 @@ const Signup = () => {
             </label>
             <input
               type={showPass ? "text" : "password"}
-              className="form-control"
+              className={`form-control ${errors.password ? "is-invalid" : ""}`}
               id="password_input"
               name="password"
               onChange={handleChange}
@@ -142,7 +176,7 @@ const Signup = () => {
               required
             />
             {/* show eye icon only if has value */}
-            {formData.password && (
+            {!errors.password && formData.password && (
               <span
                 style={{
                   position: "absolute",
@@ -156,6 +190,11 @@ const Signup = () => {
                 {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
             )}
+            {errors.password && (
+              <div className="invalid-feedback text-start">
+                {errors.password}
+              </div>
+            )}
           </div>
           <div className="mb-3 position-relative">
             <label
@@ -166,7 +205,7 @@ const Signup = () => {
             </label>
             <input
               type={showConfirmPass ? "text" : "password"}
-              className="form-control"
+              className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
               id="confirm_password_input"
               name="confirmPassword"
               onChange={handleChange}
@@ -174,7 +213,7 @@ const Signup = () => {
               style={{ paddingRight: "40px" }}
               required
             />
-            {formData.confirmPassword && (
+            {!errors.confirmPassword && formData.confirmPassword && (
               <span
                 style={{
                   position: "absolute",
@@ -187,6 +226,11 @@ const Signup = () => {
               >
                 {showConfirmPass ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
+            )}
+            {errors.confirmPassword && (
+              <div className="invalid-feedback text-start">
+                {errors.confirmPassword}
+              </div>
             )}
           </div>
           <button

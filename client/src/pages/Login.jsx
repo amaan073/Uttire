@@ -128,7 +128,7 @@ const Login = () => {
               required
             />
             {/* show password button */}
-            {formData.password.length > 0 && (
+            {!errors.password && formData.password.length > 0 && (
               <span
                 onClick={() => setShowPassword(!showPassword)}
                 style={{

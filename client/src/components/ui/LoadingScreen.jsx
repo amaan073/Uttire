@@ -1,6 +1,6 @@
 import { Spinner } from "react-bootstrap";
+import PropTypes from "prop-types";
 
-/* eslint-disable react/prop-types */
 const LoadingScreen = ({ message = "Loading..." }) => {
   return (
     <div
@@ -13,4 +13,9 @@ const LoadingScreen = ({ message = "Loading..." }) => {
     </div>
   );
 };
+
+LoadingScreen.propTypes = {
+  message: PropTypes.string,
+};
+
 export default LoadingScreen;

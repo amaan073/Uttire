@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect, useRef } from "react";
-import privateAxios from "../api/privateAxios.js";
 import sessionAxios from "../api/sessionAxios.js";
 import { toast } from "react-toastify";
 import { Spinner } from "react-bootstrap";
@@ -49,25 +48,6 @@ export const AuthProvider = ({ children }) => {
     checkUser();
   }, []);
 
-  // after login(or signup) user fetching (for getting user info with access token and set the user globally)
-  const fetchUser = async () => {
-    try {
-      const res = await privateAxios.get("/users/me");
-      console.log(res.data);
-      setUser(res.data.user); //set user globally
-    } catch (err) {
-      console.error("Fetching user (/me) failed:", err);
-
-      setUser(null);
-
-      // if it's unauthorized/forbidden, force logout
-      if (err.response?.status === 401 || err.response?.status === 403) {
-        await sessionAxios.post("/users/logout", {}); // clears refresh cookie
-      }
-      throw err;
-    }
-  };
-
   // logout method
   const logoutUser = async () => {
     try {
@@ -75,8 +55,15 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       toast.info("Logged out successfully");
     } catch (error) {
-      console.error("Logout failed:", error);
-      toast.error("Failed to log out. Please try again.");
+      console.error(error);
+      if (error.code === "OFFLINE_ERROR") {
+        toast.error("You are offline. Please check your internet connection.");
+      } else if (error.code === "NETWORK_ERROR") {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Failed to log out. Please try again.");
+      }
+
       throw error;
     }
   };
@@ -92,9 +79,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider
-      value={{ user, setUser, fetchUser, logoutUser, loading }}
-    >
+    <AuthContext.Provider value={{ user, setUser, logoutUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

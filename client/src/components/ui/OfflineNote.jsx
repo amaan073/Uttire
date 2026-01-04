@@ -1,14 +1,18 @@
-/* eslint-disable react/prop-types */
+import PropTypes from "prop-types";
 
-const OfflineNote = ({ isOnline }) => {
+const OfflineNote = ({ isOnline, className = "" }) => {
   if (isOnline) return null;
-  // 🔧 ADDED: do not render anything when user is online
 
   return (
-    <p className="text-muted mt-2 small text-center mb-0">
-      <i>🚫Offline — connect to continue.</i>
+    <p className={`text-muted small fst-italic m-0 ${className}`}>
+      🚫 Offline — connect to continue.
     </p>
   );
+};
+
+OfflineNote.propTypes = {
+  isOnline: PropTypes.bool.isRequired,
+  className: PropTypes.string,
 };
 
 export default OfflineNote;

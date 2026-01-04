@@ -17,8 +17,7 @@ const NotFoundPage = () => {
         <div>
           <div className="fw-bolder display-5">404 - Page Not Found</div>
           <div className="my-2 text-muted fs-4">
-            {/* eslint-disable-next-line react/no-unescaped-entities */}
-            Oops! We couldn't find that page you were looking for.
+            {"Oops! We couldn't find that page you were looking for."}
           </div>
           <Link to="/">Go to Homepage 🏠</Link>
         </div>

@@ -10,6 +10,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import LoadingScreen from "../components/ui/LoadingScreen";
 import ErrorState from "../components/ui/ErrorState";
 import Image from "../components/ui/Image";
+import OfflineNote from "../components/ui/OfflineNote";
 
 import {
   ShoppingCart as ShoppingCartIcon,
@@ -64,19 +65,13 @@ const ProductDetail = () => {
     } catch (error) {
       console.error(error);
 
-      // Network errors
       if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
-        return;
-      }
-
-      // Product not found error
-      if (error.response?.status === 404) {
+      } else if (error.response?.status === 404) {
         setError("Product not found");
-        return;
+      } else {
+        setError("Something went wrong. Please try again later.");
       }
-
-      setError("Something went wrong. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -171,6 +166,7 @@ const ProductDetail = () => {
             alt={product.name}
             loading="eager"
             style={{ aspectRatio: "1/1" }}
+            className="h-100 w-100"
           />
         </div>
         {/* Info */}
@@ -280,7 +276,7 @@ const ProductDetail = () => {
           </div>
 
           {/* Actions */}
-          <div className="d-flex flex-wrap gap-2 mb-3">
+          <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-primary d-flex align-items-center gap-2"
               disabled={product?.stock === 0 || adding || !isOnline}
@@ -305,9 +301,10 @@ const ProductDetail = () => {
               <ShoppingBagIcon size={18} /> Buy Now
             </button>
           </div>
+          <OfflineNote isOnline={isOnline} />
 
           {/* Shipping & Returns Flags */}
-          <div className="d-flex flex-wrap gap-3">
+          <div className="d-flex flex-wrap gap-3 mt-3">
             {product.freeShipping && <span>✅ Free Shipping</span>}
             {product.easyReturns && <span>✅ Easy Returns</span>}
           </div>

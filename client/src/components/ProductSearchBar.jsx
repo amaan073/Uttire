@@ -1,9 +1,11 @@
-/* eslint-disable react/prop-types */
+import PropTypes from "prop-types";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isValidSearch } from "../utils/validators";
 import publicAxios from "../api/publicAxios";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import Image from "./ui/Image";
+import { createPortal } from "react-dom";
 
 const ProductSearchBar = ({ searchBarVisible }) => {
   const isOnline = useOnlineStatus();
@@ -41,7 +43,7 @@ const ProductSearchBar = ({ searchBarVisible }) => {
         setSearchResults(data);
       } catch (err) {
         console.error(err);
-        setError("Something went wrong. Please try again."); // inline error
+        setError("Something went wrong."); // inline error
       } finally {
         setIsSearching(false);
       }
@@ -101,7 +103,14 @@ const ProductSearchBar = ({ searchBarVisible }) => {
           </span>
         )}
       </form>
-
+      {isResultVisible &&
+        createPortal(
+          <div
+            className="page-overlay"
+            onClick={() => setIsResultVisible(false)}
+          />,
+          document.body
+        )}
       {/* Dropdown */}
       {isResultVisible && searchQuery.trim() && (
         <div
@@ -115,7 +124,7 @@ const ProductSearchBar = ({ searchBarVisible }) => {
               &apos; only, max 50 characters)
             </div>
           ) : error ? (
-            // ✅ Inline API/network error
+            // Inline API/network error
             <div className="p-3 text-danger d-flex aling-items-center gap-3">
               <i
                 className="bi bi-exclamation-triangle text-danger"
@@ -124,7 +133,7 @@ const ProductSearchBar = ({ searchBarVisible }) => {
               <span style={{ lineHeight: "45px" }}>{error}</span>
             </div>
           ) : hasSearched && !isSearching && searchResults.length === 0 ? (
-            // ✅ only show "No results" AFTER a search has completed
+            //  only show "No results" AFTER a search has completed
             <div className="p-3">No results found</div>
           ) : (
             // Search results
@@ -135,9 +144,11 @@ const ProductSearchBar = ({ searchBarVisible }) => {
                 className="d-flex gap-3 align-items-center p-3 text-decoration-none text-dark"
                 onClick={() => setIsResultVisible(false)}
               >
-                <div style={{ width: "40px", aspectRatio: "1/1" }}>
-                  <img src={product.image} className="w-100 rounded-1" />
-                </div>
+                <Image
+                  src={product.image}
+                  style={{ width: "40px", aspectRatio: "1/1" }}
+                  className="rounded-1"
+                />
                 <div style={{ maxWidth: "150px" }} className="small">
                   {product.name}
                 </div>
@@ -148,6 +159,10 @@ const ProductSearchBar = ({ searchBarVisible }) => {
       )}
     </div>
   );
+};
+
+ProductSearchBar.propTypes = {
+  searchBarVisible: PropTypes.bool.isRequired,
 };
 
 export default ProductSearchBar;

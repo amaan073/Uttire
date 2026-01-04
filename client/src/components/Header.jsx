@@ -6,8 +6,8 @@ import { NavLink } from "react-router-dom";
 import AuthContext from "../context/AuthContext.jsx";
 import { useContext } from "react";
 import UserAvatar from "../components/ui/UserAvatar.jsx";
+import { createPortal } from "react-dom";
 
-//ICONS
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -18,11 +18,13 @@ import { toast } from "react-toastify";
 import CartContext from "../context/CartContext.jsx";
 import ProductSearchBar from "./ProductSearchBar.jsx";
 import { Search } from "lucide-react";
+import useOnlineStatus from "../hooks/useOnlineStatus.jsx";
 
 const Header = () => {
   const [searchBarVisible, setSearchBarVisible] = useState(false);
   const [isNavActive, setNavActive] = useState(false); //nav menu button for small screens
   const [isAccountPopupVisible, setisAccountPopupVisible] = useState(false); //login form show and hide
+  const isOnline = useOnlineStatus();
 
   //checking if user is logged in or not (has value or null)
   const { user, logoutUser } = useContext(AuthContext);
@@ -48,13 +50,18 @@ const Header = () => {
     };
   }, [isAccountPopupVisible]);
 
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     try {
       await logoutUser(); //clears token and user data
       navigate("/login");
       setisAccountPopupVisible(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -72,7 +79,7 @@ const Header = () => {
               </div>
             </Link>
             <NavBtn isNavActive={isNavActive} setNavActive={setNavActive} />
-            <Navbar isNavActive={isNavActive} />
+            <Navbar isNavActive={isNavActive} setNavActive={setNavActive} />
 
             <ProductSearchBar
               searchBarVisible={searchBarVisible}
@@ -131,8 +138,16 @@ const Header = () => {
                     )}
                   </div>
                 </button>
+                {isAccountPopupVisible &&
+                  createPortal(
+                    <div
+                      className="page-overlay"
+                      onClick={() => setisAccountPopupVisible(false)}
+                    />,
+                    document.body
+                  )}
                 <div
-                  className={`account-popup position-absolute end-0 shadow-lg rounded-4 z-3 bg-body mt-3 text-center border p-3 ${
+                  className={`account-popup position-absolute end-0 shadow-lg rounded-4 bg-body mt-3 text-center border p-3 ${
                     isAccountPopupVisible ? "d-block visible" : "d-none"
                   }`}
                 >
@@ -185,14 +200,15 @@ const Header = () => {
                           <ShoppingBagOutlinedIcon fontSize="large" />
                           Orders
                         </NavLink>
-                        <p
-                          className="a-link m-0 d-flex align-items-center gap-3 py-2 pb-2 rounded-3 text-danger"
+                        <button
+                          className="btn btn-danger fs-5 hover m-0 d-flex align-items-center gap-3 py-2 pb-2 rounded-3 w-100"
                           style={{ paddingLeft: "11px" }}
+                          disabled={isLoggingOut || !isOnline}
                           onClick={handleLogout}
                         >
                           <LogoutIcon fontSize="large" />
-                          Logout
-                        </p>
+                          <span>Logout</span>
+                        </button>
                       </div>
                     </div>
                   ) : (

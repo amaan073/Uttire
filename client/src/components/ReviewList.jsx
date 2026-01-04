@@ -3,9 +3,11 @@ import publicAxios from "../api/publicAxios";
 import Dropdown from "react-bootstrap/Dropdown";
 import StarRating from "./ui/StarRating";
 import { Spinner } from "react-bootstrap";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 // eslint-disable-next-line react/prop-types
 const ReviewsList = ({ productId }) => {
+  const isOnline = useOnlineStatus();
   const [reviews, setReviews] = useState([]);
   const [filter, setFilter] = useState("recent"); // recent | highest | lowest
   const [page, setPage] = useState(1);
@@ -58,7 +60,11 @@ const ReviewsList = ({ productId }) => {
         <div className="d-flex align-items-center gap-2 mb-4">
           <strong>Sort by:</strong>
           <Dropdown>
-            <Dropdown.Toggle variant="outline-dark" size="sm">
+            <Dropdown.Toggle
+              variant="outline-dark"
+              size="sm"
+              disabled={!isOnline}
+            >
               {filter === "recent"
                 ? "Most Recent"
                 : filter === "highest"
@@ -114,7 +120,7 @@ const ReviewsList = ({ productId }) => {
           <button
             className="btn btn-link text-decoration-none"
             onClick={() => fetchReviews()}
-            disabled={loading}
+            disabled={loading || !isOnline}
           >
             {loading ? (
               <Spinner animation="border" size="sm" />

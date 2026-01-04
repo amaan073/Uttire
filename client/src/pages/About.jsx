@@ -30,9 +30,11 @@ const About = () => {
         <div className="col-md-6 text-center mt-4 mt-md-0">
           <Image
             src={about_img}
-            alt="Fashion showcase"
+            alt="About Page Cover"
             className="rounded shadow-lg w-100"
             style={{ height: "400px" }}
+            fit="cover"
+            critical
           />
         </div>
       </div>

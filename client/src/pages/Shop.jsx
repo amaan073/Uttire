@@ -7,6 +7,7 @@ import ErrorState from "../components/ui/ErrorState";
 import SkeletonCard from "../components/ui/SkeletonCard";
 import { Spinner } from "react-bootstrap";
 import { toast } from "react-toastify";
+import OfflineNote from "../components/ui/OfflineNote";
 
 const Shop = () => {
   const isOnline = useOnlineStatus();
@@ -93,7 +94,7 @@ const Shop = () => {
       setCurrentPage(data.currentPage);
       if (type === "initial") setError(null); // for initial fetching
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       const message =
         error.code === "OFFLINE_ERROR"
@@ -104,12 +105,17 @@ const Shop = () => {
 
       // show error on page for initial fetch errors
       if (type === "initial") {
-        setError(message);
-        return;
+        if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+          setError(
+            "Couldn't reach server. Check your connection and try again."
+          );
+        } else {
+          setError("Something went wrong. Please try again later.");
+        }
+      } else {
+        // show toast for all other fetch from api buttons
+        toast.error(message);
       }
-
-      // show toast for all other fetch from api buttons
-      toast.error(message);
     } finally {
       setLoading({
         initial: false,
@@ -222,11 +228,10 @@ const Shop = () => {
   };
 
   const handlePageChange = (page) => {
-    fetchProducts(page, "pagination");
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // makes it smooth
     });
+    fetchProducts(page, "pagination");
   };
 
   // ======= Full Page Error Handling ========
@@ -235,12 +240,9 @@ const Shop = () => {
 
   return (
     <>
-      <div
-        className="container-xxl py-md-5 py-2 d-md-grid gap-4 align-items-start"
-        style={{ gridTemplateColumns: "290px minmax(0,1fr)" }}
-      >
+      <div className="container-xxl shop-page-container py-5 align-items-start">
         <button
-          className="mobile-filter-btn btn btn-primary d-flex align-items-center gap-1  d-md-none my-3 ms-auto"
+          className="mobile-filter-btn btn btn-primary align-items-center gap-1 d-none my-3 ms-auto"
           onClick={handleFilterBtn}
         >
           <Filter /> <span className="fs-5">Filters</span>
@@ -248,14 +250,14 @@ const Shop = () => {
 
         <section
           className={`filter-sidebar shadow-sm position-sticky bg-white p-4 border rounded-3 ${
-            isFilterOpen ? "d-block open" : "d-none d-md-block"
+            isFilterOpen ? "open" : ""
           }`}
           aria-label="filter"
         >
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h3 className="fw-bold m-0">Filters</h3>
             <button
-              className="close-btn d-block d-md-none btn fw-bold fs-3 border-0"
+              className="filter-close-btn d-none btn fw-bold fs-3 border-0"
               onClick={() => setIsFilterOpen(false)}
             >
               &times;
@@ -438,18 +440,14 @@ const Shop = () => {
                 )}
               </button>
             </div>
+            <OfflineNote isOnline={isOnline} />
           </form>
         </section>
 
         <section className="products">
           {isLoadingGrid ? (
             // show 9 skeleton cards
-            <div
-              className="d-sm-grid gap-4 text-center"
-              style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(244px, 1fr))",
-              }}
-            >
+            <div className="shop-products-grid">
               {Array.from({ length: 9 }).map((_, i) => (
                 <SkeletonCard key={i} />
               ))}
@@ -463,12 +461,7 @@ const Shop = () => {
               </p>
             </div>
           ) : (
-            <div
-              className="d-sm-grid gap-4 text-center"
-              style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(244px, 1fr))",
-              }}
-            >
+            <div className="shop-products-grid">
               {products.map((product) => (
                 <Card key={product._id} product={product} />
               ))}

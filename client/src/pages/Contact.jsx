@@ -64,12 +64,14 @@ const Contact = () => {
         <div className="col-md-6 text-center mt-4 mt-md-0">
           <Image
             src={customer_care}
-            alt="Customer support illustration"
+            alt="Contact page cover"
             className="rounded shadow-lg w-100"
-            style={{ height: "400px", objectFit: "cover" }}
+            style={{ height: "400px" }}
+            fit="cover"
+            critical
           />
         </div>
-        <div className="col-md-6">
+        <div className="col-md-6 mt-4 mt-md-0">
           <div className="p-4 p-sm-5 rounded-4 shadow-lg bg-white text-center text-md-start">
             <h1 className="display-4 fw-bold mb-3">Get in Touch</h1>
             <p className="lead text-muted mb-4">
@@ -169,7 +171,7 @@ const Contact = () => {
                   className="btn btn-primary"
                   disabled={!isOnline}
                 />
-                <OfflineNote isOnline={isOnline} />
+                <OfflineNote isOnline={isOnline} className="text-center" />
               </div>
             </form>
           </div>

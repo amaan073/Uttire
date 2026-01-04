@@ -40,7 +40,10 @@ export const registerUser = async (req, res) => {
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(409).json({
+        code: "USER_EXISTS",
+        message: "User already exists",
+      });
     }
 
     // Hash password
@@ -70,6 +73,8 @@ export const registerUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        profileImage: user.profileImage,
+        isAdmin: user.isAdmin,
       },
     });
   } catch (error) {
@@ -119,11 +124,7 @@ export const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         profileImage: user.profileImage,
-        phone: user.phone,
-        address: user.address,
         isAdmin: user.isAdmin,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
       },
     });
   } catch (error) {
@@ -202,7 +203,7 @@ export const logoutUser = async (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select(
-      "name email phone address profileImage isAdmin createdAt updatedAt"
+      "name email profileImage isAdmin"
     );
 
     if (!user) {

@@ -1,45 +1,56 @@
-// All state of image handled
 import { Img } from "react-image";
 import { ImageOff } from "lucide-react";
+import PropTypes from "prop-types";
+import "./Image.css";
 
-/* eslint-disable react/prop-types */
 const Image = ({
   src,
   alt,
   className = "",
   style = {},
-  fallbackText = "Unable to load image",
+  critical = false,
+  fit = "contain",
 }) => {
   return (
     <div
-      className={`position-relative overflow-hidden ${className}`}
+      className={`image-shell position-relative overflow-hidden ${className}`}
       style={style}
       aria-live="polite"
     >
       <Img
         src={src}
+        alt={alt}
+        className="w-100 h-100 fade-in"
+        style={{ objectFit: fit }}
         loader={
           <div
-            className="w-100 h-100 bg-light rounded pulse"
+            className="image-loader"
             role="status"
             aria-label="Loading image"
           />
         }
         unloader={
           <div
-            role="alert"
-            className="w-100 h-100 bg-light d-flex flex-column align-items-center justify-content-center text-center p-3"
+            role="img"
+            aria-label={critical ? alt : "Image unavailable"}
+            className="image-fallback"
           >
-            <ImageOff size={56} className="text-muted mb-3" />
-            <p className="text-muted mb-0">{fallbackText}</p>
+            <ImageOff className="fallback-icon" />
+            {critical && <p className="fallback-text">{alt}</p>}
           </div>
         }
-        alt={alt}
-        className="w-100 h-100 fade-in"
-        style={{ objectFit: "cover" }}
       />
     </div>
   );
+};
+
+Image.propTypes = {
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  style: PropTypes.object,
+  critical: PropTypes.bool,
+  fit: PropTypes.oneOf(["contain", "cover", "fill", "none", "scale-down"]), // CHANGED
 };
 
 export default Image;

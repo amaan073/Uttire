@@ -67,8 +67,7 @@ const RelatedProducts = ({ category, excludeId }) => {
                   <Image
                     src={product.image}
                     alt={product.name}
-                    className="w-100 h-100 rounded"
-                    style={{ objectFit: "cover" }}
+                    className="w-100 h-100 rounded bg-secondary"
                   />
                   {product.discount > 0 && (
                     <span className="badge bg-danger position-absolute top-0 start-0 m-2">

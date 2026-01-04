@@ -1,6 +1,6 @@
 import { AlertTriangle, RotateCcw } from "lucide-react";
+import PropTypes from "prop-types";
 
-/* eslint-disable react/prop-types */
 const ErrorState = ({ message = "Something went wrong", retry }) => {
   return (
     <div
@@ -22,4 +22,10 @@ const ErrorState = ({ message = "Something went wrong", retry }) => {
     </div>
   );
 };
+
+ErrorState.propTypes = {
+  message: PropTypes.string,
+  retry: PropTypes.func,
+};
+
 export default ErrorState;

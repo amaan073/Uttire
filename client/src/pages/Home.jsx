@@ -4,9 +4,8 @@ import { Link } from "react-router-dom";
 import { isValidEmail } from "../utils/validators";
 
 import Card from "../components/ui/Card";
-import { ShoppingBagIcon } from "lucide-react";
+import { ImageOff, ShoppingBagIcon } from "lucide-react";
 
-import bg from "../assets/images/bg.webp";
 import home1 from "../assets/images/home1.webp";
 import home2 from "../assets/images/home2.webp";
 import home3 from "../assets/images/home3.webp";
@@ -25,7 +24,12 @@ const Home = () => {
   const [error, setError] = useState(null);
 
   // track static image preload
-  const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [imageErrors, setImageErrors] = useState({
+    home1: false,
+    home2: false,
+    home3: false,
+  });
 
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
@@ -42,8 +46,8 @@ const Home = () => {
     setEmail("");
   };
 
-  const preloadAssets = useCallback(() => {
-    const images = [bg, home1, home2, home3];
+  const preloadImages = useCallback(() => {
+    const images = [home1, home2, home3];
     let loadedCount = 0;
 
     images.forEach((src) => {
@@ -51,11 +55,11 @@ const Home = () => {
       img.src = src;
       img.onload = () => {
         loadedCount++;
-        if (loadedCount === images.length) setAssetsLoaded(true);
+        if (loadedCount === images.length) setImagesLoaded(true);
       };
       img.onerror = () => {
         loadedCount++; // ignore error
-        if (loadedCount === images.length) setAssetsLoaded(true);
+        if (loadedCount === images.length) setImagesLoaded(true);
       };
     });
   }, []);
@@ -84,12 +88,12 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    preloadAssets(); // Preload static images first
+    preloadImages(); // Preload static images first
     fetchFeatured(); // Begin fetching
-  }, [preloadAssets, fetchFeatured]);
+  }, [preloadImages, fetchFeatured]);
 
   // ======= Full Page Loading & Error Handling ========
-  if (!assetsLoaded || loading) return <LoadingScreen />;
+  if (!imagesLoaded || loading) return <LoadingScreen />;
   if (error) return <ErrorState message={error} retry={fetchFeatured} />;
 
   return (
@@ -98,16 +102,8 @@ const Home = () => {
         className="container-fluid text-center pb-3 px-0"
         style={{ maxWidth: "1600px" }}
       >
-        <div
-          className="home-header py-3"
-          style={{
-            backgroundImage: `url(${bg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
-        >
-          <h1 className="main-logo-txt pt-3">Uttire</h1>
+        <div className="home-header textured-bg py-3">
+          <h1 className="main-logo-txt">Uttire</h1>
           <p
             className="my-2 mx-auto px-3"
             style={{ fontSize: "min(1.1rem,4vw)", color: "#fdf3e7db" }}
@@ -115,7 +111,7 @@ const Home = () => {
             Welcome to Uttire! Explore our collection of stylish and comfortable
             clothing.
           </p>
-          <div className="btn btn-primary mt-2 mb-4 mb-md-4">
+          <div className="btn btn-outline-light mt-2 mb-4 mb-md-4">
             <Link
               to="/shop"
               style={{ all: "unset" }}
@@ -128,27 +124,41 @@ const Home = () => {
         </div>
 
         {/*Home page Cover  */}
-        <div className="home-cover d-flex w-100">
-          <div className="w-100 d-none d-md-block">
-            <img src={home1} alt="Home Cover" className="h-100 w-100" />
-          </div>
-          <div className="w-100">
-            <img src={home2} alt="Home Cover" className="h-100 w-100" />
-          </div>
-          <div className="w-100 d-none d-md-block">
-            <img src={home3} alt="Home Cover" className="h-100 w-100" />
-          </div>
+        <div className="home-cover d-flex w-100" style={{ height: "700px" }}>
+          {[
+            { src: home1, key: "home1" },
+            { src: home2, key: "home2" },
+            { src: home3, key: "home3" },
+          ].map(({ src, key }) => (
+            <div key={key} className="w-100">
+              {!imageErrors[key] ? (
+                <img
+                  src={src}
+                  alt="Home Cover"
+                  className="h-100 w-100 object-fit-cover"
+                  onError={() =>
+                    setImageErrors((prev) => ({ ...prev, [key]: true }))
+                  }
+                />
+              ) : (
+                <div
+                  role="img"
+                  className="h-100 w-100 text-secondary d-flex justify-content-center align-items-center bg-light border"
+                >
+                  <div>
+                    <ImageOff size={42} />
+                    <div className="text-center px-2">Unable to load image</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* Featured Product */}
-        <div className="my-5 mx-3">
+        <div className="my-5 mx-1 mx-sm-3">
           <h2 className="text-md-start mb-5 fw-bold">Featured Products</h2>
-          <div
-            className="d-sm-grid w-100 gap-4"
-            style={{
-              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            }}
-          >
+          <div className="featured-products-grid">
             {featuredProducts.map((product) => (
               <Card
                 key={product._id}

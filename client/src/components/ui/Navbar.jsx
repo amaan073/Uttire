@@ -1,7 +1,15 @@
 import PropTypes from "prop-types";
 import { NavLink } from "react-router-dom";
 
-const Navbar = ({ isNavActive }) => {
+// eslint-disable-next-line react/prop-types
+const Navbar = ({ isNavActive, setNavActive }) => {
+  const navItems = [
+    { path: "/", label: "Home" },
+    { path: "/shop", label: "Shop" },
+    { path: "/about", label: "About" },
+    { path: "/contact", label: "Contact" },
+  ];
+
   return (
     <nav className="order-5 order-md-0 col-12 col-md-auto">
       <ul
@@ -9,54 +17,21 @@ const Navbar = ({ isNavActive }) => {
           isNavActive ? "d-flex" : "d-none"
         }`}
       >
-        <li>
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? "nav-link p-0 px-2 text-secondary fs-5"
-                : "nav-link p-0 px-2 text-dark fs-5"
-            }
-          >
-            Home
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/shop"
-            className={({ isActive }) =>
-              isActive
-                ? "nav-link p-0 px-2 text-secondary fs-5"
-                : "nav-link p-0 px-2 text-dark fs-5"
-            }
-          >
-            Shop
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              isActive
-                ? "nav-link p-0 px-2 text-secondary fs-5"
-                : "nav-link p-0 px-2 text-dark fs-5"
-            }
-          >
-            About
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/contact"
-            className={({ isActive }) =>
-              isActive
-                ? "nav-link p-0 px-2 text-secondary fs-5"
-                : "nav-link p-0 px-2 text-dark fs-5"
-            }
-          >
-            Contact
-          </NavLink>
-        </li>
+        {navItems.map(({ path, label }) => (
+          <li key={path}>
+            <NavLink
+              to={path}
+              className={({ isActive }) =>
+                isActive
+                  ? "nav-link p-0 px-2 text-secondary fs-5"
+                  : "nav-link p-0 px-2 text-dark fs-5"
+              }
+              onClick={() => setNavActive(false)}
+            >
+              {label}
+            </NavLink>
+          </li>
+        ))}
       </ul>
     </nav>
   );

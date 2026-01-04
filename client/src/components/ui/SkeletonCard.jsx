@@ -7,7 +7,7 @@ const SkeletonCard = () => {
       {/* Image skeleton */}
       <div
         className="w-100 rounded-top-3 bg-light"
-        style={{ height: "350px" }}
+        style={{ aspectRatio: "1/1" }}
       ></div>
 
       {/* Text skeleton */}
@@ -25,23 +25,11 @@ const SkeletonCard = () => {
           style={{ height: "14px", width: "90%" }}
         ></div>
 
-        {/* Rating skeleton */}
-        <div className="d-flex align-items-center mb-3">
-          <div
-            className="bg-light rounded"
-            style={{ height: "18px", width: "80px" }}
-          ></div>
-        </div>
-
         {/* Price + Button row */}
         <div className="mt-auto d-flex justify-content-between align-items-center">
           <div
             className="bg-light rounded"
-            style={{ height: "22px", width: "60px" }}
-          ></div>
-          <div
-            className="bg-light rounded"
-            style={{ height: "30px", width: "100px" }}
+            style={{ height: "30px", width: "100%" }}
           ></div>
         </div>
       </div>
