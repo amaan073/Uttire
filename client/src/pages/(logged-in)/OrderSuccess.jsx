@@ -4,6 +4,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import privateAxios from "../../api/privateAxios";
 import LoadingScreen from "../../components/ui/LoadingScreen";
 import useDocumentTitle from "../../hooks/useDocumentTitle";
+import ErrorState from "../../components/ui/ErrorState";
 
 const OrderSuccess = () => {
   const { orderId } = useParams();
@@ -24,22 +25,15 @@ const OrderSuccess = () => {
     } catch (error) {
       console.error(error);
 
-      if (error.response) {
-        if (error.response.status === 401) {
-          setError({ status: 401, message: "Unauthorized access." });
-        } else if (error.response.status === 404) {
-          setError({ status: 404, message: "Order not found." });
-        } else {
-          setError({
-            status: error.response.status,
-            message: "Something went wrong while fetching the order.",
-          });
-        }
+      if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+        setError("Couldn't reach server. Check your connection and try again.");
+      } else if (error.response.status === 401) {
+        setError("Unauthorized access.");
+      } else if (error.response.status === 404) {
+        setError("Order not found.");
       } else {
-        setError({ status: 0, message: "Network error. Please try again." });
+        setError("Something went wrong. Please try again later.");
       }
-
-      setOrder(null);
     } finally {
       setLoading(false);
     }
@@ -51,32 +45,7 @@ const OrderSuccess = () => {
   }, []);
 
   if (loading) return <LoadingScreen />;
-  if (error) {
-    return (
-      <div
-        className="container d-flex justify-content-center align-items-center text-center"
-        style={{ minHeight: "calc(var(--safe-height) - 83px)" }}
-      >
-        <div
-          className="border rounded-4 bg-white shadow-sm p-4"
-          style={{ maxWidth: "500px", width: "100%" }}
-        >
-          <h4 className="fw-bold mb-3">Oops!</h4>
-          <p className="text-muted">{error.message}</p>
-          {error.status === 404 && (
-            <Link to="/shop" className="btn btn-primary mt-3">
-              Go to Shop
-            </Link>
-          )}
-          {error.status === 401 && (
-            <Link to="/orders" className="btn btn-secondary mt-3">
-              Go to My Orders
-            </Link>
-          )}
-        </div>
-      </div>
-    );
-  }
+  if (error) return <ErrorState message={error} retry={fetchOrder} />;
 
   // Estimate delivery: 7 days after creation
   const estimatedDelivery = new Date(order.createdAt);

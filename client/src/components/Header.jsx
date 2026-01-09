@@ -19,6 +19,7 @@ import CartContext from "../context/CartContext.jsx";
 import ProductSearchBar from "./ProductSearchBar.jsx";
 import { Search } from "lucide-react";
 import useOnlineStatus from "../hooks/useOnlineStatus.jsx";
+import { Spinner } from "react-bootstrap";
 
 const Header = () => {
   const [searchBarVisible, setSearchBarVisible] = useState(false);
@@ -201,13 +202,24 @@ const Header = () => {
                           Orders
                         </NavLink>
                         <button
-                          className="btn btn-danger fs-5 hover m-0 d-flex align-items-center gap-3 py-2 pb-2 rounded-3 w-100"
+                          className="btn btn-danger position-relative fs-5 hover m-0 d-flex align-items-center gap-3 py-2 pb-2 rounded-3 w-100"
                           style={{ paddingLeft: "11px" }}
                           disabled={isLoggingOut || !isOnline}
                           onClick={handleLogout}
                         >
                           <LogoutIcon fontSize="large" />
                           <span>Logout</span>
+                          {isLoggingOut && (
+                            <Spinner
+                              animation="border"
+                              className="ms-auto position-absolute"
+                              style={{
+                                right: "17px",
+                                height: "20px",
+                                width: "20px",
+                              }}
+                            />
+                          )}
                         </button>
                       </div>
                     </div>

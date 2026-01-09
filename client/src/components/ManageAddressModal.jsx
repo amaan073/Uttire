@@ -6,6 +6,7 @@ import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
 import { isValidZip } from "../utils/validators";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import OfflineNote from "./ui/OfflineNote";
 
 const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
   const isOnline = useOnlineStatus();
@@ -35,6 +36,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
   useEffect(() => {
     if (address && Object.keys(address).length > 0) setFormData(address);
     setIsChanged(false);
+    setErrors({});
   }, [address]);
 
   // Compare current formData with original address to enable/disable Save
@@ -73,6 +75,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
       });
     }
     setIsChanged(false);
+    setErrors({});
   };
 
   const handleDelete = async () => {
@@ -90,6 +93,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
       }); // reset form
       setIsChanged(false); // disable Save
       setProfile((prev) => ({ ...prev, address: null }));
+      setErrors({}); // Clear errors
       onHide(); // close modal
     } catch (err) {
       console.error(err);
@@ -109,13 +113,34 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
     const newErrors = {};
     const street = formData.street?.trim() || "";
 
-    if (street.length < 5 || !/^[a-zA-Z0-9\s]+$/.test(street)) {
-      newErrors.street =
-        "Street must be at least 5 characters and contain only letters, numbers, or spaces.";
+    if (!street) {
+      newErrors.street = "Street address is required.";
+    } else if (street.length < 5) {
+      newErrors.street = "Street must be at least 5 characters.";
+    } else if (!/^[a-zA-Z0-9\s,.-]+$/.test(street)) {
+      newErrors.street = "Street contains invalid characters.";
     }
 
-    if (!isValidZip(formData.zip))
-      newErrors.zip = "ZIP code must be 4–10 digits.";
+    // Country validation
+    if (!formData.country) {
+      newErrors.country = "Country is required.";
+    }
+
+    // State validation
+    if (!formData.state) {
+      newErrors.state = "State is required.";
+    }
+
+    // City validation
+    if (!formData.city) {
+      newErrors.city = "City is required.";
+    }
+
+    if (!formData.zip.trim()) {
+      newErrors.zip = "ZIP code is required.";
+    } else if (!isValidZip(formData.zip)) {
+      newErrors.zip = "Please enter a valid 5-10 digit ZIP code.";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -133,6 +158,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
       toast.success(res.data.message || "Address saved successfully!");
       setProfile((prev) => ({ ...prev, address: res.data.address }));
       setIsChanged(false);
+      setErrors({});
       onHide(); // close modal
     } catch (err) {
       console.error(err);
@@ -165,6 +191,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
           className="p-2"
           style={{ fontSize: "0.85rem" }}
           disabled={isSaving || isDeleting}
+          noValidate
         >
           <fieldset disabled={isSaving || isDeleting}>
             <Row className="g-2">
@@ -175,14 +202,13 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                   value={formData.street}
                   onChange={handleChange}
                   required
-                  className={`py-1 ${errors.street ? "is-invalid" : ""}`}
+                  isInvalid={!!errors.street}
+                  className="py-1"
                   style={{ fontSize: "0.85rem" }}
                 />
-                {errors.street && (
-                  <Form.Control.Feedback type="invalid">
-                    {errors.street}
-                  </Form.Control.Feedback>
-                )}
+                <Form.Control.Feedback type="invalid">
+                  {errors.street}
+                </Form.Control.Feedback>
               </Col>
 
               <Col xs={6}>
@@ -190,6 +216,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                   name="country"
                   value={formData.country}
                   onChange={handleChange}
+                  isInvalid={!!errors.country}
                   className="py-1"
                   style={{ fontSize: "0.85rem" }}
                   required
@@ -201,6 +228,9 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                     </option>
                   ))}
                 </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {errors.country}
+                </Form.Control.Feedback>
               </Col>
 
               <Col xs={6}>
@@ -208,6 +238,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                   name="state"
                   value={formData.state}
                   onChange={handleChange}
+                  isInvalid={!!errors.state}
                   className="py-1"
                   style={{ fontSize: "0.85rem" }}
                   required
@@ -220,6 +251,9 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                     </option>
                   ))}
                 </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {errors.state}
+                </Form.Control.Feedback>
               </Col>
 
               <Col xs={6}>
@@ -227,6 +261,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
+                  isInvalid={!!errors.city}
                   className="py-1"
                   style={{ fontSize: "0.85rem" }}
                   required
@@ -239,6 +274,9 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                     </option>
                   ))}
                 </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {errors.city}
+                </Form.Control.Feedback>
               </Col>
 
               <Col xs={6}>
@@ -249,14 +287,13 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                   value={formData.zip}
                   onChange={handleChange}
                   required
-                  className={`py-1 ${errors.zip ? "is-invalid" : ""}`}
+                  isInvalid={!!errors.zip}
+                  className="py-1"
                   style={{ fontSize: "0.85rem" }}
                 />
-                {errors.zip && (
-                  <Form.Control.Feedback type="invalid">
-                    {errors.zip}
-                  </Form.Control.Feedback>
-                )}
+                <Form.Control.Feedback type="invalid">
+                  {errors.zip}
+                </Form.Control.Feedback>
               </Col>
 
               <Col xs={12}>
@@ -333,6 +370,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
               </Button>
             </div>
           </div>
+          <OfflineNote isOnline={isOnline} className="text-end" />
         </Form>
       </Modal.Body>
     </Modal>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { isValidPassword } from "../utils/validators";
 import useOnlineStatus from "../hooks/useOnlineStatus";
 import { Spinner } from "react-bootstrap";
+import OfflineNote from "./ui/OfflineNote";
 
 /* eslint-disable react/prop-types */
 export default function ChangePasswordForm({ onCancel, onSubmit, loading }) {
@@ -14,10 +15,12 @@ export default function ChangePasswordForm({ onCancel, onSubmit, loading }) {
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setErrors((prev) => ({ ...prev, [name]: "" })); // Clear error for this field
   };
 
   //frontend validation
@@ -25,14 +28,14 @@ export default function ChangePasswordForm({ onCancel, onSubmit, loading }) {
     let newErrors = {};
 
     // Required fields
-    if (!formData.currentPassword) {
-      newErrors.currentPassword = "Current password is required";
+    if (!formData.currentPassword.trim()) {
+      newErrors.currentPassword = "Current password is required.";
     }
-    if (!formData.newPassword) {
-      newErrors.newPassword = "New password is required";
+    if (!formData.newPassword.trim()) {
+      newErrors.newPassword = "New password is required.";
     }
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your new password";
+    if (!formData.confirmPassword.trim()) {
+      newErrors.confirmPassword = "Please confirm your new password.";
     }
 
     // Prevent reusing old password
@@ -45,6 +48,12 @@ export default function ChangePasswordForm({ onCancel, onSubmit, loading }) {
         "New password cannot be the same as current password";
     }
 
+    // Password strength
+    if (formData.newPassword && !isValidPassword(formData.newPassword)) {
+      newErrors.newPassword =
+        "Password must be at least 6 characters, contain letters, numbers, and no spaces";
+    }
+
     // Confirm password match
     if (
       formData.newPassword &&
@@ -52,12 +61,6 @@ export default function ChangePasswordForm({ onCancel, onSubmit, loading }) {
       formData.newPassword !== formData.confirmPassword
     ) {
       newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    // Password strength → use your helper here ✅
-    if (formData.newPassword && !isValidPassword(formData.newPassword)) {
-      newErrors.newPassword =
-        "Password must be at least 6 characters, contain letters, numbers, and no spaces";
     }
 
     setErrors(newErrors); //sets error when there is error and if there are none then the newError has empty array9(original value at top of function) automatically clearing old errors under form input fields
@@ -74,102 +77,99 @@ export default function ChangePasswordForm({ onCancel, onSubmit, loading }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="form-group mb-3">
-        <label
-          htmlFor="current-password"
-          className="fw-semibold mb-1 text-secondary"
-        >
-          Current password
-        </label>
-        <input
-          type="password"
-          className="form-control"
-          id="current-password"
-          name="currentPassword"
-          value={formData.currentPassword}
-          onChange={handleChange}
-          disabled={loading}
-          required
-        />
-        {errors.currentPassword && (
-          <div className="font-italic text-danger">
-            {"*" + errors.currentPassword}
-          </div>
-        )}
-      </div>
-
-      <div className="form-group mb-3">
-        <label
-          htmlFor="new-password"
-          className="fw-semibold mb-1 text-secondary"
-        >
-          New password
-        </label>
-        <input
-          type="password"
-          className="form-control"
-          id="new-password"
-          name="newPassword"
-          value={formData.newPassword}
-          onChange={handleChange}
-          disabled={loading}
-          required
-        />
-        {errors.newPassword && (
-          <div className="font-italic text-danger">
-            {"*" + errors.newPassword}
-          </div>
-        )}
-      </div>
-
-      <div className="form-group mb-3">
-        <label
-          htmlFor="confirm-password"
-          className="fw-semibold mb-1 text-secondary"
-        >
-          Confirm password
-        </label>
-        <input
-          type="password"
-          className="form-control"
-          id="confirm-password"
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          disabled={loading}
-          required
-        />
-        {errors.confirmPassword && (
-          <div className="font-italic text-danger">
-            {"*" + errors.confirmPassword}
-          </div>
-        )}
-      </div>
-
-      <div className="form-group d-flex gap-2 w-100 mt-4">
-        <button
-          type="button"
-          className="btn btn-outline-danger w-100"
-          onClick={onCancel}
-          disabled={loading}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="btn btn-primary w-100 text-nowrap"
-          disabled={!isOnline || loading}
-        >
-          {loading ? (
-            <>
-              <Spinner animation="border" size="sm" /> Changing
-            </>
-          ) : (
-            "Change password"
+    <form onSubmit={handleSubmit} noValidate>
+      <fieldset disabled={loading}>
+        <div className="form-group mb-3">
+          <label
+            htmlFor="current-password"
+            className="fw-semibold mb-1 text-secondary"
+          >
+            Current password
+          </label>
+          <input
+            type="password"
+            className={`form-control ${errors.currentPassword ? "is-invalid" : ""}`}
+            id="current-password"
+            name="currentPassword"
+            value={formData.currentPassword}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
+          {errors.currentPassword && (
+            <div className="invalid-feedback">{errors.currentPassword}</div>
           )}
-        </button>
-      </div>
+        </div>
+
+        <div className="form-group mb-3">
+          <label
+            htmlFor="new-password"
+            className="fw-semibold mb-1 text-secondary"
+          >
+            New password
+          </label>
+          <input
+            type="password"
+            className={`form-control ${errors.newPassword ? "is-invalid" : ""}`}
+            id="new-password"
+            name="newPassword"
+            value={formData.newPassword}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
+          {errors.newPassword && (
+            <div className="invalid-feedback">{errors.newPassword}</div>
+          )}
+        </div>
+
+        <div className="form-group mb-3">
+          <label
+            htmlFor="confirm-password"
+            className="fw-semibold mb-1 text-secondary"
+          >
+            Confirm password
+          </label>
+          <input
+            type="password"
+            className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
+            id="confirm-password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
+          {errors.confirmPassword && (
+            <div className="invalid-feedback">{errors.confirmPassword}</div>
+          )}
+        </div>
+
+        <div className="form-group d-flex gap-2 w-100 mt-4">
+          <button
+            type="button"
+            className="btn btn-outline-secondary w-100"
+            onClick={onCancel}
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="btn btn-primary w-100 text-nowrap"
+            disabled={!isOnline || loading}
+          >
+            {loading ? (
+              <>
+                <Spinner animation="border" size="sm" /> Changing
+              </>
+            ) : (
+              "Change password"
+            )}
+          </button>
+        </div>
+        <OfflineNote isOnline={isOnline} />
+      </fieldset>
     </form>
   );
 }

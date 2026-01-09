@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button, Modal, Form, Alert, Stack, Spinner } from "react-bootstrap";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import OfflineNote from "./ui/OfflineNote";
 
 /* eslint-disable react/prop-types */
 function DeleteAccountModal({
@@ -96,6 +97,7 @@ function DeleteAccountModal({
               )}
             </Button>
           </Stack>
+          <OfflineNote isOnline={isOnline} className="text-center" />
         </Form>
       </Modal.Body>
     </Modal>

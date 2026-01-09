@@ -10,6 +10,7 @@ import AuthContext from "../../context/AuthContext.jsx";
 import useOnlineStatus from "../../hooks/useOnlineStatus.jsx";
 import ErrorState from "../../components/ui/ErrorState.jsx";
 import LoadingScreen from "../../components/ui/LoadingScreen.jsx";
+import Image from "../../components/ui/Image.jsx";
 
 const Cart = () => {
   const { cart, fetchCart, loading, updateQuantity, removeFromCart, error } =
@@ -140,13 +141,13 @@ const Cart = () => {
                       width: "110px",
                       height: "110px",
                     }}
-                    className="cart-product-img overflow-hidden rounded-3 border bg-light cursor-pointer"
+                    className="cart-product-img overflow-hidden rounded-3 border bg-secondary cursor-pointer"
                     onClick={() => navigate(`/products/${item.product._id}`)}
                   >
-                    <img
+                    <Image
                       src={item.product.image}
                       alt={item.product?.name || "Product image"}
-                      className="w-100 h-100 object-fit-cover"
+                      className="w-100 h-100"
                     />
                   </div>
 

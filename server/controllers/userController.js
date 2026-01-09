@@ -370,14 +370,6 @@ export const changePassword = async (req, res) => {
     if (!currentPassword || !newPassword) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    // Password rules
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
-    if (!passwordRegex.test(newPassword) || /\s/.test(newPassword)) {
-      return res.status(400).json({
-        message:
-          "Password must be at least 6 characters, include letters and numbers, and contain no spaces",
-      });
-    }
 
     // Find user
     const user = await User.findById(userId).select("+password");

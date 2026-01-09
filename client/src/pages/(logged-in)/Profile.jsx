@@ -85,7 +85,7 @@ const Profile = () => {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       if (error.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
       } else if (error.code === "NETWORK_ERROR") {

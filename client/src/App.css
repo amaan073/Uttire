@@ -441,9 +441,9 @@ input[type="range"]::-webkit-slider-thumb {
 */
 
 @media screen and (max-width: 520px) {
-  img.img_ol {
-    height: 60px !important;
+  .img_ol {
     width: 60px !important;
+    flex-shrink: 0 !important;
   }
   .ol_product > h6 {
     font-size: min(1em, 3.5vw);

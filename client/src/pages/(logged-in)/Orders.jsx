@@ -8,6 +8,7 @@ import { ShoppingBagIcon } from "lucide-react";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
 import LoadingScreen from "../../components/ui/LoadingScreen";
 import ErrorState from "../../components/ui/ErrorState";
+import Image from "../../components/ui/Image";
 
 export default function Orders() {
   const isOnline = useOnlineStatus();
@@ -301,7 +302,7 @@ export default function Orders() {
                           style={{ width: "87px", height: "21px" }}
                           className="d-flex align-items-center justify-content-center"
                         >
-                          <Spinner animation="border" size="sm" cl="true" />
+                          <Spinner animation="border" size="sm" />
                         </div>
                       ) : (
                         "Cancel Order"
@@ -336,22 +337,20 @@ export default function Orders() {
                     className="d-flex align-items-center bg-light p-3 rounded-3 shadow-sm cursor-pointer mt-3"
                     onClick={() => navigate(`/products/${item.product._id}`)}
                   >
-                    <div
-                      className="me-3 border rounded overflow-hidden img_ol"
+                    <Image
+                      src={item.product.image}
+                      alt={item.product.name}
+                      className="me-3 border rounded overflow-hidden img_ol bg-secondary"
                       style={{
                         width: "80px",
-                        height: "80px",
-                        objectFit: "cover",
+                        aspectRatio: "1/1",
+                        flexShrink: 0,
                       }}
-                    >
-                      <img
-                        src={item.product.image}
-                        alt={item.product.name}
-                        className="w-100 h-100"
-                      />
-                    </div>
+                    />
                     <div className="flex-grow-1 ol_product">
-                      <h6 className="fw-semibold mb-1">{item.product.name}</h6>
+                      <h6 className="fw-semibold mb-1 break-word">
+                        {item.product.name}
+                      </h6>
                       <p className="text-muted small mb-1">
                         Color: {item.product.color} • Size: {item.size}
                       </p>
@@ -359,7 +358,7 @@ export default function Orders() {
                         Qty: {item.quantity}
                       </p>
                     </div>
-                    <div className="text-end">
+                    <div className="text-end ms-3">
                       <div
                         className="text-success fw-bold"
                         style={{ fontSize: "1.05em" }}

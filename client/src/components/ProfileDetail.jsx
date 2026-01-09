@@ -3,12 +3,13 @@ import UserAvatar from "../components/ui/UserAvatar";
 import { useContext, useEffect, useState } from "react";
 import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
-import { isValidName, isValidPhone } from "../utils/validators";
+import { isValidPhone } from "../utils/validators";
 import AuthContext from "../context/AuthContext";
 import { Spinner } from "react-bootstrap";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Avatar } from "@mui/material";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import OfflineNote from "../components/ui/OfflineNote";
 
 /* eslint-disable react/prop-types */
 const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
@@ -21,6 +22,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
   const [previewUrl, setPreviewUrl] = useState(null); // object URL for preview
   const [loading, setLoading] = useState(false); // disable inputs while saving
   const [isChanged, setIsChanged] = useState(false); //to check user has made any changes yet
+  const [errors, setErrors] = useState({}); // error state for validation errors
   const [removeImage, setRemoveImage] = useState(false); // flag to remove
 
   const { setUser } = useContext(AuthContext);
@@ -34,6 +36,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
         phone: profile.phone || "",
       });
       setRemoveImage(false);
+      setErrors({});
     }
   }, [mode, profile]);
 
@@ -99,6 +102,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   //remove chosen file before saving
@@ -115,6 +119,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
     handleRemoveSelectedFile();
     setRemoveImage(false); // reset flag
     setMode("view");
+    setErrors({});
   };
 
   const handleRemoveImage = () => {
@@ -124,24 +129,29 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
     setRemoveImage(true); // mark image for removal
   };
 
+  // Form validation
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required.";
+    }
+
+    // Phone is optional, but validate if provided
+    if (formData.phone.trim() !== "" && !isValidPhone(formData.phone)) {
+      newErrors.phone = "Please enter a valid phone number.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    //validation
-    if (!isValidName(formData.name)) {
-      toast.error(
-        "Please enter a valid name (only letters, at least 2 characters)."
-      );
-      setLoading(false);
-      return false;
-    }
-    // phone input is optional and should only validate when the input is not empty
-    if (formData.phone.trim() !== "" && !isValidPhone(formData.phone)) {
-      toast.error("Please enter a valid Phone no.");
-      setLoading(false);
-      return false;
-    }
+    if (!validateForm()) return;
+
+    setLoading(true);
 
     try {
       //new form data creation with enctype="multipart/form-data" to allow holding raw binary(image) data
@@ -174,9 +184,10 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setSelectedFile(null);
       setPreviewUrl(null);
+      setErrors({});
       setMode("view");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       if (error.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
       } else if (error.code === "NETWORK_ERROR") {
@@ -235,10 +246,10 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
         </>
       )}
 
-      {/* Edit profile mode */}
+      {/* Edit profilEdite mode */}
       {mode == "edit" && (
         <>
-          <form className="text-start" onSubmit={handleSubmit}>
+          <form className="text-start" onSubmit={handleSubmit} noValidate>
             <div className="mt-2 mb-3 position-relative">
               <div className="d-flex justify-content-center">
                 <div
@@ -314,7 +325,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
               </label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${errors.name ? "is-invalid" : ""}`}
                 id="name-input"
                 name="name"
                 value={formData.name ?? ""}
@@ -322,6 +333,9 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
                 disabled={loading}
                 required
               />
+              {errors.name && (
+                <div className="invalid-feedback">{errors.name}</div>
+              )}
             </div>
             <div className="form-group mb-3">
               <label
@@ -350,13 +364,16 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
                 placeholder="i.e. +91 9876543210"
                 pattern="^\+?[0-9]{10,15}$"
                 maxLength="15"
-                className="form-control"
+                className={`form-control ${errors.phone ? "is-invalid" : ""}`}
                 id="phone-no-input"
                 name="phone"
                 value={formData.phone ?? ""}
                 onChange={handleChange}
                 disabled={loading}
               />
+              {errors.phone && (
+                <div className="invalid-feedback">{errors.phone}</div>
+              )}
             </div>
             <div
               className="form-group d-flex gap-2 w-100 mt-4"
@@ -384,6 +401,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
                 )}
               </button>
             </div>
+            <OfflineNote isOnline={isOnline} />
           </form>
         </>
       )}

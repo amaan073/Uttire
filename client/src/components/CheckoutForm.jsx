@@ -12,6 +12,7 @@ import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
 import useOnlineStatus from "../hooks/useOnlineStatus.jsx";
 import { Spinner } from "react-bootstrap";
+import OfflineNote from "../components/ui/OfflineNote.jsx";
 
 const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
   const { user } = useContext(AuthContext);
@@ -138,7 +139,7 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
 
       if (onOrderSuccess) onOrderSuccess(data._id); // passing order id
     } catch (err) {
-      console.log(err);
+      console.error(err);
       if (err?.response?.data?.code === "INSUFFICIENT_STOCK") {
         toast.error(err.response.data.message);
       } else if (err.code === "OFFLINE_ERROR") {
@@ -155,240 +156,249 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <h4 className="fw-semibold mb-4">Shipping Information</h4>
+      <fieldset disabled={loading}>
+        <h4 className="fw-semibold mb-4">Shipping Information</h4>
 
-      <div className="row">
-        {/* Name */}
-        <div className="mb-3 col-12 col-md-6">
-          <label className="form-label">Name</label>
+        <div className="row">
+          {/* Name */}
+          <div className="mb-3 col-12 col-md-6">
+            <label className="form-label">Name</label>
+            <input
+              type="text"
+              name="name"
+              className={`form-control ${errors.name ? "is-invalid" : ""}`}
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+            {errors.name && (
+              <div className="invalid-feedback">{errors.name}</div>
+            )}
+          </div>
+
+          {/* Email */}
+          <div className="mb-3 col-12 col-md-6">
+            <label className="form-label">Email</label>
+            <input
+              type="email"
+              name="email"
+              className={`form-control ${errors.email ? "is-invalid" : ""}`}
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+            {errors.email && (
+              <div className="invalid-feedback">{errors.email}</div>
+            )}
+          </div>
+        </div>
+
+        {/* Address */}
+        <div className="mb-3">
+          <label className="form-label">Address</label>
           <input
             type="text"
-            name="name"
-            className={`form-control ${errors.name ? "is-invalid" : ""}`}
-            value={formData.name}
+            name="address"
+            className={`form-control ${errors.address ? "is-invalid" : ""}`}
+            value={formData.address}
             onChange={handleChange}
             required
           />
-          {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+          {errors.address && (
+            <div className="invalid-feedback">{errors.address}</div>
+          )}
         </div>
 
-        {/* Email */}
-        <div className="mb-3 col-12 col-md-6">
-          <label className="form-label">Email</label>
+        <div className="row">
+          {/* Country */}
+          <div className="mb-3 col-12 col-md-6">
+            <label className="form-label">Country</label>
+            <select
+              name="country"
+              className={`form-select ${errors.country ? "is-invalid" : ""}`}
+              value={formData.country}
+              onChange={handleChange}
+            >
+              <option value="">Select Country</option>
+              {countries.map((c) => (
+                <option key={c.isoCode} value={c.isoCode}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            {errors.country && (
+              <div className="invalid-feedback">{errors.country}</div>
+            )}
+          </div>
+
+          {/* State */}
+          <div className="mb-3 col-12 col-md-6">
+            <label className="form-label">State</label>
+            <select
+              name="state"
+              className={`form-select ${errors.state ? "is-invalid" : ""}`}
+              value={formData.state}
+              onChange={handleChange}
+            >
+              <option value="">Select State</option>
+              {states.map((s) => (
+                <option key={s.isoCode} value={s.isoCode}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            {errors.state && (
+              <div className="invalid-feedback">{errors.state}</div>
+            )}
+          </div>
+        </div>
+
+        <div className="row">
+          {/* City */}
+          <div className="mb-3 col-12 col-md-6">
+            <label className="form-label">City</label>
+            <select
+              name="city"
+              className={`form-select ${errors.city ? "is-invalid" : ""}`}
+              value={formData.city}
+              onChange={handleChange}
+            >
+              <option value="">Select City</option>
+              {cities.map((ct) => (
+                <option key={ct.name} value={ct.name}>
+                  {ct.name}
+                </option>
+              ))}
+            </select>
+            {errors.city && (
+              <div className="invalid-feedback">{errors.city}</div>
+            )}
+          </div>
+
+          {/* ZIP */}
+          <div className="mb-3 col-12 col-md-6">
+            <label className="form-label">ZIP / Postal Code</label>
+            <input
+              type="number"
+              name="zip"
+              className={`form-control ${errors.zip ? "is-invalid" : ""}`}
+              value={formData.zip}
+              onChange={handleChange}
+              min="100000"
+              max="9999999999"
+              required
+            />
+            {errors.zip && <div className="invalid-feedback">{errors.zip}</div>}
+          </div>
+        </div>
+
+        {/* Phone */}
+        <div className="mb-3">
+          <label className="form-label">Phone</label>
           <input
-            type="email"
-            name="email"
-            className={`form-control ${errors.email ? "is-invalid" : ""}`}
-            value={formData.email}
+            type="tel"
+            name="phone"
+            className={`form-control ${errors.phone ? "is-invalid" : ""}`}
+            value={formData.phone}
             onChange={handleChange}
             required
           />
-          {errors.email && (
-            <div className="invalid-feedback">{errors.email}</div>
-          )}
-        </div>
-      </div>
-
-      {/* Address */}
-      <div className="mb-3">
-        <label className="form-label">Address</label>
-        <input
-          type="text"
-          name="address"
-          className={`form-control ${errors.address ? "is-invalid" : ""}`}
-          value={formData.address}
-          onChange={handleChange}
-          required
-        />
-        {errors.address && (
-          <div className="invalid-feedback">{errors.address}</div>
-        )}
-      </div>
-
-      <div className="row">
-        {/* Country */}
-        <div className="mb-3 col-12 col-md-6">
-          <label className="form-label">Country</label>
-          <select
-            name="country"
-            className={`form-select ${errors.country ? "is-invalid" : ""}`}
-            value={formData.country}
-            onChange={handleChange}
-          >
-            <option value="">Select Country</option>
-            {countries.map((c) => (
-              <option key={c.isoCode} value={c.isoCode}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-          {errors.country && (
-            <div className="invalid-feedback">{errors.country}</div>
+          {errors.phone && (
+            <div className="invalid-feedback">{errors.phone}</div>
           )}
         </div>
 
-        {/* State */}
-        <div className="mb-3 col-12 col-md-6">
-          <label className="form-label">State</label>
-          <select
-            name="state"
-            className={`form-select ${errors.state ? "is-invalid" : ""}`}
-            value={formData.state}
-            onChange={handleChange}
-          >
-            <option value="">Select State</option>
-            {states.map((s) => (
-              <option key={s.isoCode} value={s.isoCode}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-          {errors.state && (
-            <div className="invalid-feedback">{errors.state}</div>
-          )}
-        </div>
-      </div>
-
-      <div className="row">
-        {/* City */}
-        <div className="mb-3 col-12 col-md-6">
-          <label className="form-label">City</label>
-          <select
-            name="city"
-            className={`form-select ${errors.city ? "is-invalid" : ""}`}
-            value={formData.city}
-            onChange={handleChange}
-          >
-            <option value="">Select City</option>
-            {cities.map((ct) => (
-              <option key={ct.name} value={ct.name}>
-                {ct.name}
-              </option>
-            ))}
-          </select>
-          {errors.city && <div className="invalid-feedback">{errors.city}</div>}
-        </div>
-
-        {/* ZIP */}
-        <div className="mb-3 col-12 col-md-6">
-          <label className="form-label">ZIP / Postal Code</label>
+        {/* Payment Method */}
+        <h5 className="mt-4 fw-semibold">Payment Method</h5>
+        <div className="form-check">
           <input
-            type="number"
-            name="zip"
-            className={`form-control ${errors.zip ? "is-invalid" : ""}`}
-            value={formData.zip}
+            className="form-check-input"
+            type="radio"
+            name="paymentMethod"
+            id="debitCard"
+            value="debitCard"
+            checked={formData.paymentMethod === "debitCard"}
             onChange={handleChange}
-            min="100000"
-            max="9999999999"
-            required
           />
-          {errors.zip && <div className="invalid-feedback">{errors.zip}</div>}
+          <label className="form-check-label" htmlFor="debitCard">
+            Debit / Credit Card
+          </label>
         </div>
-      </div>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="paymentMethod"
+            id="creditCard"
+            value="creditCard"
+            checked={formData.paymentMethod === "creditCard"}
+            onChange={handleChange}
+          />
+          <label className="form-check-label" htmlFor="creditCard">
+            Credit Card
+          </label>
+        </div>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="paymentMethod"
+            id="cod"
+            value="cod"
+            checked={formData.paymentMethod === "cod"}
+            onChange={handleChange}
+          />
+          <label className="form-check-label" htmlFor="cod">
+            Cash on Delivery
+          </label>
+        </div>
 
-      {/* Phone */}
-      <div className="mb-3">
-        <label className="form-label">Phone</label>
-        <input
-          type="tel"
-          name="phone"
-          className={`form-control ${errors.phone ? "is-invalid" : ""}`}
-          value={formData.phone}
-          onChange={handleChange}
-          required
-        />
-        {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
-      </div>
+        {/* Delivery */}
+        <h5 className="mt-4 fw-semibold">Delivery Option</h5>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="delivery"
+            id="standard"
+            value="standard"
+            checked={formData.delivery === "standard"}
+            onChange={handleChange}
+          />
+          <label className="form-check-label" htmlFor="standard">
+            Standard Delivery
+          </label>
+        </div>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="delivery"
+            id="express"
+            value="express"
+            checked={formData.delivery === "express"}
+            onChange={handleChange}
+          />
+          <label className="form-check-label" htmlFor="express">
+            Express Delivery <b>(+$5)</b>
+          </label>
+        </div>
 
-      {/* Payment Method */}
-      <h5 className="mt-4 fw-semibold">Payment Method</h5>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          name="paymentMethod"
-          id="debitCard"
-          value="debitCard"
-          checked={formData.paymentMethod === "debitCard"}
-          onChange={handleChange}
-        />
-        <label className="form-check-label" htmlFor="debitCard">
-          Debit / Credit Card
-        </label>
-      </div>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          name="paymentMethod"
-          id="creditCard"
-          value="creditCard"
-          checked={formData.paymentMethod === "creditCard"}
-          onChange={handleChange}
-        />
-        <label className="form-check-label" htmlFor="creditCard">
-          Credit Card
-        </label>
-      </div>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          name="paymentMethod"
-          id="cod"
-          value="cod"
-          checked={formData.paymentMethod === "cod"}
-          onChange={handleChange}
-        />
-        <label className="form-check-label" htmlFor="cod">
-          Cash on Delivery
-        </label>
-      </div>
-
-      {/* Delivery */}
-      <h5 className="mt-4 fw-semibold">Delivery Option</h5>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          name="delivery"
-          id="standard"
-          value="standard"
-          checked={formData.delivery === "standard"}
-          onChange={handleChange}
-        />
-        <label className="form-check-label" htmlFor="standard">
-          Standard Delivery
-        </label>
-      </div>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          name="delivery"
-          id="express"
-          value="express"
-          checked={formData.delivery === "express"}
-          onChange={handleChange}
-        />
-        <label className="form-check-label" htmlFor="express">
-          Express Delivery <b>(+$5)</b>
-        </label>
-      </div>
-
-      <button
-        type="submit"
-        className="btn btn-primary w-100 mt-4"
-        disabled={loading || !isOnline}
-      >
-        {loading ? (
-          <>
-            <Spinner animation="border" size="sm" /> Placing Order
-          </>
-        ) : (
-          "Place Order"
-        )}
-      </button>
+        <button
+          type="submit"
+          className="btn btn-primary w-100 mt-4"
+          disabled={loading || !isOnline}
+        >
+          {loading ? (
+            <>
+              <Spinner animation="border" size="sm" /> Placing Order
+            </>
+          ) : (
+            "Place Order"
+          )}
+        </button>
+        <OfflineNote isOnline={isOnline} className="text-center" />
+      </fieldset>
     </form>
   );
 };

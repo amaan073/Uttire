@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import CartContext from "../../../context/CartContext";
 import CheckoutForm from "../../../components/CheckoutForm";
+import Image from "../../../components/ui/Image";
 
 const CartCheckout = () => {
   const navigate = useNavigate();
@@ -76,15 +77,14 @@ const CartCheckout = () => {
             {cart.map((item) => (
               <div
                 key={item._id}
-                className="d-flex mb-3 align-items-center border-bottom pb-2"
+                className="d-flex mb-3 align-items-center border-bottom pb-2 cursor-pointer"
+                onClick={() => navigate(`/products/${item.product._id}`)}
               >
-                <img
+                <Image
                   src={item.product.image}
                   alt={item.product.name}
-                  className="rounded cursor-pointer"
-                  width="70"
-                  height="70"
-                  onClick={() => navigate(`/products/${item.product._id}`)}
+                  className="rounded"
+                  style={{ width: "70px", aspectRatio: "1/1" }}
                 />
                 <div className="ms-3 me-auto pe-4">
                   <p className="mb-1 fw-semibold">{item.product.name}</p>

@@ -2,6 +2,7 @@
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import CheckoutForm from "../../../components/CheckoutForm";
 import { useState } from "react";
+import Image from "../../../components/ui/Image";
 
 const DirectCheckout = () => {
   const navigate = useNavigate();
@@ -81,14 +82,15 @@ const DirectCheckout = () => {
             <h4 className="fw-semibold mb-4">Order Summary</h4>
 
             {/* Single Product */}
-            <div className="d-flex mb-3 align-items-center border-bottom pb-3">
-              <img
+            <div
+              className="d-flex mb-3 align-items-center border-bottom pb-3  cursor-pointer"
+              onClick={() => navigate(`/products/${id}`)}
+            >
+              <Image
                 src={image}
                 alt={name}
-                className="rounded cursor-pointer"
-                width="70"
-                height="70"
-                onClick={() => navigate(`/products/${id}`)}
+                className="rounded bg-secondary"
+                style={{ width: "70px", aspectRatio: "1/1" }}
               />
               <div className="ms-3 me-auto pe-4">
                 <p className="mb-1 fw-semibold">{name}</p>
