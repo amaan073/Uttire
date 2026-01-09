@@ -3,6 +3,7 @@ import { Modal, Button, Spinner } from "react-bootstrap";
 import useOnlineStatus from "../hooks/useOnlineStatus";
 import { Img } from "react-image";
 import { ImageOff } from "lucide-react";
+import OfflineNote from "../components/ui/OfflineNote";
 
 const DeleteProductModal = ({
   show,
@@ -94,6 +95,7 @@ const DeleteProductModal = ({
           )}
         </Button>
       </Modal.Footer>
+      <OfflineNote isOnline={isOnline} className="text-end" />
     </Modal>
   );
 };

@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import privateAxios from "../../api/privateAxios";
 import { Spinner, Button } from "react-bootstrap";
-import { Img } from "react-image";
-import { ImageOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DeleteProductModal from "../../components/DeleteProductModal";
 import { toast } from "react-toastify";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
 import LoadingScreen from "../../components/ui/LoadingScreen";
 import ErrorState from "../../components/ui/ErrorState";
+import Image from "../../components/ui/Image";
 
 const AdminProducts = () => {
   const isOnline = useOnlineStatus();
@@ -125,7 +124,7 @@ const AdminProducts = () => {
       // close modal
       setShowDeleteModal(false);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       if (err.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
       } else if (err.code === "NETWORK_ERROR") {
@@ -203,32 +202,12 @@ const AdminProducts = () => {
               products?.map((p) => (
                 <tr key={p?._id ?? Math.random()}>
                   <td>
-                    <div
+                    <Image
+                      src={p?.image}
+                      alt={p?.name}
+                      className="rounded-3 mx-auto"
                       style={{ width: "48px", height: "48px" }}
-                      className="rounded-3 overflow-hidden mx-auto"
-                    >
-                      <Img
-                        src={p?.image}
-                        alt={p?.name}
-                        className="w-100 h-100"
-                        style={{ objectFit: "contain" }}
-                        loader={
-                          <div
-                            className="w-100 h-100 bg-light rounded pulse"
-                            role="status"
-                            aria-label="Loading image"
-                          />
-                        }
-                        unloader={
-                          <div
-                            role="alert"
-                            className="w-100 h-100 bg-light d-flex flex-column align-items-center justify-content-center"
-                          >
-                            <ImageOff size={20} className="text-muted" />
-                          </div>
-                        }
-                      />
-                    </div>
+                    />
                   </td>
                   <td>{p?.name ?? "—"}</td>
                   <td>

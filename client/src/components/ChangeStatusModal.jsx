@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import useOnlineStatus from "../hooks/useOnlineStatus";
+import OfflineNote from "../components/ui/OfflineNote";
 
 const ChangeStatusModal = ({
   show,
@@ -77,6 +78,7 @@ const ChangeStatusModal = ({
           )}
         </Button>
       </Modal.Footer>
+      <OfflineNote isOnline={isOnline} className="text-end" />
     </Modal>
   );
 };

@@ -7,8 +7,7 @@ import ChangeStatusModal from "../../components/ChangeStatusModal";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
 import LoadingScreen from "../../components/ui/LoadingScreen";
 import ErrorState from "../../components/ui/ErrorState";
-import { Img } from "react-image";
-import { ImageOff } from "lucide-react";
+import Image from "../../components/ui/Image";
 
 const formatDate = (iso) => {
   try {
@@ -209,7 +208,7 @@ const AdminOrders = () => {
   }
 
   return (
-    <div className="container-lg py-4">
+    <div className="container-xxl py-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h1 className="display-6">Orders</h1>
       </div>
@@ -395,33 +394,12 @@ const AdminOrders = () => {
                       >
                         <div className="d-flex align-items-center">
                           {/* ✅ Product image */}
-
-                          <div
+                          <Image
+                            src={it?.product?.image}
+                            alt={it?.product?.name}
                             style={{ width: "60px", height: "60px" }}
-                            className="rounded-3 overflow-hidden me-3"
-                          >
-                            <Img
-                              src={it?.product?.image}
-                              alt={it?.product?.name}
-                              className="w-100 h-100"
-                              style={{ objectFit: "contain" }}
-                              loader={
-                                <div
-                                  className="w-100 h-100 bg-light rounded pulse"
-                                  role="status"
-                                  aria-label="Loading image"
-                                />
-                              }
-                              unloader={
-                                <div
-                                  role="alert"
-                                  className="w-100 h-100 bg-light d-flex flex-column align-items-center justify-content-center"
-                                >
-                                  <ImageOff size={20} className="text-muted" />
-                                </div>
-                              }
-                            />
-                          </div>
+                            className="rounded-3 me-3"
+                          />
 
                           {/* ✅ Product info */}
                           <div>
