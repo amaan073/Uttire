@@ -54,18 +54,18 @@ export default function Orders() {
 
       if (pageNumber === 1) {
         // First page replaces existing data
-        setOrders(data.orders || []);
+        setOrders(data?.orders || []);
         setStats({
-          totalOrders: data.totalOrders || 0,
-          totalSpent: data.totalSpent || 0,
+          totalOrders: data?.totalOrders || 0,
+          totalSpent: data?.totalSpent || 0,
         });
       } else {
         // Pagination appends new orders
-        setOrders((prev) => [...prev, ...(data.orders || [])]);
+        setOrders((prev) => [...prev, ...(data?.orders || [])]);
       }
 
       // 📄 Update pagination state
-      setHasMore(pageNumber < data.totalPages);
+      setHasMore(pageNumber < (data?.totalPages || 0));
     } catch (err) {
       console.error("Failed to fetch orders:", err);
 
@@ -132,7 +132,7 @@ export default function Orders() {
 
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
-          order._id === cancelingOrderId
+          order?._id === cancelingOrderId
             ? { ...order, status: "cancelled" }
             : order
         )
@@ -152,7 +152,7 @@ export default function Orders() {
         toast.info("Order was already cancelled.");
         setOrders((prevOrders) =>
           prevOrders.map((order) =>
-            order._id === cancelingOrderId
+            order?._id === cancelingOrderId
               ? { ...order, status: "cancelled" }
               : order
           )
@@ -167,7 +167,7 @@ export default function Orders() {
 
   if (loading) return <LoadingScreen />;
   if (error) return <ErrorState message={error} retry={() => fetchOrders(1)} />;
-  if (orders.length === 0) {
+  if (orders?.length === 0) {
     return (
       <div
         className="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center"
@@ -213,7 +213,7 @@ export default function Orders() {
           >
             <div className="card-body py-2 text-center">
               <p className="text-muted mb-1 small">Total Orders</p>
-              <h5 className="fw-bold mb-0">{stats.totalOrders}</h5>
+              <h5 className="fw-bold mb-0">{stats?.totalOrders}</h5>
             </div>
           </div>
           <div
@@ -222,7 +222,7 @@ export default function Orders() {
           >
             <div className="card-body py-2 text-center">
               <p className="text-muted mb-1 small">Total Spent</p>
-              <h5 className="fw-bold mb-0">${stats.totalSpent.toFixed(2)}</h5>
+              <h5 className="fw-bold mb-0">${stats?.totalSpent?.toFixed(2)}</h5>
             </div>
           </div>
         </div>
@@ -230,54 +230,54 @@ export default function Orders() {
       {/* ORDERS LIST */}
 
       <div className="d-flex flex-column gap-4">
-        {orders.map((order) => (
-          <div key={order._id} className="card border shadow-sm">
+        {orders?.map((order) => (
+          <div key={order?._id} className="card border shadow-sm">
             <div className="card-header bg-white border-0 p-3 pb-0">
               {/* ORDER HEADER */}
               <div className="d-flex justify-content-between flex-wrap align-items-center">
                 <div>
                   <div className="d-flex align-items-center gap-2 mb-0 mb-sm-2">
                     <h5 className="fw-semibold m-0">
-                      Order #{order.orderNumber}
+                      Order #{order?.orderNumber}
                     </h5>
                     <span
                       className={`badge rounded-pill text-capitalize ${
-                        order.status === "delivered"
+                        order?.status === "delivered"
                           ? "bg-success-subtle text-success"
-                          : order.status === "pending"
+                          : order?.status === "pending"
                             ? "bg-warning-subtle text-warning"
-                            : order.status === "processing"
+                            : order?.status === "processing"
                               ? "bg-info-subtle text-info"
-                              : order.status === "shipped"
+                              : order?.status === "shipped"
                                 ? "bg-primary-subtle text-primary"
-                                : order.status === "cancelled"
+                                : order?.status === "cancelled"
                                   ? "bg-danger-subtle text-danger"
                                   : "bg-secondary-subtle text-secondary"
                       }`}
                     >
-                      {order.status}
+                      {order?.status}
                     </span>
                   </div>
                   <p className="text-muted small mb-1 d-none d-md-block">
-                    <small>ID: {order._id}</small>
+                    <small>ID: {order?._id}</small>
                   </p>
                   <p className="text-muted small mb-0 d-none d-md-block">
-                    {new Date(order.createdAt).toLocaleDateString()} •{" "}
-                    {order.paymentMethod.toUpperCase()} •{" "}
+                    {new Date(order?.createdAt)?.toLocaleDateString()} •{" "}
+                    {order?.paymentMethod?.toUpperCase()} •{" "}
                     <span className="text-capitalize">
-                      {order.delivery} delivery (+
-                      {order.delivery === "express" ? 10 : 5}$)
+                      {order?.delivery} delivery (+
+                      {order?.delivery === "express" ? 10 : 5}$)
                     </span>
                   </p>
                 </div>
 
                 <div className="text-end">
                   <div className="fw-bold fs-5 text-dark">
-                    ${order.totals?.total.toFixed(2)}
+                    ${order?.totals?.total?.toFixed(2)}
                   </div>
                   {(() => {
-                    const estimatedDelivery = new Date(order.createdAt);
-                    const daysToAdd = order.delivery === "express" ? 4 : 7;
+                    const estimatedDelivery = new Date(order?.createdAt);
+                    const daysToAdd = order?.delivery === "express" ? 4 : 7;
                     estimatedDelivery.setDate(
                       estimatedDelivery.getDate() + daysToAdd
                     );
@@ -291,13 +291,13 @@ export default function Orders() {
                     );
                   })()}
 
-                  {["pending", "processing"].includes(order.status) && (
+                  {["pending", "processing"].includes(order?.status) && (
                     <button
                       className="btn btn-outline-danger btn-sm"
-                      onClick={() => confirmCancel(order._id)}
-                      disabled={cancelingOrderId == order._id || !isOnline}
+                      onClick={() => confirmCancel(order?._id)}
+                      disabled={cancelingOrderId == order?._id || !isOnline}
                     >
-                      {cancelingOrderId == order._id ? (
+                      {cancelingOrderId == order?._id ? (
                         <div
                           style={{ width: "87px", height: "21px" }}
                           className="d-flex align-items-center justify-content-center"
@@ -315,16 +315,16 @@ export default function Orders() {
 
             {/* ORDER ITEMS */}
             <div className="card-body">
-              {order.items.map((item) => {
+              {order?.items?.map((item) => {
                 const discountedPrice =
-                  item.price - (item.price * item.discount) / 100;
-                const product = item.product; // shorthand
+                  item?.price - (item?.price * item?.discount) / 100;
+                const product = item?.product; // shorthand
 
                 // 🛑 Skip if product is missing
                 if (!product) {
                   return (
                     <div
-                      key={item._id}
+                      key={item?._id}
                       className="bg-light p-3 rounded-3 mt-3 text-muted"
                     >
                       <p className="mb-0">⚠️ This product no longer exists.</p>
@@ -333,13 +333,13 @@ export default function Orders() {
                 }
                 return (
                   <div
-                    key={item._id}
+                    key={item?._id}
                     className="d-flex align-items-center bg-light p-3 rounded-3 shadow-sm cursor-pointer mt-3"
-                    onClick={() => navigate(`/products/${item.product._id}`)}
+                    onClick={() => navigate(`/products/${item?.product?._id}`)}
                   >
                     <Image
-                      src={item.product.image}
-                      alt={item.product.name}
+                      src={item?.product?.image}
+                      alt={item?.product?.name}
                       className="me-3 border rounded overflow-hidden img_ol bg-secondary"
                       style={{
                         width: "80px",
@@ -349,13 +349,13 @@ export default function Orders() {
                     />
                     <div className="flex-grow-1 ol_product">
                       <h6 className="fw-semibold mb-1 break-word">
-                        {item.product.name}
+                        {item?.product?.name}
                       </h6>
                       <p className="text-muted small mb-1">
-                        Color: {item.product.color} • Size: {item.size}
+                        Color: {item?.product?.color} • Size: {item?.size}
                       </p>
                       <p className="text-muted small mb-0">
-                        Qty: {item.quantity}
+                        Qty: {item?.quantity}
                       </p>
                     </div>
                     <div className="text-end ms-3">
@@ -363,10 +363,10 @@ export default function Orders() {
                         className="text-success fw-bold"
                         style={{ fontSize: "1.05em" }}
                       >
-                        ${(discountedPrice * item.quantity).toFixed(2)}
+                        ${(discountedPrice * item?.quantity)?.toFixed(2)}
                       </div>
                       <p className="small">
-                        ({item.quantity} × ${discountedPrice.toFixed(2)})
+                        ({item?.quantity} × ${discountedPrice?.toFixed(2)})
                       </p>
                     </div>
                   </div>

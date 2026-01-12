@@ -29,7 +29,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      if (user.isAdmin) {
+      if (user?.isAdmin) {
         navigate("/admin/dashboard", { replace: true });
       } else {
         navigate(from, { replace: true });
@@ -65,9 +65,9 @@ const Login = () => {
 
       const { data } = await sessionAxios.post("/users/login", formData);
 
-      setUser(data.user); // set user in global context
+      setUser(data?.user); // set user in global context
 
-      toast.success(`Welcome back, ${data.user.name}!`);
+      toast.success(`Welcome back, ${data?.user?.name ?? "User"}!`);
     } catch (e) {
       console.error(e);
 

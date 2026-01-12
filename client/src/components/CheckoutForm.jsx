@@ -18,10 +18,9 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
   const { user } = useContext(AuthContext);
   const isOnline = useOnlineStatus();
 
-  // --- Pre-fill form with user info ---
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
+    name: user?.name ?? "",
+    email: user?.email ?? "",
     address: "",
     city: "",
     state: "",
@@ -137,11 +136,13 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
 
       const { data } = await privateAxios.post("/orders", orderPayload);
 
-      if (onOrderSuccess) onOrderSuccess(data._id); // passing order id
+      if (onOrderSuccess) onOrderSuccess(data?._id); // passing order id
     } catch (err) {
       console.error(err);
       if (err?.response?.data?.code === "INSUFFICIENT_STOCK") {
-        toast.error(err.response.data.message);
+        toast.error(
+          err?.response?.data?.message ?? "insufficient stock for this item"
+        );
       } else if (err.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Check your connection.");
       } else if (err.code === "NETWORK_ERROR") {

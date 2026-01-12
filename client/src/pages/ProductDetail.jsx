@@ -55,12 +55,42 @@ const ProductDetail = () => {
     ? (product?.price - product?.price * (product?.discount / 100)).toFixed(2)
     : product?.price.toFixed(2);
 
+  const normalizeProduct = (product) => {
+    if (!product) return null;
+
+    return {
+      _id: product?._id ?? "",
+      name: product?.name ?? "Unnamed Product",
+      brand: product?.brand ?? "",
+      description: product?.description ?? "",
+      price: typeof product?.price === "number" ? product.price : 0,
+      discount: typeof product?.discounts === "number" ? product.discount : 0,
+      stock: typeof product?.stock === "number" ? product.stock : 0,
+      quantity: typeof product?.quantity === "number" ? product.quantity : 1,
+      sizes: Array.isArray(product?.sizes) ? product.sizes : [],
+      image: product?.image ?? "",
+      imagePublicId: product?.imagePublicIds ?? "",
+      category: product?.category ?? "",
+      gender: product?.gender ?? "",
+      color: product?.color ?? "",
+      featured: Boolean(product?.featured),
+      freeShipping: Boolean(product?.freeShipping),
+      easyReturns: Boolean(product?.easyReturns),
+      fabric: product?.fabric ?? "",
+      care: Array.isArray(product?.care) ? product.care : [],
+      fit: product?.fit ?? "",
+      modelInfo: product?.modelInfo ?? "",
+      reviews: Array.isArray(product?.reviews) ? product.reviews : [],
+      specifications: product?.specifications ? product.specifications : {},
+    };
+  };
+
   // product fetch
   const fetchProduct = async () => {
     try {
       setLoading(true);
       const { data } = await publicAxios.get(`/products/${id}`);
-      setProduct(data);
+      setProduct(normalizeProduct(data));
       setError(null);
     } catch (error) {
       console.error(error);

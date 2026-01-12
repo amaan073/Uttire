@@ -59,9 +59,9 @@ const AdminOrders = () => {
     try {
       isFetchingRef.current = true;
       const data = await fetchPage(null);
-      setOrders(data.orders || []);
-      setHasMore(Boolean(data.hasMore));
-      setCursor(data.nextCursor || null);
+      setOrders(data?.orders || []);
+      setHasMore(Boolean(data?.hasMore));
+      setCursor(data?.nextCursor || null);
     } catch (err) {
       console.error("Failed to load orders:", err);
       if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
@@ -100,11 +100,11 @@ const AdminOrders = () => {
     isFetchingRef.current = true;
     try {
       const data = await fetchPage(cursor);
-      const fetched = data.orders || [];
+      const fetched = data?.orders || [];
       // merge (no dedupe code here because cursor approach avoids duplicates)
       setOrders((prev) => [...prev, ...fetched]);
-      setHasMore(Boolean(data.hasMore));
-      setCursor(data.nextCursor || null);
+      setHasMore(Boolean(data?.hasMore));
+      setCursor(data?.nextCursor || null);
     } catch (err) {
       console.error("Failed loading more orders:", err);
       setLoadingMoreError(true);
@@ -145,7 +145,7 @@ const AdminOrders = () => {
     // optimistic update locally
     const prev = orders;
     setOrders((arr) =>
-      arr.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o))
+      arr?.map((o) => (o?._id === orderId ? { ...o, status: newStatus } : o))
     );
 
     try {
@@ -157,7 +157,7 @@ const AdminOrders = () => {
 
       // replace with canonical server response if returned
       setOrders((arr) =>
-        arr.map((o) => (o._id === orderId ? updatedOrder : o))
+        arr?.map((o) => (o?._id === orderId ? updatedOrder : o))
       );
       toast.success("Order status updated");
       setShowChangeModal(false);
@@ -168,9 +168,9 @@ const AdminOrders = () => {
       // rollback
       setOrders(prev);
 
-      if (err.code === "OFFLINE_ERROR") {
+      if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         setStatusChangeError("Failed to update status. Try again.");
@@ -229,21 +229,21 @@ const AdminOrders = () => {
           <tbody>
             {orders.length > 0 ? (
               orders.map((o) => (
-                <tr key={o._id}>
+                <tr key={o?._id}>
                   <td className="fw-medium">
-                    #{o.orderNumber || o._id.slice(-6).toUpperCase()}
+                    #{o?.orderNumber || o?._id?.slice(-6).toUpperCase()}
                   </td>
                   <td>
-                    <div className="fw-semibold">{o.user?.name || "-"}</div>
+                    <div className="fw-semibold">{o?.user?.name || "-"}</div>
                     <div className="text-muted small">
-                      {o.user?.email || ""}
+                      {o?.user?.email || ""}
                     </div>
                   </td>
-                  <td>{Array.isArray(o.items) ? o.items.length : "-"}</td>
-                  <td>${Number(o.totals?.total || 0).toFixed(2)}</td>
-                  <td>{formatDate(o.createdAt)}</td>
+                  <td>{Array.isArray(o?.items) ? o?.items?.length : "-"}</td>
+                  <td>${Number(o?.totals?.total || 0).toFixed(2)}</td>
+                  <td>{formatDate(o?.createdAt)}</td>
                   <td>
-                    <StatusBadge status={o.status} />
+                    <StatusBadge status={o?.status} />
                   </td>
                   <td className="d-flex justify-content-end align-items-center gap-2 flex-wrap">
                     <Button
@@ -330,13 +330,13 @@ const AdminOrders = () => {
               {/* --- Basic order info --- */}
               <div className="mb-3">
                 <strong>Order:</strong> #
-                {orderDetails.orderNumber || orderDetails._id}
+                {orderDetails?.orderNumber || orderDetails?._id}
                 <div className="text-muted small">
-                  Placed on {formatDate(orderDetails.createdAt)}
+                  Placed on {formatDate(orderDetails?.createdAt)}
                 </div>
                 <p>
                   <strong>Estimated Delivery:</strong>{" "}
-                  {new Date(orderDetails.estimatedDelivery).toLocaleDateString(
+                  {new Date(orderDetails?.estimatedDelivery).toLocaleDateString(
                     "en-IN",
                     { dateStyle: "medium" }
                   )}
@@ -348,21 +348,21 @@ const AdminOrders = () => {
                 <strong>Customer Information</strong>
                 <div className="mt-2">
                   <div className="fw-semibold">
-                    {orderDetails.customer?.name}
+                    {orderDetails?.customer?.name}
                   </div>
                   <div className="text-muted small">
-                    {orderDetails.customer?.email}
+                    {orderDetails?.customer?.email}
                   </div>
                   <div className="text-muted small">
-                    📞 {orderDetails.customer?.phone}
+                    📞 {orderDetails?.customer?.phone}
                   </div>
                   <div className="mt-1">
                     <div>
-                      {orderDetails.customer?.address},{" "}
-                      {orderDetails.customer?.city},{" "}
-                      {orderDetails.customer?.state},{" "}
-                      {orderDetails.customer?.country} -{" "}
-                      {orderDetails.customer?.zip}
+                      {orderDetails?.customer?.address},{" "}
+                      {orderDetails?.customer?.city},{" "}
+                      {orderDetails?.customer?.state},{" "}
+                      {orderDetails?.customer?.country} -{" "}
+                      {orderDetails?.customer?.zip}
                     </div>
                   </div>
                 </div>
@@ -373,10 +373,10 @@ const AdminOrders = () => {
                 <strong>Payment & Delivery</strong>
                 <div className="mt-2">
                   <div>
-                    💳 <strong>Payment:</strong> {orderDetails.paymentMethod}
+                    💳 <strong>Payment:</strong> {orderDetails?.paymentMethod}
                   </div>
                   <div>
-                    🚚 <strong>Delivery:</strong> {orderDetails.delivery}
+                    🚚 <strong>Delivery:</strong> {orderDetails?.delivery}
                   </div>
                 </div>
               </div>
@@ -385,9 +385,9 @@ const AdminOrders = () => {
               <div className="mb-4">
                 <strong>Items</strong>
                 <div className="list-group mt-2">
-                  {Array.isArray(orderDetails.items) &&
-                  orderDetails.items.length > 0 ? (
-                    orderDetails.items.map((it, idx) => (
+                  {Array.isArray(orderDetails?.items) &&
+                  orderDetails?.items?.length > 0 ? (
+                    orderDetails?.items?.map((it, idx) => (
                       <div
                         key={idx}
                         className="list-group-item d-flex align-items-center justify-content-between"
@@ -404,16 +404,16 @@ const AdminOrders = () => {
                           {/* ✅ Product info */}
                           <div>
                             <div className="fw-semibold">
-                              {it.product?.name || "Unnamed Product"}
+                              {it?.product?.name || "Unnamed Product"}
                             </div>
-                            {it.size && (
+                            {it?.size && (
                               <div className="small text-muted">
-                                Size: {it.size}
+                                Size: {it?.size}
                               </div>
                             )}
-                            {it.discount > 0 && (
+                            {it?.discount > 0 && (
                               <div className="small text-success">
-                                Discount: {it.discount}%
+                                Discount: {it?.discount}%
                               </div>
                             )}
                           </div>
@@ -422,12 +422,14 @@ const AdminOrders = () => {
                         {/* ✅ Quantity and pricing */}
                         <div className="text-end">
                           <div>
-                            {it.quantity} × ${Number(it.price).toFixed(2)}
+                            {it?.quantity} × ${Number(it?.price)?.toFixed(2)}
                           </div>
                           <div className="fw-semibold">
                             $
                             {Number(
-                              it.quantity * it.price * (1 - it.discount / 100)
+                              it?.quantity *
+                                it?.price *
+                                (1 - it?.discount / 100)
                             ).toFixed(2)}
                           </div>
                         </div>
@@ -446,15 +448,15 @@ const AdminOrders = () => {
                   <div className="mt-2">
                     <div>
                       Subtotal: $
-                      {Number(orderDetails.totals?.subtotal || 0).toFixed(2)}
+                      {Number(orderDetails?.totals?.subtotal || 0).toFixed(2)}
                     </div>
                     <div>
                       Shipping: $
-                      {Number(orderDetails.totals?.shipping || 0).toFixed(2)}
+                      {Number(orderDetails?.totals?.shipping || 0).toFixed(2)}
                     </div>
                     <div className="fw-bold h5 mt-1">
                       Total: $
-                      {Number(orderDetails.totals?.total || 0).toFixed(2)}
+                      {Number(orderDetails?.totals?.total || 0).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -462,7 +464,7 @@ const AdminOrders = () => {
                 <div className="text-end">
                   <strong>Status</strong>
                   <div className="mt-2">
-                    <StatusBadge status={orderDetails.status} />
+                    <StatusBadge status={orderDetails?.status} />
                   </div>
                 </div>
               </div>

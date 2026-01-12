@@ -51,13 +51,13 @@ const CartCheckout = () => {
           <div className="card shadow-sm p-4">
             <CheckoutForm
               items={cart.map((item) => ({
-                productId: item.product._id,
-                name: item.product.name,
-                image: item.product.image,
-                size: item.size,
-                quantity: item.quantity,
-                price: item.product.price,
-                discount: item.product.discount,
+                productId: item?.product?._id,
+                name: item?.product?.name,
+                image: item?.product?.image,
+                size: item?.size,
+                quantity: item?.quantity,
+                price: item?.product?.price,
+                discount: item?.product?.discount,
               }))}
               checkoutType="cart"
               setDelivery={setDelivery}

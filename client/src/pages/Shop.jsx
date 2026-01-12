@@ -70,6 +70,23 @@ const Shop = () => {
       maxPrice,
     }) !== JSON.stringify(appliedFilters);
 
+  //normalize product
+  const normalizeProduct = (product) => {
+    if (!product) return null;
+
+    return {
+      _id: product?._id ?? "",
+      image: product?.image ?? "",
+      name: product?.name ?? "Unnamed Product",
+      discount: product?.discount ?? 0,
+      price: product?.price ?? 0,
+      brand: product?.brand ?? "",
+      sizes: Array.isArray(product?.sizes) ? product.sizes : [],
+      stock: product?.stock ?? 0,
+      reviews: Array.isArray(product?.reviews) ? product.reviews : [],
+    };
+  };
+
   const fetchProducts = async (page = 1, type = "initial") => {
     setLoadingState(type);
 
@@ -89,9 +106,9 @@ const Shop = () => {
 
     try {
       const { data } = await publicAxios.get(`/products?${query.toString()}`);
-      setProducts(data.products);
-      setTotalPages(data.totalPages);
-      setCurrentPage(data.currentPage);
+      setProducts(data?.products ?? []);
+      setTotalPages(data?.totalPages ?? 1);
+      setCurrentPage(data?.currentPage ?? 1);
       if (type === "initial") setError(null); // for initial fetching
     } catch (error) {
       console.error(error);
@@ -462,9 +479,10 @@ const Shop = () => {
             </div>
           ) : (
             <div className="shop-products-grid">
-              {products.map((product) => (
-                <Card key={product._id} product={product} />
-              ))}
+              {products.map((product) => {
+                const normalizedProduct = normalizeProduct(product);
+                return <Card key={product._id} product={normalizedProduct} />;
+              })}
             </div>
           )}
 

@@ -37,12 +37,12 @@ const AdminProducts = () => {
     try {
       isFetchingRef.current = true;
       const data = await fetchPage(null);
-      setProducts(data.products || []);
-      setHasMore(Boolean(data.hasMore));
-      setCursor(data.nextCursor || null);
+      setProducts(data?.products || []);
+      setHasMore(Boolean(data?.hasMore));
+      setCursor(data?.nextCursor || null);
     } catch (err) {
       console.error(err);
-      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+      if (err?.code === "OFFLINE_ERROR" || err?.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
       } else {
         setError("Failed to load products.");
@@ -79,13 +79,13 @@ const AdminProducts = () => {
 
     try {
       const data = await fetchPage(cursor);
-      const fetched = data.products || [];
+      const fetched = data?.products || [];
 
       // merge without duplicates
       setProducts((prev) => [...prev, ...fetched]);
 
-      setHasMore(Boolean(data.hasMore));
-      setCursor(data.nextCursor || null);
+      setHasMore(Boolean(data?.hasMore));
+      setCursor(data?.nextCursor || null);
     } catch (err) {
       console.error("Failed loading more:", err);
       setLoadingMoreError(true);
@@ -119,15 +119,15 @@ const AdminProducts = () => {
     try {
       await privateAxios.delete(`/admin/product/${productId}`);
       // On success remove locally and show success modal
-      setProducts((prev) => prev.filter((p) => p._id !== productId));
+      setProducts((prev) => prev.filter((p) => p?._id !== productId));
       toast.success("Product deleted successfully");
       // close modal
       setShowDeleteModal(false);
     } catch (err) {
       console.error(err);
-      if (err.code === "OFFLINE_ERROR") {
+      if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         setDeleteBackendError("Failed to delete product. Try again.");

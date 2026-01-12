@@ -9,14 +9,14 @@ const AddProductPage = () => {
   const handleAddProduct = async (data) => {
     try {
       const res = await privateAxios.post("/admin/products", data);
-      console.log(res.data);
+      console.log(res?.data);
       toast.success("✅ Product added successfully!");
       navigate("/admin/products");
     } catch (error) {
       console.error(error);
-      if (error.code === "OFFLINE_ERROR") {
+      if (error?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (error.code === "NETWORK_ERROR") {
+      } else if (error?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("Failed to add product!");

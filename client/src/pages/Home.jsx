@@ -17,6 +17,23 @@ import DemoToolTip from "../components/ui/DemoTooltip";
 import useOnlineStatus from "../hooks/useOnlineStatus";
 import OfflineNote from "../components/ui/OfflineNote";
 
+// Normalizes product data to ensure all required fields have default values
+const normalizeProduct = (product) => {
+  if (!product) return null;
+
+  return {
+    _id: product?._id ?? "",
+    image: product?.image ?? "",
+    name: product?.name ?? "Unnamed Product",
+    discount: product?.discount ?? 0,
+    price: product?.price ?? 0,
+    brand: product?.brand ?? "",
+    sizes: Array.isArray(product?.sizes) ? product.sizes : [],
+    stock: product?.stock ?? 0,
+    reviews: Array.isArray(product?.reviews) ? product.reviews : [],
+  };
+};
+
 const Home = () => {
   const isOnline = useOnlineStatus();
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -71,7 +88,7 @@ const Home = () => {
 
     try {
       const { data } = await publicAxios.get("/products/featured");
-      setFeaturedProducts(data);
+      setFeaturedProducts(data ?? []);
     } catch (error) {
       console.error("Error fetching featured products:", error);
 
@@ -159,13 +176,16 @@ const Home = () => {
         <div className="my-5 mx-1 mx-sm-3">
           <h2 className="text-md-start mb-5 fw-bold">Featured Products</h2>
           <div className="featured-products-grid">
-            {featuredProducts.map((product) => (
-              <Card
-                key={product._id}
-                product={product}
-                className="text-start text-sm-center mb-4 mb-sm-0"
-              />
-            ))}
+            {featuredProducts.map((product) => {
+              const normalizedProduct = normalizeProduct(product);
+              return (
+                <Card
+                  key={normalizedProduct?._id ?? ""}
+                  product={normalizedProduct}
+                  className="text-start text-sm-center mb-4 mb-sm-0"
+                />
+              );
+            })}
           </div>
         </div>
         {/* Newsletter subsciption */}

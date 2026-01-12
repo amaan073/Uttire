@@ -20,12 +20,15 @@ const EditProductPage = () => {
       setLoading(true);
       setError(null);
       const { data } = await privateAxios.get(`/products/${id}`);
+
       setProductData(data);
     } catch (err) {
       console.error(err);
-      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
-        setError("Couldn't reach server. Check your connection and try again.");
-      } else if (err.response?.status === 404) {
+      if (err?.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+        setError(
+          "Couldn't reach server?. Check your connection and try again."
+        );
+      } else if (err?.response?.status === 404) {
         setError("Product not found");
       } else {
         setError("Failed to load product data");
@@ -41,7 +44,7 @@ const EditProductPage = () => {
   }, []);
 
   // Update document title when product loads
-  useDocumentTitle(productData ? `Edit ${productData.name}` : "Edit Product");
+  useDocumentTitle(productData ? `Edit ${productData?.name}` : "Edit Product");
 
   const handleUpdate = async (updatedData) => {
     try {
@@ -49,9 +52,9 @@ const EditProductPage = () => {
       toast.success("✅ Product updated successfully!");
       navigate("/admin/products");
     } catch (error) {
-      if (error.code === "OFFLINE_ERROR") {
+      if (error?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (error.code === "NETWORK_ERROR") {
+      } else if (error?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("❌ Update failed!");

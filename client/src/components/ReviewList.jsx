@@ -25,12 +25,12 @@ const ReviewsList = ({ productId }) => {
 
       // to reset the list if filter changes
       if (reset) {
-        setReviews(data.reviews);
+        setReviews(data?.reviews || []);
       } else {
-        setReviews((prev) => [...prev, ...data.reviews]);
+        setReviews((prev) => [...prev, ...(data?.reviews || [])]);
       }
 
-      setHasMore(data.hasMore);
+      setHasMore(data?.hasMore || false);
       setPage((prev) => (reset ? 2 : prev + 1)); // after filter chagnge (reset is true) the page value is set to 2 so next time load more gets second page when clicked
     } catch (err) {
       console.error("Error fetching reviews:", err);
@@ -56,7 +56,7 @@ const ReviewsList = ({ productId }) => {
       )}
 
       {/* Filter - only if not error AND reviews exist */}
-      {!error && reviews.length > 0 && (
+      {!error && reviews?.length > 0 && (
         <div className="d-flex align-items-center gap-2 mb-4">
           <strong>Sort by:</strong>
           <Dropdown>
@@ -89,33 +89,33 @@ const ReviewsList = ({ productId }) => {
       {/* Review items */}
       <div className="mt-3">
         {/* Loading state */}
-        {loading && reviews.length === 0 && !error && (
+        {loading && reviews?.length === 0 && !error && (
           <p className="text-muted">Loading reviews...</p>
         )}
 
         {/* No reviews */}
-        {reviews.length === 0 && !loading && !error && (
+        {reviews?.length === 0 && !loading && !error && (
           <p className="text-muted">No reviews yet.</p>
         )}
 
         {/* Review list */}
         {!error &&
           reviews.map((r) => (
-            <div key={r._id} className="border-bottom pb-3 mb-3">
+            <div key={r?._id} className="border-bottom pb-3 mb-3">
               <div className="d-flex align-items-center gap-2 mb-1">
-                <StarRating rating={r.rating} />
-                <b>{r.name}</b>
+                <StarRating rating={r?.rating} />
+                <b>{r?.name}</b>
                 <span className="text-muted small">
-                  • {new Date(r.date).toLocaleDateString()}
+                  • {new Date(r?.date).toLocaleDateString()}
                 </span>
               </div>
-              <p className="mb-0">{r.comment}</p>
+              <p className="mb-0">{r?.comment}</p>
             </div>
           ))}
       </div>
 
       {/* Load More - only if reviews exist, no error, and has more */}
-      {hasMore && !error && reviews.length > 0 && (
+      {hasMore && !error && reviews?.length > 0 && (
         <div className="text-center">
           <button
             className="btn btn-link text-decoration-none"

@@ -50,7 +50,7 @@ const ChangeStatusModal = ({
             >
               {STATUS_OPTIONS.map((s) => (
                 <option key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                  {s?.charAt(0)?.toUpperCase() + s?.slice(1)}
                 </option>
               ))}
             </Form.Select>

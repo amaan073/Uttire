@@ -51,27 +51,27 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0 && isEdit) {
       const normalized = {
-        name: initialData.name || "",
-        brand: initialData.brand || "",
-        description: initialData.description || "",
-        price: (initialData.price ?? "") ? String(initialData.price) : "",
-        discount: initialData.discount ?? 0,
-        stock: (initialData.stock ?? "") ? String(initialData.stock) : "",
-        sizes: Array.isArray(initialData.sizes) ? initialData.sizes : [],
-        image: initialData.image || "",
-        imagePublicId: initialData.imagePublicId || "", // extra field since its available in edit mode
-        category: initialData.category || "",
-        gender: initialData.gender || "",
-        color: initialData.color || "",
-        featured: !!initialData.featured,
-        freeShipping: !!initialData.freeShipping,
-        easyReturns: !!initialData.easyReturns,
-        fabric: initialData.fabric || "",
-        care: Array.isArray(initialData.care)
-          ? initialData.care.join(", ")
-          : initialData.care || "",
-        fit: initialData.fit || "",
-        modelInfo: initialData.modelInfo || "",
+        name: initialData?.name || "",
+        brand: initialData?.brand || "",
+        description: initialData?.description || "",
+        price: (initialData?.price ?? "") ? String(initialData?.price) : "",
+        discount: initialData?.discount ?? 0,
+        stock: (initialData?.stock ?? "") ? String(initialData?.stock) : "",
+        sizes: Array.isArray(initialData?.sizes) ? initialData?.sizes : [],
+        image: initialData?.image || "",
+        imagePublicId: initialData?.imagePublicId || "", // extra field since its available in edit mode
+        category: initialData?.category || "",
+        gender: initialData?.gender || "",
+        color: initialData?.color || "",
+        featured: !!initialData?.featured,
+        freeShipping: !!initialData?.freeShipping,
+        easyReturns: !!initialData?.easyReturns,
+        fabric: initialData?.fabric || "",
+        care: Array.isArray(initialData?.care)
+          ? initialData?.care?.join(", ")
+          : initialData?.care || "",
+        fit: initialData?.fit || "",
+        modelInfo: initialData?.modelInfo || "",
       };
 
       setFormData((prev) => ({ ...prev, ...normalized }));
@@ -344,7 +344,7 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
               required
             >
               <option value="">Select category</option>
-              {categories.map((cat) => (
+              {categories?.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>

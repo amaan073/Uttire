@@ -6,7 +6,9 @@ export const getFeaturedProducts = async (req, res) => {
   try {
     const products = await Product.find(
       { featured: true } // only featured ones
-    ).limit(8); // fetch limited count
+    )
+      .limit(8)
+      .select("_id image name discount price brand sizes stock reviews"); // only fields needed for Card component
 
     res.json(products);
   } catch (error) {
@@ -58,7 +60,8 @@ export const getProducts = async (req, res) => {
     const products = await Product.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(Number(limit));
+      .limit(Number(limit))
+      .select("_id image name discount price brand sizes stock reviews");
 
     const totalProducts = await Product.countDocuments(filter);
 
@@ -79,9 +82,11 @@ export const getProducts = async (req, res) => {
 // ========================= Get product details (product detail page) =========================
 export const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).select(
+      "-createdAt -updatedAt -__v"
+    );
     if (!product) return res.status(404).json({ message: "Product not found" });
-    res.json(product);
+    res.status(200).json(product);
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
   }

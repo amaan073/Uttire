@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
       try {
         // Try access token first if available
         const res = await sessionAxios.get("/users/me");
-        setUser(res.data.user);
+        setUser(res?.data?.user);
       } catch (err) {
         if (err.response?.status === 401) {
           try {
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
             await sessionAxios.post("/users/refresh", {});
             // 3. Retry fetching user with new token
             const res = await sessionAxios.get("/users/me");
-            setUser(res.data.user);
+            setUser(res?.data?.user);
           } catch (refreshError) {
             console.warn("Refresh failed:", refreshError);
             setUser(null);

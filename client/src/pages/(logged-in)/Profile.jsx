@@ -44,7 +44,7 @@ const Profile = () => {
       setFetchError("");
     } catch (error) {
       console.error("Error fetching profile:", error);
-      if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+      if (error?.code === "OFFLINE_ERROR" || error?.code === "NETWORK_ERROR") {
         setFetchError(
           "Couldn't reach server. Check your connection and try again."
         );
@@ -67,11 +67,11 @@ const Profile = () => {
       setIsChangingPassword(true);
 
       const response = await privateAxios.post("/users/change-password", {
-        currentPassword: data.currentPassword,
-        newPassword: data.newPassword,
+        currentPassword: data?.currentPassword,
+        newPassword: data?.newPassword,
       });
 
-      if (response.status === 200) {
+      if (response?.status === 200) {
         toast.success("Password changed successfully!");
         setMode("view");
         // Optional refresh (won’t break flow if it fails) (THIS IS TO CLEAR ALL OTHER PEOPLES SESSION)
@@ -80,17 +80,17 @@ const Profile = () => {
         } catch (refreshErr) {
           console.warn(
             "Refresh failed, but password change was successful:",
-            refreshErr.message
+            refreshErr?.message
           );
         }
       }
     } catch (error) {
       console.error(error);
-      if (error.code === "OFFLINE_ERROR") {
+      if (error?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (error.code === "NETWORK_ERROR") {
+      } else if (error?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
-      } else if (error.response?.data?.code === "INCORRECT_CURRENT_PASSWORD") {
+      } else if (error?.response?.data?.code === "INCORRECT_CURRENT_PASSWORD") {
         setErrors({ currentPassword: "Current password is incorrect" });
       } else {
         toast.error("Failed to change passoword");
@@ -111,7 +111,7 @@ const Profile = () => {
       setModalShow(false);
 
       // Show success modal
-      setSuccessMessage(res.data.message);
+      setSuccessMessage(res?.data?.message);
       setShowSuccessModal(true);
 
       //redirect after a delay
@@ -120,13 +120,13 @@ const Profile = () => {
       }, 2000);
     } catch (err) {
       console.error(err);
-      if (err.code === "OFFLINE_ERROR") {
+      if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       }
       // Only show "Incorrect password" in modal
-      else if (err.response?.status === 401) {
+      else if (err?.response?.status === 401) {
         setBackendError("Incorrect password");
       } else {
         toast.error("Something went wrong, try again.");
@@ -247,7 +247,7 @@ const Profile = () => {
                     <LockIcon /> Change Password
                   </button>
                   <div className="d-flex align-items-center w-100">
-                    <TwoFactorDemo toggleValue={profile.twoFactorAuth} />
+                    <TwoFactorDemo toggleValue={profile?.twoFactorAuth} />
                   </div>
                 </>
               )}
@@ -270,21 +270,21 @@ const Profile = () => {
                   </button>
                 </div>
 
-                {profile.address ? (
+                {profile?.address ? (
                   <div
                     className="border p-3 rounded-3 bg-light"
                     style={{ height: "114px", overflowY: "auto" }}
                   >
                     <div className="d-flex align-items-center mb-2">
                       <span className="badge bg-primary rounded-pill px-3 py-1 text-uppercase">
-                        {profile.address.type || "Address"}
+                        {profile?.address?.type || "Address"}
                       </span>
                     </div>
                     <p
                       className="mb-0 text-muted"
                       style={{ lineHeight: "1.4rem" }}
                     >
-                      {`${profile.address.street}, ${profile.address.city}, ${profile.address.state} - ${profile.address.zip}, ${profile.address.country}`}
+                      {`${profile?.address?.street}, ${profile?.address?.city}, ${profile?.address?.state} - ${profile?.address?.zip}, ${profile?.address?.country}`}
                     </p>
                   </div>
                 ) : (

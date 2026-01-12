@@ -94,10 +94,10 @@ const Signup = () => {
         sanitizedFormData
       );
 
-      setUser(data.user);
+      setUser(data?.user);
 
       toast.success(
-        `Signup successful! Welcome aboard${data?.user?.name ? ", " + data.user.name : ""}! 🙌`
+        `Signup successful! Welcome aboard${data?.user?.name ? ", " + data?.user?.name : ""}! 🙌`
       );
     } catch (e) {
       console.error(e);

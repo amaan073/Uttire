@@ -31,9 +31,9 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
   useEffect(() => {
     if (mode === "edit" && profile) {
       setFormData({
-        name: profile.name || "",
-        email: profile.email || "",
-        phone: profile.phone || "",
+        name: profile?.name ?? "",
+        email: profile?.email ?? "",
+        phone: profile?.phone ?? "",
       });
       setRemoveImage(false);
       setErrors({});
@@ -60,8 +60,8 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
   //to track if there is a change in form inputs and only allow to save changes when there is a change
   useEffect(() => {
     const normalizedName = formData.name.trim().replace(/\s+/g, " ");
-    const hasNameChanged = normalizedName !== profile.name;
-    const hasPhoneChanged = formData.phone !== (profile.phone || "");
+    const hasNameChanged = normalizedName !== profile?.name;
+    const hasPhoneChanged = formData?.phone !== (profile?.phone || "");
     const hasFileChanged = selectedFile !== null;
     const hasImageRemoved = removeImage === true;
 
@@ -175,9 +175,9 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
       setProfile(data);
       // setting user globally (authContext)
       setUser({
-        name: data.name,
-        email: data.email,
-        profileImage: data.profileImage,
+        name: data?.name,
+        email: data?.email,
+        profileImage: data?.profileImage,
       });
       toast.success("Profile updated!");
       // cleanup preview object url (server returns the real image URL)
@@ -188,9 +188,9 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
       setMode("view");
     } catch (error) {
       console.error(error);
-      if (error.code === "OFFLINE_ERROR") {
+      if (error?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (error.code === "NETWORK_ERROR") {
+      } else if (error?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("Failed to update profile");
@@ -216,19 +216,19 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
             </div>
           </div>
           <div>
-            <h5 className="m-0">{profile.name}</h5>
+            <h5 className="m-0">{profile?.name}</h5>
 
             <p
               className="m-0 my-1 text-muted"
               style={{ wordBreak: "break-all" }}
             >
-              {profile.email}
+              {profile?.email}
             </p>
 
             <p className="m-0">
               <strong>Phone:</strong>{" "}
-              {profile.phone ? (
-                profile.phone
+              {profile?.phone ? (
+                profile?.phone
               ) : (
                 <span className="text-muted">(Not added)</span>
               )}
@@ -275,7 +275,7 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
                       style={{ width: "100%", height: "100%" }}
                       sx={{ fontSize: "50px", backgroundColor: "#d32f2f" }}
                     >
-                      {profile?.name ? profile.name[0].toUpperCase() : ""}
+                      {profile?.name ? profile?.name[0].toUpperCase() : ""}
                     </Avatar>
                   )}
                 </div>

@@ -27,9 +27,9 @@ const OrderSuccess = () => {
 
       if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
-      } else if (error.response.status === 401) {
+      } else if (error?.response?.status === 401) {
         setError("Unauthorized access.");
-      } else if (error.response.status === 404) {
+      } else if (error?.response?.status === 404) {
         setError("Order not found.");
       } else {
         setError("Something went wrong. Please try again later.");
@@ -48,7 +48,7 @@ const OrderSuccess = () => {
   if (error) return <ErrorState message={error} retry={fetchOrder} />;
 
   // Estimate delivery: 7 days after creation
-  const estimatedDelivery = new Date(order.createdAt);
+  const estimatedDelivery = new Date(order?.createdAt);
   estimatedDelivery.setDate(estimatedDelivery.getDate() + 7);
 
   // Success state
@@ -71,11 +71,13 @@ const OrderSuccess = () => {
         <div className="text-center bg-light rounded-3 p-3 mb-4">
           <div>
             <b>Order ID:</b>{" "}
-            <span className="me-1 fw-semibold">#{order.orderNumber}</span>
-            <span className="small text-muted">({order._id})</span>
+            <span className="me-1 fw-semibold">
+              #{order?.orderNumber ?? "N/A"}
+            </span>
+            <span className="small text-muted">({order?._id ?? "N/A"})</span>
           </div>
           <div>
-            <b>Estimated Delivery:</b> {estimatedDelivery.toDateString()}
+            <b>Estimated Delivery:</b> {estimatedDelivery?.toDateString()}
           </div>
         </div>
 

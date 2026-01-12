@@ -47,12 +47,12 @@ const RelatedProducts = ({ category, excludeId }) => {
         }}
       >
         {relatedProducts.map((product) => {
-          const discountedPrice = product.discount
+          const discountedPrice = product?.discount
             ? (
-                product.price -
-                product.price * (product.discount / 100)
+                product?.price -
+                product?.price * (product?.discount / 100)
               ).toFixed(2)
-            : product.price.toFixed(2);
+            : product?.price.toFixed(2);
 
           return (
             <SwiperSlide key={product._id}>
@@ -65,13 +65,13 @@ const RelatedProducts = ({ category, excludeId }) => {
                   style={{ aspectRatio: "1/1", overflow: "hidden" }}
                 >
                   <Image
-                    src={product.image}
-                    alt={product.name}
+                    src={product?.image}
+                    alt={product?.name}
                     className="w-100 h-100 rounded bg-secondary"
                   />
-                  {product.discount > 0 && (
+                  {product?.discount > 0 && (
                     <span className="badge bg-danger position-absolute top-0 start-0 m-2">
-                      -{product.discount}%
+                      -{product?.discount}%
                     </span>
                   )}
                 </div>
@@ -87,23 +87,25 @@ const RelatedProducts = ({ category, excludeId }) => {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                     }}
-                    title={product.name}
+                    title={product?.name}
                   >
-                    {product.name}
+                    {product?.name}
                   </h6>
 
                   {/* Price always at bottom */}
-                  {product.discount > 0 ? (
+                  {product?.discount > 0 ? (
                     <p className="mb-0">
                       <span className="text-danger fw-bold">
                         ${discountedPrice}
                       </span>{" "}
                       <span className="text-muted text-decoration-line-through small">
-                        ${product.price.toFixed(2)}
+                        ${product?.price?.toFixed(2)}
                       </span>
                     </p>
                   ) : (
-                    <p className="mb-0 fw-bold">${product.price.toFixed(2)}</p>
+                    <p className="mb-0 fw-bold">
+                      ${product?.price?.toFixed(2)}
+                    </p>
                   )}
                 </div>
               </div>

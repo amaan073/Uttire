@@ -46,12 +46,12 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
       return;
     }
     const hasChanged =
-      formData.street.trim() !== (address.street || "").trim() ||
-      formData.city.trim() !== (address.city || "").trim() ||
-      formData.state.trim() !== (address.state || "").trim() ||
-      formData.country.trim() !== (address.country || "").trim() ||
-      formData.zip.trim() !== (address.zip || "").trim() ||
-      formData.type !== (address.type || "home");
+      formData.street.trim() !== (address?.street || "").trim() ||
+      formData.city.trim() !== (address?.city || "").trim() ||
+      formData.state.trim() !== (address?.state || "").trim() ||
+      formData.country.trim() !== (address?.country || "").trim() ||
+      formData.zip.trim() !== (address?.zip || "").trim() ||
+      formData.type !== (address?.type || "home");
     setIsChanged(hasChanged);
   }, [formData, address]);
 
@@ -97,9 +97,9 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
       onHide(); // close modal
     } catch (err) {
       console.error(err);
-      if (err.code === "OFFLINE_ERROR") {
+      if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("Failed to delete address");
@@ -155,16 +155,16 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
       const res = await privateAxios.put("/users/address", {
         address: formData,
       });
-      toast.success(res.data.message || "Address saved successfully!");
-      setProfile((prev) => ({ ...prev, address: res.data.address }));
+      toast.success(res?.data?.message || "Address saved successfully!");
+      setProfile((prev) => ({ ...prev, address: res?.data?.address }));
       setIsChanged(false);
       setErrors({});
       onHide(); // close modal
     } catch (err) {
       console.error(err);
-      if (err.code === "OFFLINE_ERROR") {
+      if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("Failed to save address");
@@ -223,8 +223,8 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                 >
                   <option value="">Country</option>
                   {countries.map((c) => (
-                    <option key={c.isoCode} value={c.isoCode}>
-                      {c.name}
+                    <option key={c?.isoCode} value={c?.isoCode}>
+                      {c?.name}
                     </option>
                   ))}
                 </Form.Select>
@@ -246,8 +246,8 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                 >
                   <option value="">State</option>
                   {states.map((s) => (
-                    <option key={s.isoCode} value={s.isoCode}>
-                      {s.name}
+                    <option key={s?.isoCode} value={s?.isoCode}>
+                      {s?.name}
                     </option>
                   ))}
                 </Form.Select>
@@ -269,8 +269,8 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                 >
                   <option value="">City</option>
                   {cities.map((ct) => (
-                    <option key={ct.name} value={ct.name}>
-                      {ct.name}
+                    <option key={ct?.name} value={ct?.name}>
+                      {ct?.name}
                     </option>
                   ))}
                 </Form.Select>

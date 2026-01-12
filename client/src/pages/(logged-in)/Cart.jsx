@@ -77,7 +77,7 @@ const Cart = () => {
 
   return (
     <>
-      {cart.length === 0 ? (
+      {cart?.length === 0 ? (
         <div
           className="container text-center d-flex justify-content-center align-items-center pb-5"
           style={{
@@ -120,7 +120,7 @@ const Cart = () => {
             </h1>
             <p className="text-muted">
               You have{" "}
-              <b>{cart.length == 1 ? "1 item" : `${cart.length} items`}</b> in
+              <b>{cart?.length == 1 ? "1 item" : `${cart?.length} items`}</b> in
               your cart.
             </p>
           </div>
@@ -129,9 +129,9 @@ const Cart = () => {
               style={{ flex: "1", maxWidth: "600px" }}
               className="mx-auto mx-md-0 d"
             >
-              {cart.map((item) => (
+              {cart?.map((item) => (
                 <div
-                  key={item._id} // make sure _id exists in your cart schema
+                  key={item?._id}
                   className="cart-item d-flex gap-3 align-items-center border rounded-4 p-3 shadow-sm bg-white mb-3"
                 >
                   {/* Product Image */}
@@ -142,32 +142,35 @@ const Cart = () => {
                       height: "110px",
                     }}
                     className="cart-product-img overflow-hidden rounded-3 border bg-secondary cursor-pointer"
-                    onClick={() => navigate(`/products/${item.product._id}`)}
+                    onClick={() => navigate(`/products/${item?.product?._id}`)}
                   >
                     <Image
-                      src={item.product.image}
-                      alt={item.product?.name || "Product image"}
+                      src={item?.product?.image}
+                      alt={item?.product?.name ?? "Product image"}
                       className="w-100 h-100"
                     />
                   </div>
 
                   {/* Product Info */}
                   <div className="cart-product-info flex-grow-1">
-                    <b className="fs-5">{item.product.name}</b>
+                    <b className="fs-5">
+                      {item?.product?.name ?? "Unnamed product"}
+                    </b>
                     <p className="text-muted mb-1 small">
-                      Size: {item.size} | Color: {item.product.color}
+                      Size: {item?.size ?? "N/A"} | Color:{" "}
+                      {item?.product?.color ?? "N/A"}
                     </p>
                     <div>
                       <p className="fw-semibold text-success mb-0">
                         $
                         {getDiscountedPrice(
-                          item.product.price,
-                          item.product.discount
+                          item?.product?.price,
+                          item?.product?.discount
                         ).toFixed(2)}
                       </p>
-                      {item.product.discount > 0 && (
+                      {item?.product?.discount > 0 && (
                         <small className="text-muted text-decoration-line-through">
-                          ${item.product.price.toFixed(2)}
+                          ${item?.product?.price?.toFixed(2)}
                         </small>
                       )}
                     </div>
@@ -186,13 +189,13 @@ const Cart = () => {
                           style={{ fontWeight: "bold" }}
                           onClick={() =>
                             handleQuantityChange(
-                              item._id,
-                              Math.max(1, item.quantity - 1)
+                              item?._id,
+                              Math.max(1, item?.quantity - 1)
                             )
                           }
                           disabled={
-                            updatingItem === item._id ||
-                            item.quantity <= 1 ||
+                            updatingItem === item?._id ||
+                            item?.quantity <= 1 ||
                             !isOnline
                           }
                         >
@@ -203,14 +206,14 @@ const Cart = () => {
                         <Form.Control
                           type="number"
                           min={1}
-                          max={item.product.stock}
-                          value={item.quantity}
-                          disabled={updatingItem === item._id || !isOnline} //  disable while loading
+                          max={item?.product?.stock}
+                          value={item?.quantity}
+                          disabled={updatingItem === item?._id || !isOnline} //  disable while loading
                           onChange={(e) => {
                             let value = parseInt(e.target.value) || 1;
-                            if (value > item.product.stock)
-                              value = item.product.stock;
-                            handleQuantityChange(item._id, value);
+                            if (value > item?.product?.stock)
+                              value = item?.product?.stock;
+                            handleQuantityChange(item?._id, value);
                           }}
                           style={{ textAlign: "center" }}
                         />
@@ -221,13 +224,13 @@ const Cart = () => {
                           style={{ fontWeight: "bold" }}
                           onClick={() =>
                             handleQuantityChange(
-                              item._id,
-                              Math.min(item.product.stock, item.quantity + 1)
+                              item?._id,
+                              Math.min(item?.product?.stock, item?.quantity + 1)
                             )
                           }
                           disabled={
-                            updatingItem === item._id ||
-                            item.quantity >= item.product.stock ||
+                            updatingItem === item?._id ||
+                            item?.quantity >= item?.product?.stock ||
                             !isOnline
                           }
                         >
@@ -236,7 +239,7 @@ const Cart = () => {
                       </InputGroup>
 
                       {/* Show spinner while updating */}
-                      {updatingItem === item._id && (
+                      {updatingItem === item?._id && (
                         <Spinner animation="border" size="sm" />
                       )}
                     </div>
@@ -246,10 +249,10 @@ const Cart = () => {
                       size="sm"
                       className="d-flex align-items-center gap-1 px-2 py-1 rounded-2 justify-content-center"
                       style={{ width: "90px" }}
-                      onClick={() => handleRemove(item._id)}
-                      disabled={removingItem === item._id || !isOnline} //  disable while removing
+                      onClick={() => handleRemove(item?._id)}
+                      disabled={removingItem === item?._id || !isOnline} //  disable while removing
                     >
-                      {removingItem === item._id ? (
+                      {removingItem === item?._id ? (
                         <Spinner animation="border" size="sm" cl /> //  show spinner
                       ) : (
                         <>

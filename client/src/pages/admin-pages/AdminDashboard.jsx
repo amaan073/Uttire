@@ -21,7 +21,7 @@ const AdminDashboard = () => {
       setRecentOrders(res?.data?.recentOrders || []);
     } catch (err) {
       console.error(err);
-      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+      if (err?.code === "OFFLINE_ERROR" || err?.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
       } else {
         setError("Failed to load dashboard data.");
@@ -104,7 +104,7 @@ const AdminDashboard = () => {
               {recentOrders.length > 0 ? (
                 recentOrders.map((order) => (
                   <tr key={order?._id ?? order?.orderNumber}>
-                    <td>#{order?.orderNumber ?? "—"}</td>
+                    <td>{order?.orderNumber ?? "—"}</td>
                     <td>{order?.customer?.name ?? "Unknown"}</td>
                     <td>${Number(order?.totals?.total || 0).toFixed(2)}</td>
                     <td>
@@ -124,7 +124,9 @@ const AdminDashboard = () => {
                     </td>
                     <td>
                       {order?.createdAt
-                        ? new Date(order.createdAt).toLocaleDateString("en-GB")
+                        ? new Date(order?.createdAt)?.toLocaleDateString(
+                            "en-GB"
+                          )
                         : "—"}
                     </td>
                   </tr>
