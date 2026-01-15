@@ -132,25 +132,25 @@ const ProductSearchBar = ({ searchBarVisible }) => {
               ></i>
               <span style={{ lineHeight: "45px" }}>{error}</span>
             </div>
-          ) : hasSearched && !isSearching && searchResults.length === 0 ? (
+          ) : hasSearched && !isSearching && searchResults?.length === 0 ? (
             //  only show "No results" AFTER a search has completed
             <div className="p-3">No results found</div>
           ) : (
             // Search results
-            searchResults.map((product) => (
+            searchResults?.map((product) => (
               <Link
-                key={product._id}
-                to={`/products/${product._id}`}
+                key={product?._id}
+                to={`/products/${product?._id}`}
                 className="d-flex gap-3 align-items-center p-3 text-decoration-none text-dark"
                 onClick={() => setIsResultVisible(false)}
               >
                 <Image
-                  src={product.image}
+                  src={product?.image}
                   style={{ width: "40px", aspectRatio: "1/1" }}
                   className="rounded-1"
                 />
                 <div style={{ maxWidth: "150px" }} className="small">
-                  {product.name}
+                  {product?.name}
                 </div>
               </Link>
             ))

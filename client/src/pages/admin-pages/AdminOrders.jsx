@@ -64,7 +64,7 @@ const AdminOrders = () => {
       setCursor(data?.nextCursor || null);
     } catch (err) {
       console.error("Failed to load orders:", err);
-      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+      if (err?.code === "OFFLINE_ERROR" || err?.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
       } else {
         setError("Failed to load orders.");
@@ -191,7 +191,7 @@ const AdminOrders = () => {
 
   if (loading) return <LoadingScreen />;
   if (error) return <ErrorState message={error} retry={fetchOrders} />;
-  if (!loading && orders.length === 0) {
+  if (!loading && orders?.length === 0) {
     return (
       <div
         className="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center"
@@ -227,8 +227,8 @@ const AdminOrders = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.length > 0 ? (
-              orders.map((o) => (
+            {orders?.length > 0 ? (
+              orders?.map((o) => (
                 <tr key={o?._id}>
                   <td className="fw-medium">
                     #{o?.orderNumber || o?._id?.slice(-6).toUpperCase()}

@@ -98,7 +98,7 @@ const DirectCheckout = () => {
                 <p className="mb-1 small">Qty: {quantity}</p>
               </div>
               <p className="fw-bold text-success mb-0 fs-6">
-                ${itemTotal.toFixed(2)}
+                ${itemTotal?.toFixed(2)}
               </p>
             </div>
 
@@ -110,13 +110,13 @@ const DirectCheckout = () => {
             {savings > 0 && (
               <div className="d-flex justify-content-between text-success mb-3">
                 <span>You saved</span>
-                <span>${savings.toFixed(2)}</span>
+                <span>${savings?.toFixed(2)}</span>
               </div>
             )}
             <hr className="hr" />
             <div className="d-flex justify-content-between fw-bold fs-4 mt-3">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>${total?.toFixed(2)}</span>
             </div>
           </div>
         </div>

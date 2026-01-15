@@ -102,12 +102,12 @@ const Signup = () => {
     } catch (e) {
       console.error(e);
 
-      const status = e.response?.status;
-      const code = e.response?.data?.code;
+      const status = e?.response?.status;
+      const code = e?.response?.data?.code;
 
-      if (e.code === "OFFLINE_ERROR") {
+      if (e?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Check your connection.");
-      } else if (e.code === "NETWORK_ERROR") {
+      } else if (e?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else if (status === 409 && code === "USER_EXISTS") {
         setErrors({ email: "Email already in use. Try logging in instead." });

@@ -13,7 +13,7 @@ const CartCheckout = () => {
   const [delivery, setDelivery] = useState("standard");
 
   // If cart is not available (error or not fetched), redirect to /cart, also to prevent cart guard navigation when order is successfully placed we need this orderCompleted flag to prevent this navigation
-  if ((!cart || cart.length === 0 || error) && !orderCompleted) {
+  if ((!cart || cart?.length === 0 || error) && !orderCompleted) {
     return <Navigate to="/cart" replace />;
   }
 
@@ -23,15 +23,15 @@ const CartCheckout = () => {
   };
   // subtotal of cart items (without discount)
   const originalTotal = cart.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
+    (acc, item) => acc + item?.product?.price * item?.quantity,
     0
   );
   // Calculate subtotal (discounted)
   const subtotal = cart.reduce(
     (acc, item) =>
       acc +
-      getDiscountedPrice(item.product.price, item.product.discount) *
-        item.quantity,
+      getDiscountedPrice(item?.product?.price, item?.product?.discount) *
+        item?.quantity,
     0
   );
 
@@ -76,27 +76,27 @@ const CartCheckout = () => {
             <h4 className="fw-semibold mb-4">Order Summary</h4>
             {cart.map((item) => (
               <div
-                key={item._id}
+                key={item?._id}
                 className="d-flex mb-3 align-items-center border-bottom pb-2 cursor-pointer"
-                onClick={() => navigate(`/products/${item.product._id}`)}
+                onClick={() => navigate(`/products/${item?.product?._id}`)}
               >
                 <Image
-                  src={item.product.image}
-                  alt={item.product.name}
+                  src={item?.product?.image}
+                  alt={item?.product?.name}
                   className="rounded"
                   style={{ width: "70px", aspectRatio: "1/1" }}
                 />
                 <div className="ms-3 me-auto pe-4">
-                  <p className="mb-1 fw-semibold">{item.product.name}</p>
-                  <p className="mb-1 small">Size: {item.size}</p>
-                  <p className="mb-1 small">Qty: {item.quantity}</p>
+                  <p className="mb-1 fw-semibold">{item?.product?.name}</p>
+                  <p className="mb-1 small">Size: {item?.size}</p>
+                  <p className="mb-1 small">Qty: {item?.quantity}</p>
                 </div>
                 <div>
                   <p className="fw-semibold text-success mb-0">
                     $
                     {getDiscountedPrice(
-                      item.product.price,
-                      item.product.discount
+                      item?.product?.price,
+                      item?.product?.discount
                     ).toFixed(2)}
                   </p>
                 </div>
@@ -105,7 +105,7 @@ const CartCheckout = () => {
 
             <div className="d-flex justify-content-between fw-semibold my-2">
               <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>${subtotal?.toFixed(2)}</span>
             </div>
             <div className="d-flex justify-content-between mb-2">
               <span>Shipping</span>
@@ -114,13 +114,13 @@ const CartCheckout = () => {
             {savings > 0 && (
               <div className="d-flex justify-content-between text-success mb-3">
                 <span>You saved</span>
-                <span>${savings.toFixed(2)}</span>
+                <span>${savings?.toFixed(2)}</span>
               </div>
             )}
             <hr className="hr" />
             <div className="d-flex justify-content-between fw-bold fs-4 mt-3">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>${total?.toFixed(2)}</span>
             </div>
           </div>
         </div>

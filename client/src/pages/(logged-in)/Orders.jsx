@@ -69,7 +69,7 @@ export default function Orders() {
     } catch (err) {
       console.error("Failed to fetch orders:", err);
 
-      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+      if (err?.code === "OFFLINE_ERROR" || err?.code === "NETWORK_ERROR") {
         if (pageNumber === 1) {
           setError(
             "Couldn't reach server. Check your connection and try again."
@@ -144,9 +144,9 @@ export default function Orders() {
       const errorCode = err.response?.data?.code;
 
       // err.code from global axios interceptors
-      if (err.code === "OFFLINE_ERROR") {
+      if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else if (errorCode === "ALREADY_CANCELLED") {
         toast.info("Order was already cancelled.");

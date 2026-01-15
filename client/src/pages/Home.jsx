@@ -93,7 +93,7 @@ const Home = () => {
       console.error("Error fetching featured products:", error);
 
       // codes from global interceptors of publicAxios
-      if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+      if (error?.code === "OFFLINE_ERROR" || error?.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
       } else {
         // Server returned valid error

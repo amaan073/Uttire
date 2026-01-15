@@ -34,7 +34,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
 
   // Initialize form with existing address
   useEffect(() => {
-    if (address && Object.keys(address).length > 0) setFormData(address);
+    if (address && Object.keys(address)?.length > 0) setFormData(address);
     setIsChanged(false);
     setErrors({});
   }, [address]);
@@ -42,7 +42,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
   // Compare current formData with original address to enable/disable Save
   useEffect(() => {
     // no change logic check when user is adding address first time
-    if (!address || Object.keys(address).length === 0) {
+    if (!address || Object.keys(address)?.length === 0) {
       return;
     }
     const hasChanged =
@@ -312,7 +312,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
             </Row>
           </fieldset>
           <div className="d-flex mt-3">
-            {address && Object.keys(address).length > 0 && (
+            {address && Object.keys(address)?.length > 0 && (
               <Button
                 variant="danger"
                 size="sm"
@@ -351,7 +351,7 @@ const ManageAddressModal = ({ show, onHide, address, setProfile }) => {
                     formData.country &&
                     formData.zip.trim()
                   ) ||
-                  (address && Object.keys(address).length > 0
+                  (address && Object.keys(address)?.length > 0
                     ? !isChanged
                     : false) ||
                   !isOnline ||

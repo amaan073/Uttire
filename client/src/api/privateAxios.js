@@ -29,9 +29,9 @@ privateAxios.interceptors.request.use(
 privateAxios.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const originalRequest = error?.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error?.response?.status === 401 && !originalRequest?._retry) {
       originalRequest._retry = true; // avoid infinite loop of sending refresh requests (interceptor stopper)
 
       // when multiple private Axios req gets 401 and tries this logic below, like 3 req at at time,
@@ -59,7 +59,7 @@ privateAxios.interceptors.response.use(
     }
 
     // Handle network errors (offline, timeout, etc.)
-    if (!error.response && error.request) {
+    if (!error?.response && error?.request) {
       // Request was made but no response received (network error)
       if (!navigator.onLine) {
         error.code = "OFFLINE_ERROR";

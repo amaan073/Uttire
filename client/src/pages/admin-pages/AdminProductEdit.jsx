@@ -24,7 +24,7 @@ const EditProductPage = () => {
       setProductData(data);
     } catch (err) {
       console.error(err);
-      if (err?.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+      if (err?.code === "OFFLINE_ERROR" || err?.code === "NETWORK_ERROR") {
         setError(
           "Couldn't reach server?. Check your connection and try again."
         );

@@ -24,9 +24,9 @@ const Card = ({ product, className, style }) => {
   if (!product) return null;
 
   // calculate discount price if exists
-  const discountedPrice = product.discount
-    ? (product.price - product.price * (product.discount / 100)).toFixed(2)
-    : product.price.toFixed(2);
+  const discountedPrice = product?.discount
+    ? (product?.price - product?.price * (product?.discount / 100)).toFixed(2)
+    : product?.price.toFixed(2);
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -40,7 +40,7 @@ const Card = ({ product, className, style }) => {
     try {
       setAdding(true);
       await addToCart({
-        productId: product._id,
+        productId: product?._id,
         size: selectedSize,
         quantity: 1,
       });
@@ -74,22 +74,22 @@ const Card = ({ product, className, style }) => {
         {/* Image */}
         <div className="position-relative">
           <Image
-            src={product.image}
-            alt={product.name}
+            src={product?.image}
+            alt={product?.name}
             className="w-100 rounded-top-3"
             style={{ aspectRatio: "1/1", backgroundColor: "#dcdcdc" }}
           />
 
-          {product.discount > 0 && (
+          {product?.discount > 0 && (
             <span
               className="badge bg-danger position-absolute top-0 start-0 m-2"
               style={{ fontSize: "0.875rem" }}
             >
-              -{product.discount}%
+              -{product?.discount}%
             </span>
           )}
           {/* Rating Badge  */}
-          {product.reviews?.length > 0 && (
+          {product?.reviews?.length > 0 && (
             <div
               className="badge position-absolute top-0 end-0 m-2 border border-1"
               style={{
@@ -104,12 +104,12 @@ const Card = ({ product, className, style }) => {
               </span>
               <span className="fw-semibold text-black">
                 {(
-                  product.reviews.reduce((sum, r) => sum + r.rating, 0) /
-                  product.reviews.length
+                  product?.reviews?.reduce((sum, r) => sum + r.rating, 0) /
+                  product?.reviews?.length
                 ).toFixed(1)}
               </span>
               <span className="ms-1 text-muted fw-normal">
-                ({product.reviews.length})
+                ({product?.reviews?.length})
               </span>
             </div>
           )}
@@ -124,13 +124,13 @@ const Card = ({ product, className, style }) => {
                 className="text-uppercase text-muted small mb-1 fw-semibold"
                 style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}
               >
-                {product.brand || "No Brand"}
+                {product?.brand || "No Brand"}
               </p>
               <h5
                 className="fw-semibold mb-0 lh-sm break-word"
                 style={{ fontSize: "1rem" }}
               >
-                {product.name}
+                {product?.name}
               </h5>
             </div>
 
@@ -141,12 +141,12 @@ const Card = ({ product, className, style }) => {
               >
                 ${discountedPrice}
               </h4>
-              {product.discount > 0 && (
+              {product?.discount > 0 && (
                 <span
                   className="text-muted text-decoration-line-through d-block"
                   style={{ fontSize: "0.875rem", paddingRight: "3px" }}
                 >
-                  ${product.price.toFixed(2)}
+                  ${product?.price?.toFixed(2)}
                 </span>
               )}
             </div>
@@ -191,7 +191,7 @@ const Card = ({ product, className, style }) => {
           <div
             className={`d-flex flex-wrap gap-2 justify-content-center ${sizeError ? "is-invalid" : ""}`}
           >
-            {product.sizes.map((size) => (
+            {product?.sizes?.map((size) => (
               <Button
                 key={size}
                 variant={selectedSize === size ? "dark" : "outline-secondary"}
@@ -220,7 +220,7 @@ const Card = ({ product, className, style }) => {
           <Button
             variant="dark"
             onClick={handleAddToCart}
-            disabled={adding || !isOnline || product.stock === 0}
+            disabled={adding || !isOnline || product?.stock === 0}
           >
             {adding ? (
               <>
@@ -231,7 +231,7 @@ const Card = ({ product, className, style }) => {
             )}
           </Button>
         </Modal.Footer>
-        {product.stock === 0 ? (
+        {product?.stock === 0 ? (
           <div className="text-center text-danger fw-bold">Out of stock</div>
         ) : (
           <OfflineNote isOnline={isOnline} className="text-center" />

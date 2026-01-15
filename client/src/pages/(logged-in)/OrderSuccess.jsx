@@ -14,7 +14,7 @@ const OrderSuccess = () => {
 
   // default tab title
   useDocumentTitle(
-    order?.orderNumber ? `Order #${order.orderNumber}` : "Order Success"
+    order?.orderNumber ? `Order #${order?.orderNumber}` : "Order Success"
   );
 
   const fetchOrder = async () => {
@@ -25,7 +25,7 @@ const OrderSuccess = () => {
     } catch (error) {
       console.error(error);
 
-      if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+      if (error?.code === "OFFLINE_ERROR" || error?.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
       } else if (error?.response?.status === 401) {
         setError("Unauthorized access.");

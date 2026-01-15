@@ -114,15 +114,18 @@ const Shop = () => {
       console.error(error);
 
       const message =
-        error.code === "OFFLINE_ERROR"
+        error?.code === "OFFLINE_ERROR"
           ? "You are offline. Check your connection."
-          : error.code === "NETWORK_ERROR"
+          : error?.code === "NETWORK_ERROR"
             ? "Network error. Please try again."
             : "Something went wrong.";
 
       // show error on page for initial fetch errors
       if (type === "initial") {
-        if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+        if (
+          error?.code === "OFFLINE_ERROR" ||
+          error?.code === "NETWORK_ERROR"
+        ) {
           setError(
             "Couldn't reach server. Check your connection and try again."
           );
@@ -208,16 +211,16 @@ const Shop = () => {
     publicAxios
       .get("/products?page=1&limit=9")
       .then(({ data }) => {
-        setProducts(data.products);
-        setTotalPages(data.totalPages);
-        setCurrentPage(data.currentPage);
+        setProducts(data?.products);
+        setTotalPages(data?.totalPages);
+        setCurrentPage(data?.currentPage);
       })
       .catch((error) => {
         console.error(error);
         const message =
-          error.code === "OFFLINE_ERROR"
+          error?.code === "OFFLINE_ERROR"
             ? "You are offline. Check your connection."
-            : error.code === "NETWORK_ERROR"
+            : error?.code === "NETWORK_ERROR"
               ? "Network error. Please try again."
               : "Something went wrong.";
         toast.error(message);
@@ -481,7 +484,7 @@ const Shop = () => {
             <div className="shop-products-grid">
               {products.map((product) => {
                 const normalizedProduct = normalizeProduct(product);
-                return <Card key={product._id} product={normalizedProduct} />;
+                return <Card key={product?._id} product={normalizedProduct} />;
               })}
             </div>
           )}

@@ -29,7 +29,7 @@ export const CartProvider = ({ children }) => {
       setError(null); // clear old error
     } catch (err) {
       console.error("Error fetching cart:", err);
-      if (err.code === "OFFLINE_ERROR" || err.code === "NETWORK_ERROR") {
+      if (err?.code === "OFFLINE_ERROR" || err?.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
       } else {
         setError("Failed to load your cart. Please try again later.");
@@ -53,9 +53,9 @@ export const CartProvider = ({ children }) => {
       toast.success("Product added to cart");
     } catch (err) {
       console.error("Error adding to cart:", err);
-      if (err.code === "OFFLINE_ERROR") {
+      if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("Failed to add product");
@@ -72,9 +72,9 @@ export const CartProvider = ({ children }) => {
       setCart(data);
     } catch (err) {
       console.error("Error updating quantity:", err);
-      if (err.code === "OFFLINE_ERROR") {
+      if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("Failed to update quantity");
@@ -92,9 +92,9 @@ export const CartProvider = ({ children }) => {
       toast.info("Product removed from cart");
     } catch (err) {
       console.error("Error removing from cart:", err);
-      if (err.code === "OFFLINE_ERROR") {
+      if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("Failed to remove product");

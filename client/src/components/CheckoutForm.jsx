@@ -85,9 +85,9 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
   const getDiscountedPrice = (price, discount) =>
     discount > 0 ? price - (price * discount) / 100 : price;
 
-  const subtotal = items.reduce(
+  const subtotal = items?.reduce(
     (acc, item) =>
-      acc + getDiscountedPrice(item.price, item.discount) * item.quantity,
+      acc + getDiscountedPrice(item?.price, item?.discount) * item?.quantity,
     0
   );
 
@@ -117,12 +117,12 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
           },
           paymentMethod: formData.paymentMethod,
           delivery: formData.delivery,
-          items: items.map((item) => ({
-            product: item.productId,
-            size: item.size,
-            quantity: item.quantity,
-            price: item.price,
-            discount: item.discount,
+          items: items?.map((item) => ({
+            product: item?.productId,
+            size: item?.size,
+            quantity: item?.quantity,
+            price: item?.price,
+            discount: item?.discount,
           })),
           totals: {
             subtotal,
@@ -143,9 +143,9 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
         toast.error(
           err?.response?.data?.message ?? "insufficient stock for this item"
         );
-      } else if (err.code === "OFFLINE_ERROR") {
+      } else if (err?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Check your connection.");
-      } else if (err.code === "NETWORK_ERROR") {
+      } else if (err?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("Failed to place order. Try again.");
@@ -221,9 +221,9 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
               onChange={handleChange}
             >
               <option value="">Select Country</option>
-              {countries.map((c) => (
-                <option key={c.isoCode} value={c.isoCode}>
-                  {c.name}
+              {countries?.map((c) => (
+                <option key={c?.isoCode} value={c?.isoCode}>
+                  {c?.name}
                 </option>
               ))}
             </select>
@@ -242,9 +242,9 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
               onChange={handleChange}
             >
               <option value="">Select State</option>
-              {states.map((s) => (
-                <option key={s.isoCode} value={s.isoCode}>
-                  {s.name}
+              {states?.map((s) => (
+                <option key={s?.isoCode} value={s?.isoCode}>
+                  {s?.name}
                 </option>
               ))}
             </select>
@@ -265,9 +265,9 @@ const CheckoutForm = ({ items, checkoutType, setDelivery, onOrderSuccess }) => {
               onChange={handleChange}
             >
               <option value="">Select City</option>
-              {cities.map((ct) => (
-                <option key={ct.name} value={ct.name}>
-                  {ct.name}
+              {cities?.map((ct) => (
+                <option key={ct?.name} value={ct?.name}>
+                  {ct?.name}
                 </option>
               ))}
             </select>

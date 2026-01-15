@@ -17,7 +17,7 @@ export default function UserAvatar({ user, sx }) {
       sx={sx}
       onError={() => setImgError(true)}
     >
-      {user?.name ? user.name[0].toUpperCase() : "U"}
+      {user?.name ? user?.name[0]?.toUpperCase() : "U"}
     </Avatar>
   );
 }

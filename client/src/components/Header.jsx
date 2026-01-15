@@ -108,8 +108,8 @@ const Header = () => {
                 }}
               >
                 <ShoppingCartIcon sx={{ height: "38px", width: "auto" }} />
-                {user && cart.length > 0 && (
-                  <div className="cart-count bg-warning">{cart.length}</div>
+                {user && cart?.length > 0 && (
+                  <div className="cart-count bg-warning">{cart?.length}</div>
                 )}
               </button>
 
@@ -171,8 +171,8 @@ const Header = () => {
                           />
                         </div>
                         <div className="user-profile-sum">
-                          <h4 className="fw-semibold">{user.name}</h4>
-                          <EmailWithTooltip email={user.email} />
+                          <h4 className="fw-semibold">{user?.name}</h4>
+                          <EmailWithTooltip email={user?.email} />
                         </div>
                       </div>
                       <hr className="hr" />

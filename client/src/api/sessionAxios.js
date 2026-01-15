@@ -31,7 +31,7 @@ sessionAxios.interceptors.response.use(
   (response) => response,
   (error) => {
     // Handle network errors (offline, timeout, etc.)
-    if (!error.response && error.request) {
+    if (!error?.response && error?.request) {
       // Request was made but no response received (network error)
       if (!navigator.onLine) {
         error.code = "OFFLINE_ERROR";

@@ -55,10 +55,10 @@ const RelatedProducts = ({ category, excludeId }) => {
             : product?.price.toFixed(2);
 
           return (
-            <SwiperSlide key={product._id}>
+            <SwiperSlide key={product?._id}>
               <div
                 className="bg-white border rounded shadow-sm p-2 h-100 d-flex flex-column cursor-pointer"
-                onClick={() => navigate(`/products/${product._id}`)}
+                onClick={() => navigate(`/products/${product?._id}`)}
               >
                 <div
                   className="position-relative w-100"

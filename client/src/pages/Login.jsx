@@ -74,9 +74,9 @@ const Login = () => {
       const status = e.response?.status;
       const code = e.response?.data?.code;
 
-      if (e.code === "OFFLINE_ERROR") {
+      if (e?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Check your connection.");
-      } else if (e.code === "NETWORK_ERROR") {
+      } else if (e?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else if (status === 401 && code === "INVALID_CREDENTIALS") {
         setErrors({ form: "Invalid email or password." });

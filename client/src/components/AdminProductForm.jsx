@@ -155,7 +155,7 @@ const ProductForm = ({ initialData = {}, onSubmit, isEdit = false }) => {
 
     if (!formData.image) {
       // if editing and an existing URL is present, that's fine
-      if (!(isEdit && initialData && initialData.image)) {
+      if (!(isEdit && initialData && initialData?.image)) {
         newErrors.image = "Product image is required.";
       }
     }

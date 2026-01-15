@@ -44,8 +44,8 @@ const ProductDetail = () => {
   const [adding, setAdding] = useState(false); // adding to cart process feadback
 
   const averageRating = product?.reviews?.length
-    ? product.reviews.reduce((sum, review) => sum + review.rating, 0) /
-      product.reviews.length
+    ? product?.reviews?.reduce((sum, review) => sum + review?.rating, 0) /
+      product?.reviews?.length
     : 0;
 
   const totalReviews = product?.reviews?.length || 0;
@@ -77,11 +77,11 @@ const ProductDetail = () => {
       freeShipping: Boolean(product?.freeShipping),
       easyReturns: Boolean(product?.easyReturns),
       fabric: product?.fabric ?? "",
-      care: Array.isArray(product?.care) ? product.care : [],
+      care: Array.isArray(product?.care) ? product?.care : [],
       fit: product?.fit ?? "",
       modelInfo: product?.modelInfo ?? "",
-      reviews: Array.isArray(product?.reviews) ? product.reviews : [],
-      specifications: product?.specifications ? product.specifications : {},
+      reviews: Array.isArray(product?.reviews) ? product?.reviews : [],
+      specifications: product?.specifications ? product?.specifications : {},
     };
   };
 
@@ -95,9 +95,9 @@ const ProductDetail = () => {
     } catch (error) {
       console.error(error);
 
-      if (error.code === "OFFLINE_ERROR" || error.code === "NETWORK_ERROR") {
+      if (error?.code === "OFFLINE_ERROR" || error?.code === "NETWORK_ERROR") {
         setError("Couldn't reach server. Check your connection and try again.");
-      } else if (error.response?.status === 404) {
+      } else if (error?.response?.status === 404) {
         setError("Product not found");
       } else {
         setError("Something went wrong. Please try again later.");
@@ -145,7 +145,7 @@ const ProductDetail = () => {
     try {
       setAdding(true);
       await addToCart({
-        productId: product._id,
+        productId: product?._id,
         size: selectedSize,
         quantity,
       });
@@ -172,10 +172,10 @@ const ProductDetail = () => {
       state: {
         size: selectedSize,
         quantity: quantity,
-        name: product.name,
-        image: product.image,
-        discount: product.discount,
-        price: product.price,
+        name: product?.name,
+        image: product?.image,
+        discount: product?.discount,
+        price: product?.price,
       },
     });
   };
@@ -192,8 +192,8 @@ const ProductDetail = () => {
         {/* Image */}
         <div className="product-image-wrap col-md-6 col-xl-5 d-flex justify-content-center align-items-center overflow-hidden shadow-sm">
           <Image
-            src={product.image}
-            alt={product.name}
+            src={product?.image}
+            alt={product?.name}
             loading="eager"
             style={{ aspectRatio: "1/1" }}
             className="h-100 w-100"
@@ -201,26 +201,26 @@ const ProductDetail = () => {
         </div>
         {/* Info */}
         <div className="col-md-6 col-xl-7 mt-4 mt-md-0">
-          <h2 className="fw-bold">{product.name}</h2>
-          <p className="text-muted">{product.brand}</p>
+          <h2 className="fw-bold">{product?.name}</h2>
+          <p className="text-muted">{product?.brand}</p>
 
           <div className="d-flex align-items-center gap-2 mb-2">
             <StarRating rating={averageRating} />
             <span className="pt-1">
-              {averageRating.toFixed(1)} ({totalReviews} reviews)
+              {averageRating?.toFixed(1)} ({totalReviews} reviews)
             </span>
           </div>
 
           <h4 className="fw-bold mb-1">
             ${discountedPrice}
-            {product.discount > 0 && (
+            {product?.discount > 0 && (
               <small className="text-muted ms-1 text-decoration-line-through">
-                ${product.price.toFixed(2)}
+                ${product?.price?.toFixed(2)}
               </small>
             )}
           </h4>
-          {product.discount > 0 && (
-            <p className="text-success">{product.discount}% off</p>
+          {product?.discount > 0 && (
+            <p className="text-success">{product?.discount}% off</p>
           )}
           <p
             className={`fw-semibold ${
@@ -234,7 +234,7 @@ const ProductDetail = () => {
           <div className="mb-4 position-relative">
             <h6>Size</h6>
             <div className="d-flex gap-2 align-items-center">
-              {product.sizes.map((size) => (
+              {product?.sizes?.map((size) => (
                 <button
                   key={size}
                   className={`btn rounded-3 px-3 py-1 ${
@@ -296,7 +296,7 @@ const ProductDetail = () => {
               <button
                 className="btn btn-light"
                 onClick={() =>
-                  setQuantity((prev) => Math.min(prev + 1, product.stock))
+                  setQuantity((prev) => Math.min(prev + 1, product?.stock))
                 }
                 disabled={product?.stock === 0}
               >
@@ -335,8 +335,8 @@ const ProductDetail = () => {
 
           {/* Shipping & Returns Flags */}
           <div className="d-flex flex-wrap gap-3 mt-3">
-            {product.freeShipping && <span>✅ Free Shipping</span>}
-            {product.easyReturns && <span>✅ Easy Returns</span>}
+            {product?.freeShipping && <span>✅ Free Shipping</span>}
+            {product?.easyReturns && <span>✅ Easy Returns</span>}
           </div>
         </div>
       </div>
@@ -344,20 +344,20 @@ const ProductDetail = () => {
       {/* --- DESCRIPTION --- */}
       <section className="my-5">
         {/* desctiption */}
-        {product.description && (
+        {product?.description && (
           <>
             <h3>Description</h3>
-            <p>{product.description}</p>
+            <p>{product?.description}</p>
           </>
         )}
 
         {/* Fabric & Care */}
-        {(product.fabric || product.care?.length > 0) && (
+        {(product?.fabric || product?.care?.length > 0) && (
           <>
             <h5 className="mt-4">Fabric & Care</h5>
             <ul>
-              {product.fabric && <li>{product.fabric}</li>}
-              {product.care?.map((item, i) => (
+              {product?.fabric && <li>{product?.fabric}</li>}
+              {product?.care?.map((item, i) => (
                 <li key={i}>{item}</li>
               ))}
             </ul>
@@ -365,11 +365,11 @@ const ProductDetail = () => {
         )}
 
         {/* Size & Fit */}
-        {product.fit && (
+        {product?.fit && (
           <>
             <h5 className="mt-4">Size & Fit</h5>
             <p>
-              {product.fit} fit.
+              {product?.fit} fit.
               <span href="#" className="text-primary small">
                 {" "}
                 View Size Guide{">>"}
@@ -379,22 +379,24 @@ const ProductDetail = () => {
         )}
 
         {/* Specifications */}
-        {product.specifications &&
-          Object.keys(product.specifications).length > 0 && (
+        {product?.specifications &&
+          Object.keys(product?.specifications)?.length > 0 && (
             <>
               <h5 className="mt-4">Specifications</h5>
               <div
                 className="row row-cols-2 g-2 mt-2"
                 style={{ maxWidth: "400px" }}
               >
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <React.Fragment key={key}>
-                    <div className="fw-semibold">
-                      {key.replace(/([A-Z])/g, " $1")} {/* formatting text*/}
-                    </div>
-                    <div>{value}</div>
-                  </React.Fragment>
-                ))}
+                {Object.entries(product?.specifications)?.map(
+                  ([key, value]) => (
+                    <React.Fragment key={key}>
+                      <div className="fw-semibold">
+                        {key.replace(/([A-Z])/g, " $1")} {/* formatting text*/}
+                      </div>
+                      <div>{value}</div>
+                    </React.Fragment>
+                  )
+                )}
               </div>
             </>
           )}
@@ -408,20 +410,20 @@ const ProductDetail = () => {
         <div className="d-flex align-items-center gap-2 mb-3">
           <StarRating rating={averageRating} />
           <span className="fw-semibold pt-1">
-            {averageRating.toFixed(1)} out of 5{" "}
+            {averageRating?.toFixed(1)} out of 5{" "}
             <span className="text-muted">({totalReviews} reviews)</span>
           </span>
         </div>
 
         {/* Review Button and Form */}
         <ReviewSection
-          productId={product._id}
+          productId={product?._id}
           product={product}
           refetchProduct={fetchProduct}
         />
 
         {/* Review List */}
-        <ReviewList productId={product._id} />
+        <ReviewList productId={product?._id} />
       </section>
 
       {/* --- RELATED PRODUCTS --- */}

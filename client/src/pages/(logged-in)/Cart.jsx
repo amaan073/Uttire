@@ -26,16 +26,16 @@ const Cart = () => {
   };
 
   // without discont total of cart items
-  const originalTotal = cart.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
+  const originalTotal = cart?.reduce(
+    (acc, item) => acc + item?.product?.price * item?.quantity,
     0
   );
   // Calculate subtotal (discounted)
-  const subtotal = cart.reduce(
+  const subtotal = cart?.reduce(
     (acc, item) =>
       acc +
-      getDiscountedPrice(item.product.price, item.product.discount) *
-        item.quantity,
+      getDiscountedPrice(item?.product?.price, item?.product?.discount) *
+        item?.quantity,
     0
   );
   const savings = originalTotal - subtotal;
@@ -287,7 +287,7 @@ const Cart = () => {
               {savings > 0 && (
                 <div className="d-flex justify-content-between text-success mb-3">
                   <span>You saved</span>
-                  <span>${savings.toFixed(2)}</span>
+                  <span>${savings?.toFixed(2)}</span>
                 </div>
               )}
 
@@ -296,7 +296,7 @@ const Cart = () => {
               <div className="d-flex justify-content-between align-items-center my-3">
                 <span className="fw-bold fs-5">Total</span>
                 <span className="fw-bold fs-4 text-success">
-                  ${total.toFixed(2)}
+                  ${total?.toFixed(2)}
                 </span>
               </div>
 

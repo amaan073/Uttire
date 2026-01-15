@@ -22,7 +22,7 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
   // ✅ check review from product prop
   useEffect(() => {
     if (user && product?.reviews) {
-      const found = product.reviews.some((r) => r.userId === user._id);
+      const found = product?.reviews?.some((r) => r?.userId === user?._id);
       setAlreadyReviewed(found);
     }
   }, [user, product]);
@@ -37,8 +37,8 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
 
     try {
       const payload = {
-        userId: user._id, // from auth context
-        name: user.name,
+        userId: user?._id, // from auth context
+        name: user?.name,
         rating: formData.rating,
         comment: formData.comment || "",
       };
@@ -56,9 +56,9 @@ const ReviewSection = ({ productId, product, refetchProduct }) => {
       }
     } catch (error) {
       console.error(error);
-      if (error.code === "OFFLINE_ERROR") {
+      if (error?.code === "OFFLINE_ERROR") {
         toast.error("You are offline. Please check your internet connection.");
-      } else if (error.code === "NETWORK_ERROR") {
+      } else if (error?.code === "NETWORK_ERROR") {
         toast.error("Network error. Please try again.");
       } else {
         toast.error("Failed to submit review. Please try again.");

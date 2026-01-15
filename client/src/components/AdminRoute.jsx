@@ -10,7 +10,7 @@ const AdminRoute = () => {
     return <Navigate to="/login" replace />;
   }
 
-  if (!user.isAdmin) {
+  if (!user?.isAdmin) {
     return <Navigate to="/" replace />;
   }
 

@@ -1,4 +1,3 @@
-// src/components/OfflineBanner.jsx
 const OfflineBanner = () => {
   return (
     <div
