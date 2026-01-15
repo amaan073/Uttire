@@ -84,7 +84,11 @@ const CartCheckout = () => {
                   src={item?.product?.image}
                   alt={item?.product?.name}
                   className="rounded"
-                  style={{ width: "70px", aspectRatio: "1/1" }}
+                  style={{
+                    width: "70px",
+                    aspectRatio: "1/1",
+                    minWidth: "70px",
+                  }}
                 />
                 <div className="ms-3 me-auto pe-4">
                   <p className="mb-1 fw-semibold">{item?.product?.name}</p>

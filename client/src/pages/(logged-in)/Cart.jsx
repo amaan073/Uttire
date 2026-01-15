@@ -153,7 +153,7 @@ const Cart = () => {
 
                   {/* Product Info */}
                   <div className="cart-product-info flex-grow-1">
-                    <b className="fs-5">
+                    <b className="fs-5 break-word">
                       {item?.product?.name ?? "Unnamed product"}
                     </b>
                     <p className="text-muted mb-1 small">

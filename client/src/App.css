@@ -70,9 +70,13 @@
   transform: rotate(-45deg);
 }
 
-@media screen and (max-width: 450px) {
-  .account-popup {
-    width: 330px !important;
+@media screen and (max-width: 430px) {
+  .account-popup > div {
+    min-width: 290px !important;
+    width: 290px !important;
+  }
+  .user-profile-sum > p {
+    width: 170px;
   }
 }
 

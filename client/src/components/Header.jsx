@@ -160,6 +160,7 @@ const Header = () => {
                             width: "90px",
                             height: "90px",
                             padding: "10px",
+                            aspectRatio: "1/1",
                           }}
                         >
                           <UserAvatar
@@ -171,7 +172,9 @@ const Header = () => {
                           />
                         </div>
                         <div className="user-profile-sum">
-                          <h4 className="fw-semibold">{user?.name}</h4>
+                          <h4 className="fw-semibold break-word">
+                            {user?.name}
+                          </h4>
                           <EmailWithTooltip email={user?.email} />
                         </div>
                       </div>

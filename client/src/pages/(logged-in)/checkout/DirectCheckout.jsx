@@ -90,7 +90,7 @@ const DirectCheckout = () => {
                 src={image}
                 alt={name}
                 className="rounded bg-secondary"
-                style={{ width: "70px", aspectRatio: "1/1" }}
+                style={{ width: "70px", aspectRatio: "1/1", minWidth: "70px" }}
               />
               <div className="ms-3 me-auto pe-4">
                 <p className="mb-1 fw-semibold">{name}</p>
