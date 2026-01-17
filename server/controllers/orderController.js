@@ -125,7 +125,7 @@ export const createOrder = async (req, res) => {
   } catch (error) {
     // Rollback everything if any step fails
     await session.abortTransaction();
-    console.log(error);
+    console.error(error);
 
     res
       .status(500)
