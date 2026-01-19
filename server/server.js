@@ -29,6 +29,9 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+//  Trust proxy for Render deployment
+app.set("trust proxy", 1);
+
 // Middleware
 app.use(express.json());
 app.use(cookieParser()); //  parse cookies
@@ -59,7 +62,7 @@ if (process.env.NODE_ENV === "production") {
           imgSrc: [
             "'self'",
             "data:",
-            "blob:", // ✅ REQUIRED for image previews
+            "blob:", // REQUIRED for image previews
             "https://res.cloudinary.com",
           ],
           connectSrc: ["'self'"],
