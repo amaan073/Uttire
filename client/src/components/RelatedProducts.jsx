@@ -32,18 +32,17 @@ const RelatedProducts = ({ category, excludeId }) => {
 
   return (
     <section className="my-5">
-      <h3 className="mb-3">Related Products</h3>
+      <h3 className="mb-4">Related Products</h3>
       <Swiper
         modules={[Navigation]}
         navigation
         spaceBetween={16}
         slidesPerView={5} // ✅ default for large screen
         breakpoints={{
-          1250: { slidesPerView: 5 }, // desktops / large screens
-          992: { slidesPerView: 4 }, // laptops
-          700: { slidesPerView: 3 }, // tablets (portrait)
-          480: { slidesPerView: 2 }, // mobiles
-          360: { slidesPerView: 1 },
+          992: { slidesPerView: 5 },
+          768: { slidesPerView: 4 },
+          480: { slidesPerView: 3 },
+          360: { slidesPerView: 2 },
         }}
       >
         {relatedProducts.map((product) => {
@@ -57,7 +56,7 @@ const RelatedProducts = ({ category, excludeId }) => {
           return (
             <SwiperSlide key={product?._id}>
               <div
-                className="bg-white border rounded shadow-sm p-2 h-100 d-flex flex-column cursor-pointer"
+                className="bg-white rounded-3 border h-100 d-flex flex-column cursor-pointer overflow-hidden"
                 onClick={() => navigate(`/products/${product?._id}`)}
               >
                 <div
@@ -67,7 +66,7 @@ const RelatedProducts = ({ category, excludeId }) => {
                   <Image
                     src={product?.image}
                     alt={product?.name}
-                    className="w-100 h-100 rounded bg-secondary"
+                    className="w-100 h-100 bg-secondary"
                   />
                   {product?.discount > 0 && (
                     <span className="badge bg-danger position-absolute top-0 start-0 m-2">
@@ -76,10 +75,10 @@ const RelatedProducts = ({ category, excludeId }) => {
                   )}
                 </div>
 
-                <div className="mt-2 text-start d-flex flex-column justify-content-between flex-grow-1">
+                <div className="p-2 text-center d-flex flex-column justify-content-between flex-grow-1">
                   {/* Product Name → clamp to 2 lines */}
-                  <h6
-                    className="fw-bold mb-2"
+                  <div
+                    className="m-0 p-0 fw-semibold small"
                     style={{
                       display: "-webkit-box",
                       WebkitLineClamp: 1,
@@ -90,7 +89,7 @@ const RelatedProducts = ({ category, excludeId }) => {
                     title={product?.name}
                   >
                     {product?.name}
-                  </h6>
+                  </div>
 
                   {/* Price always at bottom */}
                   {product?.discount > 0 ? (

@@ -248,7 +248,7 @@ const Cart = () => {
                       variant="outline-danger"
                       size="sm"
                       className="d-flex align-items-center gap-1 px-2 py-1 rounded-2 justify-content-center"
-                      style={{ width: "90px" }}
+                      style={{ width: "90px", height: "30px" }}
                       onClick={() => handleRemove(item?._id)}
                       disabled={removingItem === item?._id || !isOnline} //  disable while removing
                     >

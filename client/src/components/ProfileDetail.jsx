@@ -3,7 +3,7 @@ import UserAvatar from "../components/ui/UserAvatar";
 import { useContext, useEffect, useState } from "react";
 import privateAxios from "../api/privateAxios";
 import { toast } from "react-toastify";
-import { isValidPhone } from "../utils/validators";
+import { isValidPhone, isValidName } from "../utils/validators";
 import AuthContext from "../context/AuthContext";
 import { Spinner } from "react-bootstrap";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -135,6 +135,8 @@ const ProfileDetail = ({ mode, setMode, profile, setProfile }) => {
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required.";
+    } else if (!isValidName(formData.name)) {
+      newErrors.name = "Only letters, minimum 2 characters.";
     }
 
     // Phone is optional, but validate if provided

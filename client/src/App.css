@@ -71,7 +71,7 @@
 }
 
 @media screen and (max-width: 430px) {
-  .account-popup > div {
+  .account-popup > div.user-details {
     min-width: 290px !important;
     width: 290px !important;
   }

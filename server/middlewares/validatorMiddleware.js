@@ -15,12 +15,12 @@ export const validateRegister = [
     .trim()
     .notEmpty()
     .withMessage("Name is required")
-    .isLength({ min: 3 })
-    .withMessage("Name must be at least 3 characters"),
+    .matches(/^[a-zA-Z\s]+$/)
+    .withMessage("Only letters allowed")
+    .isLength({ min: 2 })
+    .withMessage("Name must be at least 2 characters"),
 
-  body("email")
-    .isEmail()
-    .withMessage("Please enter a valid email"),
+  body("email").isEmail().withMessage("Please enter a valid email"),
 
   body("password")
     .isLength({ min: 6 })
@@ -31,13 +31,9 @@ export const validateRegister = [
 
 // Validation rules for login
 export const validateLogin = [
-  body("email")
-    .isEmail()
-    .withMessage("Please enter a valid email"),
+  body("email").isEmail().withMessage("Please enter a valid email"),
 
-  body("password")
-    .notEmpty()
-    .withMessage("Password is required"),
+  body("password").notEmpty().withMessage("Password is required"),
 
   handleValidationErrors,
 ];

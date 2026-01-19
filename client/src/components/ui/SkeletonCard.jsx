@@ -17,15 +17,11 @@ const SkeletonCard = () => {
           style={{ height: "18px", width: "40%" }}
         ></div>
         <div
-          className="bg-light rounded mb-2"
+          className="bg-light rounded"
           style={{ height: "22px", width: "70%" }}
         ></div>
-        <div
-          className="bg-light rounded mb-3"
-          style={{ height: "14px", width: "90%" }}
-        ></div>
 
-        {/* Price + Button row */}
+        {/*  Button row */}
         <div className="mt-auto d-flex justify-content-between align-items-center">
           <div
             className="bg-light rounded"

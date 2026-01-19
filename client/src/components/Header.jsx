@@ -153,7 +153,10 @@ const Header = () => {
                   }`}
                 >
                   {user ? (
-                    <div className="text-start" style={{ minWidth: "340px" }}>
+                    <div
+                      className="text-start user-details"
+                      style={{ minWidth: "340px" }}
+                    >
                       <div className="d-flex align-items-center mb-3 gap-2 pe-3">
                         <div
                           style={{
