@@ -1,8 +1,6 @@
 ## Tech Stack
 
 - React, React Router, React Bootstrap
-- MUI
-- Lucide
 - NodeJS, Express, MongoDB, Mongoose
 - Cloudinary
 - Vite
